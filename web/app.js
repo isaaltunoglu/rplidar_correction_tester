@@ -56,6 +56,7 @@ let replay = null,
   replayPlaying = false,
   replayTimer = null,
   localReplay = false;
+let sourceChanging = false;
 let trialKind = "accuracy",
   trial = null,
   results = [],
@@ -277,6 +278,7 @@ async function changeSource(source, extra = {}) {
     toast("Önce etkin deneyi veya kaydı durdurun.", true);
     return;
   }
+  sourceChanging = true;
   try {
     const accepted = await api("/api/source", {
       source,
@@ -288,9 +290,13 @@ async function changeSource(source, extra = {}) {
     minimumGeneration = accepted.generation ?? -1;
     localReplay = false;
     stopReplay();
-    scan = analysis = null;
-    history = [];
-    receivedAt = 0;
+    // SSE can deliver the new source before its HTTP acknowledgement arrives.
+    // Preserve that new frame rather than blanking an already live stream.
+    if (state?.generation !== accepted.generation) {
+      scan = analysis = null;
+      history = [];
+      receivedAt = 0;
+    }
     deviceKey = "";
     serverGeneration = null;
     $("sourceSelect").value = source === "idle" ? "replay" : source;
@@ -299,6 +305,8 @@ async function changeSource(source, extra = {}) {
   } catch (e) {
     toast(e.message, true);
     $("sourceSelect").value = activeSource() || "hardware";
+  } finally {
+    sourceChanging = false;
   }
 }
 $("sourceSelect").addEventListener("change", async () => {
@@ -393,7 +401,8 @@ function connect() {
         stopReplay();
         localReplay = false;
         scan = analysis = null;
-        toast("Başka bir istemci veri kaynağını değiştirdi.", true);
+        if (!sourceChanging)
+          toast("Başka bir istemci veri kaynağını değiştirdi.", true);
       }
       if (!localReplay) {
         $("sourceSelect").value = msg.source === "idle" ? "replay" : msg.source;
@@ -472,7 +481,7 @@ function renderState() {
   const source = activeSource();
   let badge, notice;
   if (localReplay) {
-    badge = "Kayıttan oynatılıyor";
+    badge = replayPlaying ? "Kayıt oynatılıyor" : "Kayıt · duraklatıldı";
     notice = `TEKRAR OYNATMA · Asıl kaynak: ${sourceName(replay.source)}. Yeni fiziksel ölçüm yapılmıyor.`;
   } else if (state.source === "demo") {
     badge = "Simülasyon";
@@ -519,6 +528,31 @@ function renderState() {
     localReplay ||
     state.source === "demo" ||
     (streamOnline && state.status.connection === "connected");
+  const paused =
+    !localReplay &&
+    state.status.connection === "connected" &&
+    !state.status.scanning;
+  const emptyTitle = $("plotEmpty").querySelector("h2");
+  const emptyDescription = $("plotEmpty").querySelector("p");
+  if (!streamOnline && !localReplay) {
+    emptyTitle.textContent = "Sunucu bağlantısı kesildi.";
+    emptyDescription.textContent =
+      "Yerel sunucuya yeniden bağlanılıyor. Güncel ölçüm gelene kadar önceki veriler gösterilmez.";
+  } else if (paused) {
+    emptyTitle.textContent = "Tarama duraklatıldı.";
+    emptyDescription.textContent =
+      "Devam et düğmesiyle ölçüm akışını yeniden başlatın. Önceki ölçümler güncel veri olarak gösterilmez.";
+  } else if (state.source === "demo") {
+    emptyTitle.textContent = "Yeni tarama bekleniyor.";
+    emptyDescription.textContent =
+      "Simülasyon akışı hazırlanıyor veya yeni veri ulaşmıyor. Güncel sentetik ölçüm geldiğinde görünüm yenilenir.";
+  } else {
+    emptyTitle.textContent = "Bir bağlantı, 360° keşif.";
+    emptyDescription.textContent =
+      "USB LiDAR bağlandığında tarama burada görünür. Sensör olmadan simülasyonla tüm iş akışını deneyin.";
+  }
+  $("plotDemo").hidden =
+    paused || localReplay || state.source === "demo" || !streamOnline;
   $("plotSource").textContent =
     source === "hardware" ? "USB" : source === "demo" ? "SİMÜLASYON" : "KAYIT";
   $("plotWatermark").textContent = localReplay
@@ -787,8 +821,8 @@ function drawRadar() {
   const { ctx: c, w, h } = canvasSize($("radarCanvas"));
   if (w < 1) return;
   const x = w / 2,
-    y = h / 2 + 2,
-    r = Math.max(20, Math.min(w / 2 - 45, h / 2 - 40));
+    y = h / 2 - 2,
+    r = Math.max(20, Math.min(w / 2 - 45, h / 2 - 62));
   plotGeometry = { x, y, r };
   c.clearRect(0, 0, w, h);
   c.fillStyle = "#102c40";

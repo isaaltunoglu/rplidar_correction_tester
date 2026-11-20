@@ -550,8 +550,8 @@ textarea::placeholder {
   color: #d8e7ee;
 }
 .plot-toolbar {
-  height: 49px;
-  padding: 0 17px;
+  min-height: 49px;
+  padding: 10px 17px;
   border-bottom: 1px solid #284759;
   display: flex;
   justify-content: space-between;
@@ -566,6 +566,7 @@ textarea::placeholder {
 .plot-toolbar strong {
   font-size: 12px;
   font-weight: 600;
+  white-space: nowrap;
 }
 .plot-status {
   height: 5px;
@@ -1793,8 +1794,8 @@ dd {
     max-height: 460px;
   }
   .plot-toolbar {
-    padding: 0 11px;
-    height: 43px;
+    padding: 10px 11px;
+    flex-wrap: wrap;
   }
   .plot-toolbar strong {
     font-size: 12px;
@@ -2037,9 +2038,18 @@ dd {
 .plot-footer > span:last-child {
   max-width: none;
 }
-.plot-toolbar {
-  padding-block: 8px;
-}
 .plot-footer {
   padding-block: 10px;
+}
+
+.text-button > svg,
+.source-links span > svg {
+  width: 12px;
+  height: 12px;
+  vertical-align: middle;
+}
+.source-links span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
 }

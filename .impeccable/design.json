@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-20T21:40:03Z",
+  "generatedAt": "2026-11-20T23:03:14.511738Z",
   "title": "Design System: RPLIDAR Lab",
   "extensions": {
     "colorMeta": {
@@ -334,9 +334,9 @@
       "name": "Polar plot surface",
       "kind": "custom",
       "refersTo": "plot",
-      "description": "Dark measurement surface with source text and a pale warm selection legend; preview contains no invented data.",
+      "description": "Dark measurement surface with a wrapping toolbar, explicit state text and a pale warm selection legend; preview contains no invented data.",
       "html": "<section class=\"ds-plot\"><header>Polar scan <span>Disconnected</span></header><div class=\"ds-plot-empty\">Waiting for a data source</div><footer><i aria-hidden=\"true\"></i> Selected sector</footer></section>",
-      "css": ".ds-plot{font-family:var(--font,Manrope,\"Segoe UI\",sans-serif);background:var(--plot,#102c40);color:#d8e7ee;border:1px solid #214457;border-radius:8px;overflow:hidden;} .ds-plot header{display:flex;justify-content:space-between;gap:8px;padding:14px 17px;border-bottom:1px solid #284759;font-size:12px;font-weight:600;} .ds-plot header span{color:#adc4d1;font-weight:400;} .ds-plot-empty{min-height:170px;display:grid;place-items:center;font-size:12px;color:#b4cad6;} .ds-plot footer{display:flex;align-items:center;gap:6px;padding:10px 16px;border-top:1px solid #294758;font-size:12px;color:#a7bfcb;} .ds-plot footer i{width:5px;height:5px;border-radius:50%;background:#eaa37e;}"
+      "css": ".ds-plot{font-family:var(--font,Manrope,\"Segoe UI\",sans-serif);background:var(--plot,#102c40);color:#d8e7ee;border:1px solid #214457;border-radius:8px;overflow:hidden;} .ds-plot header{display:flex;justify-content:space-between;gap:8px;min-height:49px;padding:10px 17px;border-bottom:1px solid #284759;font-size:12px;font-weight:600;} .ds-plot header span{color:#adc4d1;font-weight:400;} .ds-plot-empty{min-height:170px;display:grid;place-items:center;font-size:12px;color:#b4cad6;} .ds-plot footer{display:flex;align-items:center;gap:6px;padding:10px 16px;border-top:1px solid #294758;font-size:12px;color:#a7bfcb;} .ds-plot footer i{width:5px;height:5px;border-radius:50%;background:#eaa37e;} @media(max-width:680px){.ds-plot header{padding:10px 11px;flex-wrap:wrap;}}"
     },
     {
       "name": "Angular ribbon",

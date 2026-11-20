@@ -122,7 +122,7 @@ RPLIDAR Lab is a compact local instrument: ink blue navigation frames an offwhit
 
 A terracotta angular ribbon and the corresponding plotted sector form the signature. They describe the same software selection; the plotted geometry is evidence-bearing rather than decorative. Locally served Manrope gives controls and measurements one consistent voice. Data source, stale data, disconnected hardware, simulation, replay and pause remain explicit product states.
 
-This record refreshes the incumbent direction from `web/styles.css`, `index.html` and the canvas drawing code in `web/app.js`. Visual decisions were delegated in Operate mode. The field research station direction was selected from seven considered directions; the online catalog and generated comparisons were unavailable. No actual desktop or mobile browser screenshots were captured in this sandbox, and this document does not grant visual ship approval. Review evidence and the remaining recapture disposition are recorded in `docs/UI_REVIEW.md`.
+This record refreshes the incumbent direction from `web/styles.css`, `index.html` and the canvas drawing code in `web/app.js`. Visual decisions were delegated in Operate mode. The field research station direction was selected from seven considered directions, with seed `5b3a139c` corroborated by `.impeccable/questions/roll.json`. The online catalog and quality-bar boards were unavailable; no approved comp or comp-fidelity claim exists. The retrospective formal direction contract is `docs/UI_DIRECTION.md`. Actual Chrome desktop and mobile captures cover the implemented surface. The finish reviewer returned **ship** after the external-link SVG correction and recapture; this approves the reviewed rendered software, not physical sensor behavior. Evidence and review limits are recorded in `docs/UI_REVIEW.md`.
 
 **Key Characteristics:**
 
@@ -191,14 +191,14 @@ The desktop shell has a fixed left navigation rail (218px) and a workspace of th
 
 The live view divides a flexible plot from a settings column (280px) with a gap (24px). A four-part telemetry band and directional summary use shared dividers. Recording and device views use two columns; experiments use a selector beside a workbench. Reused spacing is intentionally dense: control gaps (7–8px), paired fields (12px), field separation (17px), and larger working gaps (24–35px).
 
-Responsive changes are source-backed, pending rendered verification:
+Responsive changes are source-backed and were exercised in actual Chrome at desktop (1512 × 1100) and mobile (390 × 844). These captures sample the responsive system rather than independently validating every breakpoint:
 
 - At (1600px) and above, settings widen to (305px) and the plot uses a wider aspect ratio (1.6).
 - At (1200px) and below, the rail narrows to (190px), working margins to (24px), and settings to (248px).
 - At (960px) and below, the rail narrows to (168px); plot and settings stack, settings become a two-column grid, and multi-column secondary pages stack. The decorative connector ribbon and its duplicate note are hidden; labelled angular controls and the plot remain.
 - At (680px) and below, navigation becomes a four-item horizontal row above the workspace. Working margins become (16px), telemetry becomes two columns, top actions wrap, and footer content stacks. Tables keep horizontal scrolling rather than compressing measurement columns.
 
-The plot wrapper changes aspect ratio with the layout and uses a minimum height (350px) on desktop, (380px) in the intermediate stacked layout, and (320px) on narrow screens. Canvas content scales to its wrapper. Do not infer mobile clipping or touch usability approval from these source rules.
+The plot wrapper changes aspect ratio with the layout and uses a minimum height (350px) on desktop, (380px) in the intermediate stacked layout, and (320px) on narrow screens. Canvas content scales to its wrapper; the polar drawing reserves bottom space for its labels and readout. The browser workflow reported no mobile horizontal overflow at the captured viewport. Broader device and touch usability remain outside that check.
 
 ## Elevation & Depth
 
@@ -212,7 +212,7 @@ Page activation uses a short clipped reveal (0.28s, `cubic-bezier(0.16, 1, 0.3, 
 
 Corners are restrained: fields and badges use the field radius, buttons and table boundaries the control radius, navigation the navigation radius, recording/replay containers the container radius, and the main plot the plot radius. Dots remain circular and communicate state alongside text. Native range inputs and familiar form controls carry adjustment behavior.
 
-Iconography is inline stroked SVG with rounded caps and joins. General icons are (19px) with stroke width (1.65); buttons and navigation use smaller variants. Do not introduce glyph characters as icon replacements.
+Iconography is inline stroked SVG with rounded caps and joins. General icons are (19px) with stroke width (1.65); buttons and navigation use smaller variants. External links use the same shared SVG symbol system. Do not introduce glyph characters as icon replacements.
 
 ## Components
 
@@ -232,7 +232,7 @@ Instrument Blue surrounds pale navigation text and stroked icons. The selected i
 
 ### State badges and notices
 
-Compact badges pair short source labels with restrained state fills: neutral grey, simulation terracotta, live green, replay violet, error red. Source notices repeat the current provenance with explanatory text. Proximity feedback retains neutral, warning, danger and observed-clear treatments; missing data must remain explicit rather than borrowing a green result.
+Compact badges pair short source labels with restrained state fills: neutral grey, simulation terracotta, live green, replay violet, error red. Source notices repeat the current provenance with explanatory text. A paused replay retains its replay source label and states pause accurately; source transitions clear preceding data and ignore stale-generation events until the new source is acknowledged. Proximity feedback retains neutral, warning, danger and observed-clear treatments; missing data must remain explicit rather than borrowing a green result.
 
 ### Containers and tables
 
@@ -242,7 +242,7 @@ Most groups use separators on the paper ground. Recording and replay use white, 
 
 The plot is a dark bounded instrument surface with toolbar, source watermark, scale, contextual points, selected points, angular sector and footer legend. The terracotta ribbon gives start and end angles on the light settings ground; the plot uses a lighter related terracotta for its wedge boundary and selected points. The wedge follows the actual angular configuration. It is a software filter on physical full-circle coverage.
 
-Plot empty states include an explanation and action. The canvas has a textual measurement alternative. Do not draw a synthetic sweep or fabricate live values to fill unavailable data. The history chart and experiment chart carry measured or explicitly simulated series, not decoration.
+The plot toolbar uses a minimum height (49px) and vertical padding (10px), with horizontal padding (17px) on desktop and (11px) on mobile. Its mobile controls wrap without a fixed toolbar height. Plot empty states distinguish disconnected, paused, stale and source-transition conditions with appropriate explanations and actions. The canvas has a textual measurement alternative. Do not draw a synthetic sweep or fabricate live values to fill unavailable data. The history chart and experiment chart carry measured or explicitly simulated series, not decoration.
 
 ## Do's and Don'ts
 

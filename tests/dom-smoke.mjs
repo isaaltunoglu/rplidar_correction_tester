@@ -110,6 +110,7 @@ function frame(seq) {
     ],
   };
 }
+let deliverBeforeAcknowledgement = false;
 globalThis.fetch = async (path, options) => {
   const body = JSON.parse(options.body);
   if (path === "/api/source") {
@@ -123,7 +124,12 @@ globalThis.fetch = async (path, options) => {
         mode: "Synthetic",
       },
     };
-    setTimeout(() => emit(), 20);
+    if (deliverBeforeAcknowledgement) {
+      emit(frame(99));
+      await new Promise((resolve) => setTimeout(resolve, 25));
+    } else {
+      setTimeout(() => emit(), 20);
+    }
   }
   if (path === "/api/control") {
     state.status.scanning = body.action !== "pause";
@@ -208,9 +214,16 @@ stream.onmessage({
   }),
 });
 assert.ok($("noticeText").textContent.includes("TEKRAR OYNATMA"));
+deliverBeforeAcknowledgement = true;
 $("sourceSelect").value = "demo";
 $("sourceSelect").dispatchEvent(new window.Event("change"));
 await wait(50);
+assert.equal(
+  $("plotEmpty").hidden,
+  true,
+  "A new frame must survive its HTTP acknowledgement",
+);
+assert.ok(!$("toast").textContent.includes("Başka bir istemci"));
 emit(frame(35));
 assert.ok($("noticeText").textContent.includes("SİMÜLASYON"));
 state = {

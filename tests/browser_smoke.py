@@ -1,7 +1,4 @@
-"""Real browser integration and screenshots. Requires Playwright (dev only).
-Run: python3 tests/browser_smoke.py
-Never interprets simulation as physical LiDAR verification.
-"""
+"""Real browser workflows and desktop/mobile evidence, using simulation only."""
 
 import json
 import os
@@ -22,6 +19,30 @@ proc = subprocess.Popen(
     stdout=subprocess.PIPE,
     text=True,
 )
+
+
+def wait_live(page):
+    condition = """() => document.querySelector('#plotEmpty').hidden &&
+        document.querySelector('#metricPoints').textContent !== '—'"""
+    page.wait_for_function(condition)
+    # Do not accept a transient frame delivered before a source-change HTTP reply.
+    page.wait_for_timeout(250)
+    page.wait_for_function(condition)
+
+
+def capture(page, name, live=False):
+    page.evaluate("() => document.fonts.ready")
+    page.evaluate("() => { document.activeElement?.blur(); window.scrollTo(0, 0); }")
+    page.wait_for_timeout(350)  # Finish the page's finite entrance animation.
+    page.locator("#toast").wait_for(state="hidden", timeout=10000)
+    if live:
+        wait_live(page)
+    page.screenshot(path=str(OUT / name), full_page=True, animations="disabled")
+    assert page.locator("#toast").is_hidden(), "Capture contains an unsettled notification"
+    if live:
+        assert page.locator("#plotEmpty").is_hidden(), "Live capture lost its data"
+
+
 try:
     line = proc.stdout.readline()
     match = re.search(r"http://localhost:(\d+)", line)
@@ -37,13 +58,15 @@ try:
         errors = []
         desktop.on("pageerror", lambda error: errors.append(str(error)))
         desktop.goto(url)
-        desktop.wait_for_function("document.querySelector('#metricPoints').textContent !== '—'")
-        desktop.evaluate("document.fonts.ready")
+        wait_live(desktop)
         assert "SİMÜLASYON" in desktop.locator("#noticeText").inner_text()
         desktop.locator('.preset[data-center="180"][data-width="120"]').click()
         assert desktop.locator("#centerLabel").inner_text() == "180° · Arka"
         desktop.locator('.preset[data-center="0"][data-width="120"]').click()
-        desktop.screenshot(path=str(OUT / "desktop-live.png"), full_page=True)
+        desktop.locator("#radarCanvas").focus()
+        desktop.keyboard.press("ArrowRight")
+        assert "Q " in desktop.locator("#pointReadout").inner_text()
+        capture(desktop, "desktop-live.png", live=True)
         with desktop.expect_download() as dl:
             desktop.locator("#exportCSV").click()
         dl.value.save_as(str(OUT / "sector.csv"))
@@ -57,36 +80,49 @@ try:
         recording = OUT / "demo-recording.json"
         dl.value.save_as(str(recording))
         assert json.loads(recording.read_text())["source"] == "demo"
-        desktop.screenshot(path=str(OUT / "desktop-recordings.png"), full_page=True)
+        capture(desktop, "desktop-recordings.png")
+        desktop.locator('[data-page="device"]').click()
+        desktop.locator("#demoScene").select_option("target")
+        desktop.locator('[data-page="live"]').click()
+        wait_live(desktop)
         desktop.locator('[data-page="experiments"]').click()
         desktop.locator("#trialDuration").fill("3")
-        desktop.locator("#trialLabel").fill("Simülasyon · otomatik kontrol")
+        desktop.locator("#trialLabel").fill("Simülasyon · 1.000 mm hedef")
         desktop.locator("#trialStart").click()
         desktop.wait_for_function(
-            "document.querySelector('#trialState').textContent==='Tamamlandı'", timeout=10000
+            "() => document.querySelector('#trialState').textContent==='Tamamlandı'", timeout=10000
         )
         assert "SİMÜLASYON" in desktop.locator("#trialResults").inner_text()
-        desktop.screenshot(path=str(OUT / "desktop-experiment.png"), full_page=True)
+        with desktop.expect_download() as dl:
+            desktop.locator("[data-result]").click()
+        experiment = OUT / "experiment.json"
+        dl.value.save_as(str(experiment))
+        trial = json.loads(experiment.read_text())
+        assert 980 < trial["result"]["mean"] < 1020, trial["result"]
+        assert trial["source"] == "demo" and trial["completion"] == "complete"
+        capture(desktop, "desktop-experiment.png")
         with desktop.expect_download() as dl:
             desktop.locator("#exportReport").click()
         dl.value.save_as(str(OUT / "report.html"))
         desktop.locator('[data-page="recordings"]').click()
         desktop.locator("#recordingFile").set_input_files(str(recording))
         desktop.wait_for_function(
-            "document.querySelector('#noticeText').textContent.includes('TEKRAR OYNATMA')"
+            "() => document.querySelector('#noticeText').textContent.includes('TEKRAR OYNATMA')"
         )
         desktop.locator("#viewReplay").click()
         assert desktop.locator("#sourceSelect").input_value() == "replay"
+        wait_live(desktop)
+        capture(desktop, "desktop-replay.png", live=True)
         desktop.locator('[data-page="device"]').click()
-        desktop.screenshot(path=str(OUT / "desktop-device.png"), full_page=True)
+        capture(desktop, "desktop-device.png")
         desktop.locator('[data-page="live"]').click()
         desktop.locator("#sourceSelect").select_option("hardware")
         desktop.wait_for_function(
-            "document.querySelector('#sourceSelect').value==='hardware' && !document.querySelector('#plotEmpty').hidden"
+            "() => document.querySelector('#sourceSelect').value==='hardware' && !document.querySelector('#plotEmpty').hidden"
         )
         assert desktop.locator("#proximity").get_attribute("data-state") == "unknown"
-        desktop.screenshot(path=str(OUT / "desktop-disconnected.png"), full_page=True)
-        # One desktop/mobile inspection batch, no iterative screenshot loop.
+        capture(desktop, "desktop-disconnected.png")
+        assert "Başka bir istemci" not in desktop.locator("#toast").inner_text()
         mobile = browser.new_page(
             viewport=dict(width=390, height=844),
             device_scale_factor=1,
@@ -96,23 +132,72 @@ try:
         mobile.on("pageerror", lambda error: errors.append(str(error)))
         mobile.goto(url)
         mobile.locator("#tryDemo").click()
-        mobile.wait_for_function("document.querySelector('#metricPoints').textContent !== '—'")
-        mobile.evaluate("document.fonts.ready")
+        wait_live(mobile)
         assert mobile.evaluate("document.documentElement.scrollWidth <= innerWidth"), (
             "Mobile horizontal overflow"
         )
-        mobile.screenshot(path=str(OUT / "mobile-live.png"), full_page=True)
+        capture(mobile, "mobile-live.png", live=True)
         for name in ["experiments", "recordings", "device"]:
             mobile.locator(f'[data-page="{name}"]').click()
             assert mobile.evaluate("document.documentElement.scrollWidth <= innerWidth"), (
                 f"Mobile overflow: {name}"
             )
-        mobile.screenshot(path=str(OUT / "mobile-device.png"), full_page=True)
+            capture(mobile, f"mobile-{name}.png")
+        mobile.locator('[data-page="live"]').click()
+        mobile.locator("#pauseButton").click()
+        mobile.wait_for_function(
+            "() => document.querySelector('#plotEmpty h2').textContent === 'Tarama duraklatıldı.'"
+        )
+        assert mobile.locator("#plotDemo").is_hidden()
+        capture(mobile, "mobile-paused.png")
+        mobile.locator("#pauseButton").click()
+        wait_live(mobile)
+        # A frozen synthetic producer tests the browser's freshness gate.
+        # This is not a physical sensor or USB-disconnect test.
+        proc.send_signal(signal.SIGSTOP)
+        try:
+            mobile.wait_for_function(
+                "() => !document.querySelector('#plotEmpty').hidden", timeout=7000
+            )
+            assert mobile.locator("#proximity").get_attribute("data-state") == "unknown"
+            assert mobile.locator("#recordButton").is_disabled()
+            capture(mobile, "mobile-stale.png")
+        finally:
+            proc.send_signal(signal.SIGCONT)
+        wait_live(mobile)
         assert not errors, errors
+        (OUT / "checks.json").write_text(
+            json.dumps(
+                {
+                    "source": "demo",
+                    "desktop": [1512, 1100],
+                    "mobile": [390, 844],
+                    "page_errors": errors,
+                    "target_mean_mm": trial["result"]["mean"],
+                    "flows": [
+                        "front/rear sectors",
+                        "keyboard point inspection",
+                        "CSV",
+                        "recording",
+                        "accuracy trial",
+                        "report",
+                        "replay",
+                        "source switching",
+                        "mobile overflow",
+                        "pause/resume",
+                        "stale-data clearing",
+                    ],
+                    "physical_sensor_verified": False,
+                },
+                indent=2,
+            )
+        )
         browser.close()
-    print("Browser flows and desktop/mobile screenshots passed:", OUT)
+    print("Browser workflows and desktop/mobile screenshots passed:", OUT)
 finally:
-    proc.send_signal(signal.SIGTERM)
+    if proc.poll() is None:
+        proc.send_signal(signal.SIGCONT)
+        proc.send_signal(signal.SIGTERM)
     try:
         proc.wait(timeout=10)
     except subprocess.TimeoutExpired:

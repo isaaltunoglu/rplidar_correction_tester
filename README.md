@@ -62,27 +62,28 @@ python3 -m playwright install chromium
 python3 tests/browser_smoke.py
 ```
 
-Only the last four commands need development dependencies/network access. Normal operation does not. [Validation status](docs/VALIDATION.md) distinguishes checks performed here from checks that could not run. Hardware was unavailable during this change; no new bench verification is claimed.
+Only the last four commands need development dependencies/network access. Normal operation does not. [Validation status](docs/VALIDATION.md) records the completed unit, real-browser and screenshot checks and the remaining hardware limitations. Hardware was unavailable during this change; no new bench verification is claimed.
 
 ## Git and publishing
 
-A local `main` history is prepared. In this managed workspace, the root `.git` directory is a read-only mount, so repository metadata lives in `.git-local`. Use:
+A standard local Git repository on `main` is ready. Repository metadata is in `.git`; normal commands work:
 
 ```bash
-./scripts/git.sh status
-./scripts/git.sh log --oneline
+git status
+git log --oneline
 ```
 
-For a normal working copy with standard `git` commands, clone this local repository to a writable destination:
+For another local working copy:
 
 ```bash
-git clone /path/to/rplidar_dinama/.git-local rplidar-lab
-cd rplidar-lab
+git clone /path/to/rplidar_dinama rplidar-lab
 ```
 
-If using the source archive instead, extract it and run `git init -b main`, `git add .` and `git commit -m "Initial RPLIDAR Lab release"`. The source archive contains no local Git metadata or compiled binaries. To regenerate it from tracked files: `python3 scripts/package.py`.
+The initial restricted session used `.git-local` because `.git` was read-only. After filesystem access was granted, that history was moved intact to the standard `.git` location. The original nested SDK history is preserved privately in `.git/vendor-sdk-history`; it is not included in the source release. `scripts/git.sh` remains compatible with both layouts.
 
-No remote repository was created, no credentials were accessed and nothing was published. After you choose your repository host, add your remote and push the reviewed source yourself.
+If using the source archive, extract it and run `git init -b main`, `git add .` and `git commit -m "Initial RPLIDAR Lab release"`. The archive contains no local Git metadata or compiled binaries. Regenerate it with `python3 scripts/package.py`.
+
+No remote repository was created and nothing was published. Add your chosen remote and push the reviewed source when you are ready.
 
 ## License
 
