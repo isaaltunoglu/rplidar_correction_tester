@@ -113,6 +113,11 @@ components:
   disclosure:
     textColor: "{colors.blue}"
     padding: "5px 0"
+  distance-input:
+    backgroundColor: "{colors.white}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.field}"
+    padding: "9px 12px"
 ---
 
 # Design System: RPLIDAR Lab
@@ -125,7 +130,7 @@ RPLIDAR Lab makes a local measuring instrument approachable to a first-time user
 
 The terracotta angular selection and its plotted wedge retain the instrument's signature. They describe the same software filter, while clear source text distinguishes the USB sensor, computer-generated example and recorded data. Guided tests put preparation before measurement and readable conclusions before statistics. Recording is explained as measurement data rather than video, with playback available directly in the page.
 
-This record refreshes the implemented beginner revision from `index.html`, `web/styles.css`, `web/app.js` and `web/core.js`, following the user's explicit request to simplify confusing experiments, files and playback. It supersedes the earlier dense layout and its rendered approval. The Field Research Station direction and palette remain: candidate 7, seed `5b3a139c`, corroborated by `.impeccable/questions/roll.json`. The original catalog roll was degraded; no quality-bar board or approved comp exists. The retrospective direction contract is `docs/UI_DIRECTION.md`; the explanatory user guide is `docs/QUICKSTART_TR.md`. The fresh finish reviewer returned **ship** after verifying the current captures, empty-recording control fix and persisted design system. This applies to the reviewed rendered software, not a novice user study or physical sensor behavior. Capture evidence and review limits are recorded in `docs/UI_REVIEW.md`.
+This record refreshes the beginner interface and its selectable-distance-unit extension from `index.html`, `web/styles.css`, `web/app.js` and `web/core.js`, following the user's explicit request to simplify confusing experiments, files and playback. It supersedes the earlier dense layout and its rendered approval. The Field Research Station direction and palette remain: candidate 7, seed `5b3a139c`, corroborated by `.impeccable/questions/roll.json`. The original catalog roll was degraded; no quality-bar board or approved comp exists. The retrospective direction contract is `docs/UI_DIRECTION.md`; the explanatory user guide is `docs/QUICKSTART_TR.md`. The fresh finish reviewer returned **ship** for this distance-unit extension with no material fixes after inspecting the required captures, matching source evidence and persisted design rules. Capture evidence and review limits are recorded in `docs/UI_REVIEW.md`; no novice user study or physical sensor validation is implied.
 
 **Key Characteristics:**
 
@@ -134,6 +139,7 @@ This record refreshes the implemented beginner revision from `index.html`, `web/
 - Terracotta angular selections paired with their plotted sector.
 - Guided questions, source-aware preparation and human-readable results.
 - Explained recording files and direct in-page playback.
+- Paired number/unit entry, discoverable distance ranges and explained warning marks.
 - Local assets, labelled native controls, visible focus and reduced-motion support.
 
 ## Colors
@@ -170,6 +176,8 @@ The incumbent cool instrument blues, warm paper and restrained terracotta remain
 
 **The Paired Annotation Rule.** Keep direction presets, numeric angles and the plotted sector consistent. Color cannot replace the direction or angle description.
 
+**The Explained Threshold Rule.** Pair yellow/red dashed distance marks with a text legend in the selected entry units. State the applicable direction and measurement range, threshold priority, and when a mark lies outside the plotted view.
+
 ## Typography
 
 **Headline and Body Font:** locally served Manrope from `/assets/fonts/manrope.ttf`, with Segoe UI and sans-serif fallbacks; implemented variable weights span (200–800).
@@ -193,7 +201,7 @@ The new reading hierarchy increases body text and controls while keeping units a
 
 The shell uses horizontal ink blue navigation on all viewports. On desktop the brand sits left and the four destinations right, with header padding (20px 32px). The workspace occupies the full width. A secondary top bar has a minimum height (56px). Main content has a maximum width (1440px) and padding (26px 32px) at its top and sides.
 
-The live page presents numbered source, direction and result steps. A source-choice band puts its explanation beside a selector (280px) on desktop. Below it, direction presets and the nearest-object result occupy a left column (310px); the plot occupies the flexible right column, separated by (32px). The interface uses dividers and open spacing rather than a dashboard of metric cards. Technical telemetry, filters, raw tables and exports start closed.
+The live page presents numbered source, direction and result steps. A source-choice band puts its explanation beside a selector (280px) on desktop. Discoverable distance-range and warning disclosures sit alongside direction choices; their closed summaries state their purpose, and the range summary shows its current limits. Below it, direction presets and the nearest-object result occupy a left column (310px); the plot occupies the flexible right column, separated by (32px). The interface uses dividers and open spacing rather than a dashboard of metric cards. Technical telemetry, filters, raw tables and exports start closed.
 
 Guided tests use a centered column with maximum width (900px): a question selector, three preparation steps, reference/duration fields, start action and readable result. Desktop recording and playback use columns in the ratio (1:1.2), with a gap (28px); the player includes its own dark preview. A file-purpose glossary separates readable reports, recordings, single scans, tables and technical test evidence.
 
@@ -201,7 +209,7 @@ Responsive behavior is source-backed and captured in Chrome at desktop (1512 × 
 
 - At (1050px) and below, header padding and gaps tighten; the direction column becomes (280px), main side padding becomes (24px), and recording/playback stack.
 - At (760px) and below, brand and four-item navigation form a top header, the breadcrumb is hidden, and main side padding becomes (16px). Source selection stacks with its explanation; the source select has a minimum height (46px).
-- The mobile live sequence is direction choices, optional angle disclosure, plot, readable result, advanced settings, explanation and recording action. The four direction presets remain visible as a row. Technical telemetry stacks inside its closed disclosure.
+- The mobile live sequence is direction choices, optional angle, distance and warning disclosures, plot, threshold legend and readable result, advanced settings, explanation and recording action. The four direction presets remain visible as a row. Technical telemetry stacks inside its closed disclosure.
 - Guided fields stack on mobile, preparation and result panels reduce their padding, the file glossary becomes a vertical list, and table wrappers preserve horizontal scrolling.
 
 The main plot uses aspect ratio (1.5), minimum height (380px) and maximum height (560px) on desktop. Below (1050px) its ratio becomes square with minimum height (390px); below (760px) its minimum is (345px), maximum (460px). The polar drawing reserves bottom label room. Inline replay is (320px) high, reduced to (300px) on mobile.
@@ -232,9 +240,21 @@ Hover changes the fill and secondary border tone; disabled controls use opacity 
 
 ### Fields and direction presets
 
-Fields use white fill, fine grey borders and field-radius corners, with text (15px), padding (9px 12px) and minimum height (44px). Labels explain the requested unit before input. Guided reference distance accepts centimetres with the example “100 cm = 1 metre”; internal millimetres remain a technical detail. The question selector is larger (17px, minimum height 50px) on desktop.
+Fields use white fill, fine grey borders and field-radius corners, with text (15px), padding (9px 12px) and minimum height (44px). Labels explain the requested unit before input. All seven distance settings pair a number with a unit selector: minimum range, maximum range, red threshold, yellow threshold, plot-view distance, reference distance and tolerance. Each offers mm, cm and metre; changing the selected unit converts the visible value without changing the physical quantity. The numeric value remains editable with a visible label and the unit selector has its own accessible name. The example “1 metre = 100 cm = 1000 mm” explains the relationship; canonical millimetres remain internal. The question selector is larger (17px, minimum height 50px) on desktop.
 
 Direction presets use a two-by-two desktop grid with minimum height (61px), switching to four visible mobile options with minimum height (68px). They combine a familiar direction name, a short subtitle and selected styling. An optional custom-angle disclosure retains the ribbon and numeric controls.
+
+### Paired distance controls and warning legends
+
+The paired distance component uses a two-column grid: a flexible number input and a unit selector (96px), with a gap (8px). Both controls fill their columns and keep a minimum width of zero so the pair fits narrow layouts. The selector uses text (14px); the input retains the field treatment, padding (9px 12px) and minimum height (44px). Keep the pair together on desktop and mobile.
+
+“Ölçüm mesafesini değiştir” exposes the inclusive software inspection range and a current-limit summary; copy makes clear that this does not change the sensor's physical range. Changing the far limit automatically adjusts plot scale. A nested “Yalnızca görüntüyü yakınlaştır” disclosure distinguishes plot zoom from the measurement filter.
+
+The warning disclosure explains yellow as caution and red as very close, including their editable distances. Red must be closer than yellow; at or below red, red takes priority, otherwise at or below yellow the warning is yellow. A dynamic rule repeats the selected units. Scope copy states that only valid measurements in the selected direction and inspection range count, and warns when part of a threshold interval is clipped by the range.
+
+The legend uses dashed swatches (23px wide, border 2px) paired with text, including the selected distance and an “outside the view” note when needed. Its flex layout wraps, with gaps (8px 22px), at text size (13px). Light-ground swatches use a readable ochre (`#92620f`) and the existing Alert Red. Plot marks use their established dark-ground hues. Neither the marks nor the warning color represents a machine stop or safety certification.
+
+**The Quantity Before Unit Rule.** A unit change alters presentation, never the physical quantity. Keep calculations and exported numerical settings in canonical millimetres; preserve reference/tolerance entry units in each test snapshot so readable results do not change meaning when later controls change.
 
 ### Navigation and source state
 
@@ -244,7 +264,7 @@ The horizontal ink blue header uses pale text, SVG icons and a paper-filled acti
 
 Native disclosures use blue summary text (14px, weight 700) with a minimum summary height (34px). Labels tell users what they gain by opening a section: different angles, advanced image settings, technical measurements, calculation details, chart, earlier tests or file details. The default beginner view does not require these sections.
 
-Six test questions share source-aware preparation, a three-step explanation, reference/duration inputs and a readable result. Simulation preparation explicitly avoids asking users to place a physical object; the distance example includes a “100 cm” target preparation action. Result summaries explain values in centimetres and offer a human-readable HTML report. Statistics, chart and raw evidence remain available through disclosures.
+Six test questions share source-aware preparation, a three-step explanation, unit-selectable reference/duration inputs and a readable result. Simulation preparation explicitly avoids asking users to place a physical object; the distance example includes a “100 cm” target preparation action. Result summaries use the reference and tolerance units captured for that test and offer a human-readable HTML report. Statistics, chart and raw evidence remain available through disclosures.
 
 ### Containers, recording and playback
 
@@ -268,6 +288,8 @@ Technical tables use thin separators, tabular numerals and overflow wrappers; ra
 - **Do** pair source color with source text and honest unavailable-data explanations.
 - **Do** keep direction presets, angle values and the plotted sector consistent.
 - **Do** explain a file's purpose before asking a beginner to save or open it.
+- **Do** keep each distance number paired with its mm/cm/metre selector and preserve its physical quantity on unit changes.
+- **Do** distinguish the inspection range from plot zoom and explain yellow/red marks in text with their scope.
 - **Do** preserve local Manrope, tabular measurements, labelled native inputs, visible focus and reduced motion.
 - **Do** obtain a revision-specific rendered review after material layout or workflow changes.
 
@@ -275,6 +297,7 @@ Technical tables use thin separators, tabular numerals and overflow wrappers; ra
 
 - **Don't** fabricate live measurements or draw a decorative scanning sweep.
 - **Don't** present missing returns or proximity color as a safety conclusion.
+- **Don't** imply a software distance filter changes the sensor's physical range or stops a machine.
 - **Don't** require raw statistics, file-format knowledge or a download to understand the basic workflow.
 - **Don't** call measurement recordings video or imply every JSON file is playable.
 - **Don't** turn every measurement group into an elevated card.

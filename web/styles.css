@@ -3168,3 +3168,87 @@ label[for="replayScrub"] {
     gap: 12px;
   }
 }
+.distance-input {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 96px;
+  gap: 8px;
+  align-items: start;
+}
+.distance-input input,
+.distance-input select {
+  width: 100%;
+  min-width: 0;
+}
+.distance-input select {
+  font-size: 14px;
+}
+.setting-summary {
+  display: block;
+  margin: 4px 0 0 19px;
+  font-weight: 500;
+  color: var(--muted);
+  font-size: 13px;
+}
+.distance-settings > .helper,
+.warning-settings > .helper,
+.warning-rule {
+  margin: 12px 0 18px;
+  font-size: 14px;
+  line-height: 1.8;
+}
+.distance-settings > .field,
+.warning-settings > .field {
+  margin: 18px 0;
+}
+.warning-settings > .field > .helper {
+  margin-top: 8px;
+}
+.warning-rule {
+  color: var(--ink);
+  font-weight: 650;
+}
+.distance-legend {
+  display: flex;
+  gap: 8px 22px;
+  flex-wrap: wrap;
+  margin: 12px 0;
+  font-size: 13px;
+  color: var(--ink);
+}
+.distance-legend > span {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+.rule-swatch {
+  display: inline-block;
+  width: 23px;
+  border-top: 2px dashed;
+  flex-shrink: 0;
+}
+.rule-swatch.yellow {
+  color: #92620f;
+}
+.rule-swatch.red {
+  color: #b94738;
+}
+.view-settings .field {
+  margin-top: 15px;
+}
+@media (max-width: 760px) {
+  .distance-settings,
+  .warning-settings {
+    order: 4;
+    width: 100%;
+    margin: 0;
+  }
+  .distance-legend {
+    order: 6;
+    width: 100%;
+    margin: 0;
+    font-size: 13px;
+  }
+  .distance-input {
+    grid-template-columns: minmax(0, 1fr) 96px;
+  }
+}

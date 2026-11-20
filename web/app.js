@@ -3,6 +3,8 @@ import {
   delta,
   inSector,
   DEFAULT_CONFIG,
+  toMillimetres,
+  fromMillimetres,
   analyze,
   trialSample,
   trialResult,
@@ -18,6 +20,115 @@ const fmt = (v, n = 1) =>
         minimumFractionDigits: n,
         maximumFractionDigits: n,
       });
+const distanceFields = {
+  minDistance: {
+    key: "min",
+    unit: "cm",
+    min: 0,
+    max: 99999,
+    name: "En yakın mesafe",
+  },
+  maxDistance: {
+    key: "max",
+    unit: "m",
+    min: 1,
+    max: 100000,
+    name: "En uzak mesafe",
+  },
+  dangerDistance: {
+    key: "danger",
+    unit: "cm",
+    min: 1,
+    max: 50000,
+    name: "Kırmızı uyarı mesafesi",
+  },
+  warningDistance: {
+    key: "warning",
+    unit: "m",
+    min: 2,
+    max: 100000,
+    name: "Sarı uyarı mesafesi",
+  },
+  viewRangeValue: {
+    key: "viewRange",
+    unit: "m",
+    min: 500,
+    max: 50000,
+    name: "Grafik uzaklığı",
+  },
+  guidedReference: {
+    unit: "cm",
+    min: 1,
+    max: 100000,
+    name: "Karşılaştırma uzaklığı",
+  },
+  trialTolerance: { unit: "cm", min: 1, max: 10000, name: "Hata payı" },
+};
+const distanceUnits = Object.fromEntries(
+  Object.entries(distanceFields).map(([id, f]) => [id, f.unit]),
+);
+let toleranceMm = 30;
+const unitLabel = (u) => (u === "m" ? "metre" : u);
+function distanceText(mm, unit) {
+  return Number.isFinite(mm)
+    ? fromMillimetres(mm, unit).toLocaleString("tr-TR", {
+        maximumFractionDigits: 4,
+      }) +
+        " " +
+        unitLabel(unit)
+    : "—";
+}
+function distanceValueMm(id) {
+  return distanceFields[id].key
+    ? cfg[distanceFields[id].key]
+    : id === "guidedReference"
+      ? Number($("trialReference").value)
+      : toleranceMm;
+}
+function syncDistanceFields() {
+  for (const [id, f] of Object.entries(distanceFields)) {
+    const unit = distanceUnits[id],
+      input = $(id);
+    input.value = fromMillimetres(distanceValueMm(id), unit);
+    input.setAttribute("step", "any");
+    input.min = fromMillimetres(f.min, unit);
+    input.max = fromMillimetres(f.max, unit);
+    $(id + "Unit").value = unit;
+  }
+  $("distanceRangeSummary").textContent =
+    distanceText(cfg.min, distanceUnits.minDistance) +
+    " – " +
+    distanceText(cfg.max, distanceUnits.maxDistance);
+  const yellow = distanceText(cfg.warning, distanceUnits.warningDistance),
+    red = distanceText(cfg.danger, distanceUnits.dangerDistance);
+  $("warningRule").textContent =
+    `Nesne ${yellow} veya daha yakındaysa sarı; ${red} veya daha yakındaysa kırmızı uyarı görünür. Kırmızı uyarı önceliklidir.`;
+  const clipped = cfg.min > cfg.danger || cfg.max < cfg.warning;
+  $("warningScope").textContent =
+    "Uyarılar yalnızca seçtiğiniz yön ve inceleme mesafesi içindeki ölçümler için geçerlidir." +
+    (clipped
+      ? " Uyarı mesafelerinizin bir bölümü inceleme aralığı dışında; dışarıda kalan ölçümler uyarı üretmez."
+      : "");
+  $("yellowLegend").textContent =
+    "Sarı kesikli çizgi: " +
+    yellow +
+    (cfg.warning > cfg.viewRange ? " (görüntünün dışında)" : "");
+  $("redLegend").textContent =
+    "Kırmızı kesikli çizgi: " +
+    red +
+    (cfg.danger > cfg.viewRange ? " (görüntünün dışında)" : "");
+}
+function checkDistanceConfig(next) {
+  if (next.min >= next.max)
+    throw Error(
+      "En yakın mesafe, en uzak mesafeden küçük olmalı. Değerleri ve birimlerini kontrol edin.",
+    );
+  if (next.danger >= next.warning)
+    throw Error(
+      "Kırmızı uyarı mesafesi sarıdan küçük olmalı. Örneğin sarı 1 metre, kırmızı 50 cm olabilir.",
+    );
+  return validateConfig(next);
+}
 const sourceName = (s) =>
   ({
     hardware: "Gerçek sensör",
@@ -152,7 +263,7 @@ function activeSource() {
 function inputLock() {
   const locked = !!trial || recording;
   for (const el of document.querySelectorAll(
-    "#prepareDemoTarget,#guidedReference,#guidedTrialSelect,#watchRecording,#replayRestart,.settings-panel input,.settings-panel select,.preset,.experiment-option,#trialForm input,#trialForm textarea,#sourceSelect,#demoScene,#portSelect,#baudSelect,#reconnectButton,#scanMode,#motorSpeed,#applyMotor,#resetConfig,#recordingFile,#replayScrub,#replaySpeed,#replayPlay",
+    "#prepareDemoTarget,#guidedReference,#guidedTrialSelect,#watchRecording,#replayRestart,.settings-panel input,.settings-panel select,.preset,.experiment-option,#trialForm input,#trialForm select,#trialForm textarea,#sourceSelect,#demoScene,#portSelect,#baudSelect,#reconnectButton,#scanMode,#motorSpeed,#applyMotor,#resetConfig,#recordingFile,#replayScrub,#replaySpeed,#replayPlay",
   )) {
     el.disabled = locked;
   }
@@ -183,23 +294,23 @@ function syncConfig() {
     sectorCenter: "center",
     sectorWidth: "width",
     viewRange: "viewRange",
-    minDistance: "min",
-    maxDistance: "max",
     qualityMin: "quality",
     angleOffset: "offset",
-    dangerDistance: "danger",
-    warningDistance: "warning",
     renderStyle: "style",
     colorMode: "color",
   };
   for (const [id, k] of Object.entries(map)) $(id).value = cfg[k];
+  syncDistanceFields();
   $("showContext").checked = cfg.context;
   $("invertAngle").checked = cfg.invert;
   const names = { 0: "Ön", 90: "Sağ", 180: "Arka", 270: "Sol" };
   $("centerLabel").textContent =
     cfg.center + "°" + (names[cfg.center] ? " · " + names[cfg.center] : "");
   $("widthLabel").textContent = cfg.width + "°";
-  $("viewLabel").textContent = fmt(cfg.viewRange / 1000, 2) + " m";
+  $("viewLabel").textContent = distanceText(
+    cfg.viewRange,
+    distanceUnits.viewRangeValue,
+  );
   const start = wrap(cfg.center - cfg.width / 2),
     end = wrap(cfg.center + cfg.width / 2);
   $("sectorStart").textContent = fmt(start, 0) + "°";
@@ -214,7 +325,7 @@ function syncConfig() {
       +b.dataset.center === cfg.center && +b.dataset.width === cfg.width,
     );
   $("trialConfigSummary").textContent =
-    `Sektör: merkez ${cfg.center}° / açıklık ${cfg.width}° · Mesafe: ${cfg.min}–${cfg.max} mm · Q ≥ ${cfg.quality} · Ofset ${cfg.offset}°${cfg.invert ? " · Ters yön" : ""}`;
+    `Sektör: merkez ${cfg.center}° / açıklık ${cfg.width}° · Mesafe: ${distanceText(cfg.min, distanceUnits.minDistance)}–${distanceText(cfg.max, distanceUnits.maxDistance)} · Q ≥ ${cfg.quality} · Ofset ${cfg.offset}°${cfg.invert ? " · Ters yön" : ""}`;
   $("selectedDirection").textContent =
     cfg.width === 360
       ? "Her yöndeki ölçümler gösteriliyor."
@@ -227,12 +338,8 @@ const numericConfig = {
   sectorCenter: "center",
   sectorWidth: "width",
   viewRange: "viewRange",
-  minDistance: "min",
-  maxDistance: "max",
   qualityMin: "quality",
   angleOffset: "offset",
-  dangerDistance: "danger",
-  warningDistance: "warning",
 };
 for (const [id, key] of Object.entries(numericConfig))
   $(id).addEventListener(
@@ -251,6 +358,44 @@ for (const [id, key] of Object.entries(numericConfig))
       }
     },
   );
+for (const [id, f] of Object.entries(distanceFields)) {
+  $(id).addEventListener(
+    id === "guidedReference" ? "input" : "change",
+    (event) => {
+      if (trial || recording) return;
+      if (event.type === "input" && $(id).value === "") return;
+      try {
+        const mm = toMillimetres($(id).value, distanceUnits[id]);
+        if (mm < f.min || mm > f.max)
+          throw Error(
+            `${f.name}, ${distanceText(f.min, distanceUnits[id])} ile ${distanceText(f.max, distanceUnits[id])} arasında olmalı.`,
+          );
+        if (f.key) {
+          const next = { ...cfg, [f.key]: mm };
+          if (id === "maxDistance")
+            next.viewRange = Math.min(50000, Math.max(500, mm));
+          cfg = checkDistanceConfig(next);
+        } else if (id === "guidedReference") $("trialReference").value = mm;
+        else toleranceMm = mm;
+        if (id === "guidedReference") return;
+        syncConfig();
+      } catch (error) {
+        toast(error.message, true);
+        syncDistanceFields();
+      }
+    },
+  );
+  $(id + "Unit").addEventListener("change", () => {
+    if (trial || recording) {
+      $(id + "Unit").value = distanceUnits[id];
+      return;
+    }
+    distanceUnits[id] = $(id + "Unit").value;
+    syncConfig();
+    if (id === "guidedReference" && page === "experiments" && !trial)
+      setTrialKind(trialKind, true);
+  });
+}
 for (const [id, key] of [
   ["showContext", "context"],
   ["invertAngle", "invert"],
@@ -758,16 +903,16 @@ function renderMetrics() {
         "Bu yönde nesne olup olmadığı söylenemez. Yönü veya mesafe ayarlarını kontrol edin.",
       ],
       danger: [
-        "Yakında bir nesne ölçüldü",
-        `Yaklaşık ${fmt(analysis.nearest?.[1] / 10, 1)} cm uzakta. Yakınlık sınırınız: ${fmt(cfg.danger / 10, 0)} cm.`,
+        "Kırmızı uyarı: nesne çok yakın",
+        `Nesne ${distanceText(analysis.nearest?.[1], distanceUnits.dangerDistance)} uzakta. Kırmızı uyarı sınırınız ${distanceText(cfg.danger, distanceUnits.dangerDistance)}; bu mesafede veya daha yakında olduğu için kırmızı uyarı gösteriliyor.`,
       ],
       warning: [
-        "Yakınlık sınırında bir nesne var",
-        `Yaklaşık ${fmt(analysis.nearest?.[1] / 10, 1)} cm uzakta. Uyarı sınırınız: ${fmt(cfg.warning / 10, 0)} cm.`,
+        "Sarı uyarı: nesne uyarı mesafesinde",
+        `Nesne ${distanceText(analysis.nearest?.[1], distanceUnits.warningDistance)} uzakta. Sarı sınırınız ${distanceText(cfg.warning, distanceUnits.warningDistance)}. ${distanceText(cfg.danger, distanceUnits.dangerDistance)} veya daha yakında kırmızı uyarıya döner.`,
       ],
       clear: [
-        "Yakınlık sınırı içinde ölçüm yok",
-        "Alınan ölçümler daha uzakta. Ölçüm gelmeyen bir yerin boş olduğu söylenemez.",
+        "Uyarı mesafesinde ölçüm yok",
+        `Alınan ölçümler sarı sınırınız olan ${distanceText(cfg.warning, distanceUnits.warningDistance)} mesafesinden daha uzakta. Ölçüm gelmeyen bir yerin boş olduğu söylenemez.`,
       ],
     };
     $("proximity").dataset.state = analysis.alarm;
@@ -870,7 +1015,11 @@ function drawRadar(target = $("radarCanvas")) {
     c.stroke();
     c.fillStyle = "#93adbd";
     if (i < 4)
-      c.fillText(fmt((cfg.viewRange * i) / 4000, 2) + " m", x + 5, y - rr + 11);
+      c.fillText(
+        distanceText((cfg.viewRange * i) / 4, distanceUnits.viewRangeValue),
+        x + 5,
+        y - rr + 11,
+      );
   }
   for (let a = 0; a < 360; a += 30) {
     const rad = ((a - 90) * Math.PI) / 180;
@@ -908,8 +1057,8 @@ function drawRadar(target = $("radarCanvas")) {
     c.textAlign = "center";
   }
   for (const [dist, color] of [
-    [cfg.danger, "#cb756280"],
-    [cfg.warning, "#bca06465"],
+    [cfg.danger, "#dd827b99"],
+    [cfg.warning, "#dfb56f99"],
   ])
     if (dist < cfg.viewRange) {
       c.beginPath();
@@ -1016,7 +1165,11 @@ function drawRadar(target = $("radarCanvas")) {
   c.fill();
   c.font = "11px Manrope";
   c.fillStyle = "#a9c1cd";
-  c.fillText(fmt(cfg.viewRange / 1000, 2) + " m", x, y + r - 10);
+  c.fillText(
+    distanceText(cfg.viewRange, distanceUnits.viewRangeValue),
+    x,
+    y + r - 10,
+  );
 }
 function chartLine(
   canvas,
@@ -1502,7 +1655,7 @@ const guides = {
   },
 };
 let guideKey = "";
-function setTrialKind(kind) {
+function setTrialKind(kind, preserveBearing = false) {
   if (trial || !guides[kind]) return;
   trialKind = kind;
   const guide = guides[kind];
@@ -1515,10 +1668,10 @@ function setTrialKind(kind) {
   let steps = guide.steps;
   const demo = state?.source === "demo";
   document.querySelector('label[for="guidedReference"]').textContent = demo
-    ? "Karşılaştırılacak örnek uzaklık · cm"
-    : "Cetvelle ölçtüğünüz uzaklık · cm";
+    ? "Karşılaştırılacak örnek uzaklık"
+    : "Cetvelle ölçtüğünüz uzaklık";
   $("guidedReferenceField").querySelector(".helper").textContent = demo
-    ? "100 cm = 1 metre. Örnek hedef hazırsa 100 olarak bırakın."
+    ? `1 metre = 100 cm = 1000 mm. Örnek hedef hazırsa ${distanceText(1000, distanceUnits.guidedReference)} kullanın.`
     : "Sensörün ortasından nesneye kadar ölçün. 100 cm = 1 metre.";
   if (demo && kind === "accuracy")
     $("trialProtocol").textContent =
@@ -1529,12 +1682,12 @@ function setTrialKind(kind) {
     steps = ready
       ? [
           "Bilgisayarda 100 cm uzakta örnek bir nesne var. Gerçek nesne koymanız gerekmez.",
-          "Aşağıdaki uzaklık alanını 100 cm olarak bırakın.",
+          `Aşağıdaki uzaklık alanını ${distanceText(1000, distanceUnits.guidedReference)} olarak bırakın.`,
           "Testi başlatın. Örnek ölçüm, 100 cm ile karşılaştırılacak.",
         ]
       : [
           "Aşağıdaki düğmeyle 100 cm uzakta bir örnek hedef hazırlayın.",
-          "Uzaklık alanına 100 yazın. Cetvelle ölçmeniz gerekmez.",
+          `Uzaklık alanında ${distanceText(1000, distanceUnits.guidedReference)} kullanın. Cetvelle ölçmeniz gerekmez.`,
           "Testi başlatın. Bu sonuç gerçek sensörden gelmez.",
         ];
     $("prepareDemoTarget").textContent = ready
@@ -1557,24 +1710,22 @@ function setTrialKind(kind) {
   const referenceNeeded = ["accuracy", "surface"].includes(kind);
   $("guidedReferenceField").hidden = !referenceNeeded;
   $("guidedReference").required = referenceNeeded;
-  $("trialBearing").value = cfg.center;
-  $("guidedReference").value = Number($("trialReference").value) / 10;
+  if (!preserveBearing) $("trialBearing").value = cfg.center;
+  $("guidedReference").value = fromMillimetres(
+    Number($("trialReference").value),
+    distanceUnits.guidedReference,
+  );
 }
 $("prepareDemoTarget").addEventListener("click", async () => {
   await changeSource("demo", { scene: "target" });
-  $("guidedReference").value = 100;
   $("trialReference").value = 1000;
+  syncDistanceFields();
   setTrialKind(trialKind);
 });
 $("guidedTrialSelect").addEventListener("change", () =>
   setTrialKind($("guidedTrialSelect").value),
 );
-$("guidedReference").addEventListener("input", () => {
-  $("trialReference").value = Number($("guidedReference").value) * 10;
-});
-$("trialReference").addEventListener("input", () => {
-  $("guidedReference").value = Number($("trialReference").value) / 10;
-});
+$("trialReference").addEventListener("input", () => syncDistanceFields());
 for (const b of document.querySelectorAll("[data-trial]"))
   b.addEventListener("click", () => setTrialKind(b.dataset.trial));
 for (const b of document.querySelectorAll("[data-go]"))
@@ -1609,7 +1760,11 @@ $("trialForm").addEventListener("submit", (e) => {
     scan_mode: scan.mode,
     config: { ...cfg },
     reference: Number($("trialReference").value),
-    tolerance: Number($("trialTolerance").value),
+    tolerance: toleranceMm,
+    distance_units: {
+      reference: distanceUnits.guidedReference,
+      tolerance: distanceUnits.trialTolerance,
+    },
     duration,
     bearing,
     beam,
@@ -1696,8 +1851,8 @@ function describeTrial(t) {
     body =
       "Nesneyi seçtiğiniz yöne yerleştirin. Görüntüde noktalar göründüğünde testi yeniden başlatın.";
   } else if (t.protocol === "accuracy") {
-    heading = `Sensörün ölçtüğü uzaklık: ${fmt(r.mean / 10, 1)} cm`;
-    body = `${t.source === "demo" ? "Karşılaştırma için girdiğiniz" : "Cetvelle ölçüp girdiğiniz"} uzaklık ${fmt(t.reference / 10, 1)} cm. Ortalama ölçüm ile arasındaki fark ${fmt(Math.abs(r.bias) / 10, 1)} cm. Seçtiğiniz ±${fmt(t.tolerance / 10, 1)} cm hata payı içinde kalan ölçümlerin oranı %${fmt(r.withinTolerance, 1)}.`;
+    heading = `Sensörün ölçtüğü uzaklık: ${distanceText(r.mean, t.distance_units?.reference || "cm")}`;
+    body = `${t.source === "demo" ? "Karşılaştırma için girdiğiniz" : "Cetvelle ölçüp girdiğiniz"} uzaklık ${distanceText(t.reference, t.distance_units?.reference || "cm")}. Ortalama ölçüm ile arasındaki fark ${distanceText(Math.abs(r.bias), t.distance_units?.reference || "cm")}. Seçtiğiniz ±${distanceText(t.tolerance, t.distance_units?.tolerance || "cm")} hata payı içinde kalan ölçümlerin oranı %${fmt(r.withinTolerance, 1)}.`;
   } else if (t.protocol === "repeatability") {
     heading = "Ölçümler ne kadar değişti?";
     body = `Sabit nesne için en düşük uzaklık ${fmt(r.min / 10, 1)} cm, en yüksek uzaklık ${fmt(r.max / 10, 1)} cm oldu. Nesnenin veya sensörün oynaması sonucu etkiler.`;

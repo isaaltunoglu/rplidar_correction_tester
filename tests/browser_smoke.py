@@ -62,6 +62,28 @@ try:
         desktop.locator('.preset[data-center="180"]').click()
         assert "Arka taraf" in desktop.locator("#selectedDirection").inner_text()
         desktop.locator('.preset[data-center="0"][data-width="120"]').click()
+        desktop.locator("#distanceSettings > summary").click()
+        desktop.locator("#maxDistance").fill("3")
+        desktop.locator("#maxDistance").press("Tab")
+        assert desktop.locator("#viewRangeValue").input_value() == "3"
+        desktop.locator("#maxDistanceUnit").select_option("cm")
+        assert desktop.locator("#maxDistance").input_value() == "300"
+        desktop.locator("#maxDistanceUnit").select_option("mm")
+        assert desktop.locator("#maxDistance").input_value() == "3000"
+        desktop.locator("#maxDistanceUnit").select_option("m")
+        assert desktop.locator("#maxDistance").input_value() == "3"
+        desktop.locator("#warningSettings > summary").click()
+        desktop.locator("#warningDistance").fill("2")
+        desktop.locator("#warningDistance").press("Tab")
+        desktop.locator("#dangerDistance").fill("150")
+        desktop.locator("#dangerDistance").press("Tab")
+        desktop.locator("#dangerDistanceUnit").select_option("m")
+        assert desktop.locator("#dangerDistance").input_value() == "1.5"
+        assert "2 metre" in desktop.locator("#warningRule").inner_text()
+        assert "1,5 metre" in desktop.locator("#warningRule").inner_text()
+        capture(desktop, "desktop-distance-settings.png", live=True)
+        desktop.locator("#distanceSettings > summary").click()
+        desktop.locator("#warningSettings > summary").click()
         desktop.locator("#radarCanvas").focus()
         desktop.keyboard.press("ArrowRight")
         assert "Mesafe:" in desktop.locator("#pointReadout").inner_text()
@@ -95,16 +117,43 @@ try:
         )
         assert "Gerçek nesne koymanız gerekmez" in desktop.locator("#trialSteps").inner_text()
         wait_live(desktop)
-        desktop.locator("#guidedReference").fill("100")
+        desktop.locator('[data-page="live"]').click()
+        wait_live(desktop)
+        assert desktop.locator("#proximity").get_attribute("data-state") == "danger"
+        assert "Kırmızı uyarı" in desktop.locator("#proximityTitle").inner_text()
+        capture(desktop, "desktop-alert-red.png", live=True)
+        desktop.locator("#warningSettings > summary").click()
+        desktop.locator("#dangerDistance").fill("0.5")
+        desktop.locator("#dangerDistance").press("Tab")
+        assert desktop.locator("#proximity").get_attribute("data-state") == "warning"
+        assert "Sarı uyarı" in desktop.locator("#proximityTitle").inner_text()
+        capture(desktop, "desktop-alert-yellow.png", live=True)
+        desktop.locator("#dangerDistance").fill("1.5")
+        desktop.locator("#dangerDistance").press("Tab")
+        desktop.locator("#warningSettings > summary").click()
+        desktop.locator('[data-page="experiments"]').click()
+        desktop.locator("#guidedReferenceUnit").select_option("m")
+        assert desktop.locator("#guidedReference").input_value() == "1"
+        desktop.locator("#guidedReference").fill("1")
         assert desktop.locator("#trialReference").input_value() == "1000"
+        desktop.locator(".test-advanced > summary").click()
+        desktop.locator("#trialToleranceUnit").select_option("mm")
+        assert desktop.locator("#trialTolerance").input_value() == "30"
+        desktop.locator("#trialTolerance").fill("20")
+        desktop.locator("#trialTolerance").press("Tab")
+        desktop.locator(".test-advanced > summary").click()
         desktop.locator("#trialDuration").fill("3")
+        assert desktop.locator("#trialForm").evaluate("(form)=>form.checkValidity()")
         desktop.locator("#trialStart").click()
         assert desktop.locator("#guidedTrialSelect").is_disabled()
+        assert desktop.locator("#guidedReferenceUnit").is_disabled()
+        assert desktop.locator("#trialToleranceUnit").is_disabled()
         desktop.wait_for_function(
             "()=>document.querySelector('#trialState').textContent==='Tamamlandı'", timeout=10000
         )
         assert "Sensörsüz örnek" in desktop.locator("#trialResults").inner_text()
-        assert "cm" in desktop.locator("#trialResults").inner_text()
+        assert "metre" in desktop.locator("#trialResults").inner_text()
+        assert "20 mm" in desktop.locator("#trialResults").inner_text()
         assert "Karşılaştırma" in desktop.locator("#trialResults").inner_text()
         capture(desktop, "desktop-experiment.png")
         with desktop.expect_download() as dl:
@@ -120,6 +169,9 @@ try:
         trial = json.loads(experiment.read_text())
         assert 980 < trial["result"]["mean"] < 1020
         assert trial["completion"] == "complete" and trial["source"] == "demo"
+        assert trial["reference"] == 1000 and trial["tolerance"] == 20
+        assert trial["config"]["max"] == 3000
+        assert trial["config"]["warning"] == 2000 and trial["config"]["danger"] == 1500
         desktop.locator(".test-history>summary").click()
         desktop.locator('[data-page="recordings"]').click()
         # Watch an in-memory recording directly; no JSON step is required.
@@ -167,6 +219,12 @@ try:
         mobile.goto(url)
         mobile.locator("#tryDemo").click()
         wait_live(mobile)
+        mobile.locator("#distanceSettings > summary").click()
+        mobile.locator("#warningSettings > summary").click()
+        assert mobile.evaluate("document.documentElement.scrollWidth<=innerWidth")
+        capture(mobile, "mobile-distance-settings.png", live=True)
+        mobile.locator("#distanceSettings > summary").click()
+        mobile.locator("#warningSettings > summary").click()
         assert mobile.evaluate("document.documentElement.scrollWidth<=innerWidth")
         capture(mobile, "mobile-live.png", live=True)
         for name in ["experiments", "recordings", "device"]:
@@ -212,6 +270,10 @@ try:
                     "target_mean_mm": trial["result"]["mean"],
                     "flows": [
                         "progressive disclosure",
+                        "mm/cm/metre equivalence without changing distance",
+                        "measurement range and automatic plot scale",
+                        "selected-unit alert rules and legends",
+                        "reference/tolerance exported in canonical millimetres",
                         "front/rear selection",
                         "point inspection in cm",
                         "all six guided protocols",

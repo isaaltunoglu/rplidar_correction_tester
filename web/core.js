@@ -1,4 +1,23 @@
 /** Pure measurement functions. Distances: mm; angles: degrees, clockwise from front. */
+export const DISTANCE_FACTORS = Object.freeze({ mm: 1, cm: 10, m: 1000 });
+export function toMillimetres(value, unit) {
+  if (!Object.hasOwn(DISTANCE_FACTORS, unit))
+    throw Error("Geçersiz mesafe birimi.");
+  if (
+    !["number", "string"].includes(typeof value) ||
+    String(value).trim() === ""
+  )
+    throw Error("Bir mesafe değeri yazın.");
+  const number = Number(value);
+  const mm = number * DISTANCE_FACTORS[unit];
+  if (!Number.isFinite(mm)) throw Error("Geçerli bir mesafe değeri yazın.");
+  return Number(mm.toPrecision(12));
+}
+export function fromMillimetres(mm, unit) {
+  if (!Object.hasOwn(DISTANCE_FACTORS, unit) || !Number.isFinite(mm))
+    throw Error("Geçersiz mesafe veya birim.");
+  return Number((mm / DISTANCE_FACTORS[unit]).toPrecision(12));
+}
 export const wrap = (a) => ((a % 360) + 360) % 360;
 export const delta = (a, b) => wrap(a - b + 180) - 180;
 export const inSector = (a, center, width) =>

@@ -143,3 +143,34 @@ test("configuration validation rejects invalid ranges and metadata escapes HTML"
   assert.throws(() => validateConfig({ ...cfg, width: 0 }));
   assert.equal(escapeHTML('<script>"&'), "&lt;script&gt;&quot;&amp;");
 });
+
+test("length conversion keeps millimetres, centimetres and metres equivalent", async () => {
+  const { toMillimetres, fromMillimetres } = await import("../web/core.js");
+  assert.equal(toMillimetres(1, "m"), 1000);
+  assert.equal(toMillimetres(100, "cm"), 1000);
+  assert.equal(toMillimetres(1000, "mm"), 1000);
+  assert.equal(toMillimetres("1.25", "m"), 1250);
+  assert.equal(fromMillimetres(1250, "cm"), 125);
+  assert.equal(fromMillimetres(1250, "m"), 1.25);
+  assert.equal(toMillimetres(fromMillimetres(0.25, "m"), "m"), 0.25);
+  for (const [value, unit] of [
+    ["", "cm"],
+    [Infinity, "m"],
+    [true, "mm"],
+    [1, "ft"],
+  ])
+    assert.throws(() => toMillimetres(value, unit));
+});
+test("converted alert distances honor inclusive red and yellow boundaries", async () => {
+  const { toMillimetres } = await import("../web/core.js");
+  const c = {
+    ...cfg,
+    danger: toMillimetres(50, "cm"),
+    warning: toMillimetres(1, "m"),
+  };
+  const alarm = (d) => analyze({ points: [[0, d, 30]], raw_count: 1 }, c).alarm;
+  assert.equal(alarm(500), "danger");
+  assert.equal(alarm(501), "warning");
+  assert.equal(alarm(1000), "warning");
+  assert.equal(alarm(1001), "clear");
+});

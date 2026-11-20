@@ -24,13 +24,14 @@ For a headless session, use `python3 server.py --demo` and open the printed URL 
 
 ## Beginner workflow
 
-Start on **Canlı görüntü**, choose a USB sensor or **Sensörsüz örnek**, then choose front/rear/all directions. **Adım adım test** explains preparation, accepts centimetres and presents plain-language results. **Kayıt ve izleme** explains the recording contents and plays a captured session on the same page without requiring a download.
+Start on **Canlı görüntü**, choose a USB sensor or **Sensörsüz örnek**, then choose front/rear/all directions. **Adım adım test** explains preparation, accepts mm/cm/metres and presents plain-language results. **Kayıt ve izleme** explains the recording contents and plays a captured session on the same page without requiring a download.
 
 Human-readable reports, replayable recording JSON, single-scan JSON, experiment JSON and CSV tables are explicitly distinguished. The application rejects experiment/snapshot JSON in the recording player with an explanation.
 
 ## What you can test
 
 - Front/rear 120°, front 180°, full 360° and any custom sector; mounting offset and angle reversal.
+- Selectable mm/cm/metres for measurement limits, plot scale, yellow/red warning distances and test reference/tolerance; switching units preserves the distance.
 - Point cloud, rays and contour visualization; cursor/touch/keyboard point inspection; distance and quality filters.
 - Scan frequency and its recent history, selected returns, angular occupancy, nearest returns and four directional summaries.
 - Distance accuracy, repeatability, surface comparisons, scan performance, angular coverage and target-return continuity. Each trial stores conditions, frozen settings, per-revolution target medians and raw evidence.

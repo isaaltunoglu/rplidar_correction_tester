@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-20T23:29:02.499435Z",
+  "generatedAt": "2026-11-20T23:55:29.830273Z",
   "title": "Design System: RPLIDAR Lab",
   "extensions": {
     "colorMeta": {
@@ -291,12 +291,12 @@
       "css": ".ds-text-action{font-family:var(--font,Manrope,\"Segoe UI\",sans-serif);border:0;background:transparent;padding:0;color:var(--accent,#a64a29);font-size:13px;font-weight:750;cursor:pointer;text-underline-offset:3px;} .ds-text-action:hover{text-decoration:underline;} .ds-text-action:focus-visible{outline:3px solid #bd5b34;outline-offset:3px;}"
     },
     {
-      "name": "Labelled field",
+      "name": "Paired distance entry",
       "kind": "input",
-      "refersTo": "input",
-      "description": "A plain labelled centimetre reference with an explicit everyday-unit example.",
-      "html": "<label class=\"ds-label\" for=\"ds-distance\">Cetvelle \u00f6l\u00e7t\u00fc\u011f\u00fcn\u00fcz uzakl\u0131k \u00b7 cm</label><input class=\"ds-input\" id=\"ds-distance\" type=\"number\" value=\"100\" min=\"0.1\" step=\"0.1\"><p class=\"ds-input-help\">100 cm = 1 metre.</p>",
-      "css": ".ds-label{font-family:var(--font,Manrope,\"Segoe UI\",sans-serif);display:block;font-size:14px;font-weight:650;color:var(--ink,#193b51);margin-bottom:7px;} .ds-input{font-family:var(--font,Manrope,\"Segoe UI\",sans-serif);font-size:15px;min-height:44px;padding:9px 12px;background:var(--white,#fff);border:1px solid #ced9db;border-radius:4px;color:var(--ink,#193b51);max-width:100%;caret-color:var(--accent,#a64a29);} .ds-input-help{font-family:var(--font,Manrope,\"Segoe UI\",sans-serif);font-size:13px;color:var(--muted,#60717b);margin:8px 0 0;} .ds-input:focus-visible{outline:3px solid #bd5b34;outline-offset:3px;} .ds-input:disabled{opacity:.48;cursor:not-allowed;}"
+      "refersTo": "distance-input",
+      "description": "Keep a labelled physical quantity beside its explicit mm/cm/metre selector; application logic preserves the quantity across unit changes.",
+      "html": "<label class=\"ds-distance-label\" for=\"ds-distance-value\">En uzak mesafe</label><div class=\"ds-distance-input\"><input id=\"ds-distance-value\" type=\"number\" value=\"8\" min=\"0.001\" step=\"any\"><select aria-label=\"En uzak mesafe birimi\"><option>mm</option><option>cm</option><option selected>metre</option></select></div><p class=\"ds-distance-help\">1 metre = 100 cm = 1000 mm.</p>",
+      "css": ".ds-distance-label{font-family:var(--font,Manrope,\"Segoe UI\",sans-serif);display:block;font-size:14px;font-weight:650;color:var(--ink,#193b51);margin-bottom:7px;} .ds-distance-input{display:grid;grid-template-columns:minmax(0,1fr) 96px;gap:8px;align-items:start;} .ds-distance-input input,.ds-distance-input select{font-family:var(--font,Manrope,\"Segoe UI\",sans-serif);width:100%;min-width:0;min-height:44px;padding:9px 12px;border:1px solid #ced9db;border-radius:4px;background:var(--white,#fff);color:var(--ink,#193b51);font-size:15px;} .ds-distance-input select{font-size:14px;cursor:pointer;} .ds-distance-input input:focus-visible,.ds-distance-input select:focus-visible{outline:3px solid #bd5b34;outline-offset:3px;} .ds-distance-input input:disabled,.ds-distance-input select:disabled{opacity:.48;cursor:not-allowed;} .ds-distance-help{font-family:var(--font,Manrope,\"Segoe UI\",sans-serif);font-size:13px;line-height:1.65;color:var(--muted,#60717b);margin:8px 0 0;}"
     },
     {
       "name": "Horizontal navigation",
@@ -337,6 +337,14 @@
       "description": "Advanced settings and evidence stay available behind a native labelled disclosure, initially closed.",
       "html": "<details class=\"ds-disclosure\"><summary>Teknik \u00f6l\u00e7\u00fcmler ve veri dosyalar\u0131</summary><p>Tur h\u0131z\u0131, say\u0131sal \u00f6l\u00e7\u00fcmler ve ayr\u0131nt\u0131l\u0131 dosyalar bu b\u00f6l\u00fcmde bulunur.</p></details>",
       "css": ".ds-disclosure{font-family:var(--font,Manrope,\"Segoe UI\",sans-serif);margin-top:32px;padding-top:18px;border-top:1px solid var(--line,#dce2df);color:var(--ink,#193b51);} .ds-disclosure summary{font-size:14px;font-weight:700;cursor:pointer;color:var(--blue,#123d61);padding:5px 0;min-height:34px;} .ds-disclosure summary:focus-visible{outline:3px solid #bd5b34;outline-offset:3px;} .ds-disclosure p{font-size:13px;line-height:1.65;margin:12px 0;max-width:75ch;}"
+    },
+    {
+      "name": "Distance warning legend",
+      "kind": "custom",
+      "refersTo": "plot",
+      "description": "Selected-unit threshold text accompanies dashed marks; the example is explanatory and contains no live reading.",
+      "html": "<div class=\"ds-distance-legend\"><span><i class=\"ds-rule-yellow\" aria-hidden=\"true\"></i>Sar\u0131 kesikli \u00e7izgi: 1 metre</span><span><i class=\"ds-rule-red\" aria-hidden=\"true\"></i>K\u0131rm\u0131z\u0131 kesikli \u00e7izgi: 50 cm</span></div><p class=\"ds-warning-rule\">Nesne 1 metre veya daha yak\u0131ndaysa sar\u0131; 50 cm veya daha yak\u0131ndaysa k\u0131rm\u0131z\u0131 uyar\u0131 g\u00f6r\u00fcn\u00fcr. K\u0131rm\u0131z\u0131 uyar\u0131 \u00f6nceliklidir.</p>",
+      "css": ".ds-distance-legend{font-family:var(--font,Manrope,\"Segoe UI\",sans-serif);display:flex;gap:8px 22px;flex-wrap:wrap;margin:12px 0;font-size:13px;color:var(--ink,#193b51);} .ds-distance-legend>span{display:flex;align-items:center;gap:7px;} .ds-distance-legend i{display:inline-block;width:23px;border-top:2px dashed;flex-shrink:0;} .ds-rule-yellow{color:#92620f;} .ds-rule-red{color:#b94738;} .ds-warning-rule{font-family:var(--font,Manrope,\"Segoe UI\",sans-serif);margin:12px 0 18px;font-size:14px;line-height:1.8;font-weight:650;color:var(--ink,#193b51);}"
     }
   ],
   "narrative": {
@@ -348,6 +356,7 @@
       "Terracotta angular selections paired with their plotted sector.",
       "Guided questions, source-aware preparation and human-readable results.",
       "Explained recording files and direct in-page playback.",
+      "Paired number/unit entry, discoverable distance ranges and explained warning marks.",
       "Local assets, labelled native controls, visible focus and reduced-motion support."
     ],
     "rules": [
@@ -359,6 +368,11 @@
       {
         "name": "The Paired Annotation Rule",
         "body": "Keep direction presets, numeric angles and the plotted sector consistent. Color cannot replace the direction or angle description.",
+        "section": "colors"
+      },
+      {
+        "name": "The Explained Threshold Rule",
+        "body": "Pair yellow/red dashed distance marks with a text legend in the selected entry units. State the applicable direction and measurement range, threshold priority, and when a mark lies outside the plotted view.",
         "section": "colors"
       },
       {
@@ -375,6 +389,11 @@
         "name": "The Flat Instrument Rule",
         "body": "Use borders, spacing and tonal surfaces for persistent structure; reserve the documented soft shadow for transient feedback.",
         "section": "elevation"
+      },
+      {
+        "name": "The Quantity Before Unit Rule",
+        "body": "A unit change alters presentation, never the physical quantity. Keep calculations and exported numerical settings in canonical millimetres; preserve reference/tolerance entry units in each test snapshot so readable results do not change meaning when later controls change.",
+        "section": "components"
       }
     ],
     "dos": [
@@ -384,12 +403,15 @@
       "Do pair source color with source text and honest unavailable-data explanations.",
       "Do keep direction presets, angle values and the plotted sector consistent.",
       "Do explain a file's purpose before asking a beginner to save or open it.",
+      "Do keep each distance number paired with its mm/cm/metre selector and preserve its physical quantity on unit changes.",
+      "Do distinguish the inspection range from plot zoom and explain yellow/red marks in text with their scope.",
       "Do preserve local Manrope, tabular measurements, labelled native inputs, visible focus and reduced motion.",
       "Do obtain a revision-specific rendered review after material layout or workflow changes."
     ],
     "donts": [
       "Don't fabricate live measurements or draw a decorative scanning sweep.",
       "Don't present missing returns or proximity color as a safety conclusion.",
+      "Don't imply a software distance filter changes the sensor's physical range or stops a machine.",
       "Don't require raw statistics, file-format knowledge or a download to understand the basic workflow.",
       "Don't call measurement recordings video or imply every JSON file is playable.",
       "Don't turn every measurement group into an elevated card.",

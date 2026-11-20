@@ -17,6 +17,28 @@ Tarayıcıda `http://localhost:8080` açılır. Gerçek sensörle başlatmak iç
 
 Nokta görünmeyen bir yönün boş olduğu söylenemez. O yönden ölçüm alınamamış olabilir. Ön/arka açı seçimi, sensörün tüm çevresinden gelen ölçümlerin hangi bölümünün gösterileceğini belirler.
 
+## Ölçülecek mesafeyi nasıl seçerim?
+
+**Canlı görüntü → Ölçüm mesafesini değiştir** bölümünü açın.
+
+- **En yakın mesafe:** Bundan daha yakın ölçümler değerlendirmeye alınmaz.
+- **En uzak mesafe:** Bundan daha uzak ölçümler değerlendirmeye alınmaz. Değiştirince grafik de bu uzaklığa göre ayarlanır.
+- Her sayının yanından **mm**, **cm** veya **metre** seçin. Örneğin **1 metre = 100 cm = 1000 mm**. Birimi değiştirmek, uzaklığın kendisini değiştirmez.
+- **Yalnızca görüntüyü yakınlaştır** bölümünde grafiğin ölçeğini ayrıca değiştirebilirsiniz. Bu, inceleme aralığını değiştirmez.
+
+Bu ayarlar sensörün fiziksel menzilini artırmaz veya lazerini seçtiğiniz mesafede durdurmaz; alınan ölçümlerin hangi bölümünün gösterilip değerlendirileceğini belirler.
+
+## Sarı ve kırmızı uyarı ne zaman görünür?
+
+**Nesne yaklaşınca ne zaman uyarı versin?** bölümünü açın. Örneğin:
+
+- Sarı uyarıya **1 metre** yazın: nesne 1 metreye veya daha yakına geldiğinde dikkat uyarısı gösterilir.
+- Kırmızı uyarıya **50 cm** yazın: nesne 50 cm'ye veya daha yakına geldiğinde kırmızı uyarı sarının yerine geçer.
+
+Kırmızı mesafe sarıdan küçük olmalıdır. Grafiğin altındaki açıklamalar, sarı ve kırmızı kesikli çizgilerin seçtiğiniz mesafelerini gösterir. Uyarı çıktığında nesnenin uzaklığı ve hangi sınıra girdiği yazılır. Uyarılar yalnızca seçtiğiniz yön ve inceleme mesafesi içindeki ölçümlere göre verilir; bir makineyi durdurmaz.
+
+Testin karşılaştırma uzaklığında ve hata payında da mm, cm veya metre seçebilirsiniz. Rapor, testin yapıldığı birimleri korur. Teknik JSON/CSV ölçümleri hesapların tutarlı olması için mm olarak saklanır.
+
 ## Bir testi nasıl yapacağım?
 
 **Adım adım test** sayfasına girin. Testler soru şeklinde adlandırılmıştır; örneğin **Mesafeyi doğru ölçüyor mu?**

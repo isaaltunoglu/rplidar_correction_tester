@@ -36,3 +36,11 @@ Guided experiment questions have separate physical-sensor and computer-generated
 The recording page now draws the current replay frame on its own canvas, using the same geometry renderer as the live page. A completed in-memory recording can be validated and played directly, without a download/import round trip. The original JSON export/import path remains available. A recorded file retains its acquisition source; replay still suspends backend acquisition through `idle`.
 
 File purposes are explicit: replayable `kind: recording`, single-frame `kind: scan`, experiment evidence `kind: experiment`, selected-point CSV and human-readable HTML report. The player rejects experiment/snapshot JSON with an explanatory message rather than suggesting all JSON is replayable.
+
+## Distance input units
+
+Distance controls now bind a numeric value to a per-field mm/cm/m selector. The pure toMillimetres/fromMillimetres helpers validate finite values and units; live configuration stays canonical in mm. Unit switches render from the canonical value rather than repeatedly converting displayed text, avoiding accumulated rounding drift. Editing the maximum analysis distance also aligns viewRange, bounded by its existing 0.5–50 m plot range. The separate view control does not change filtering or physical device range.
+
+Warning rules and dashed-circle legends are generated from cfg.warning/cfg.danger in their selected entry units; analysis retains inclusive canonical boundaries. The red limit must be smaller than yellow. Distance filters still apply before proximity analysis, and the UI explains when limits extend outside the selected analysis interval. These are screen warnings, not a machine interlock.
+
+Guided experiment references and tolerances also accept any of the three units. Trial reference/tolerance values remain mm; optional distance_units records the entry units so summaries and reports retain that trial's presentation. Existing recording and scan schema meanings remain unchanged.

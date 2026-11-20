@@ -37,3 +37,5 @@ Existing server.py, lidar_bridge.cpp, index.html, and vendor SDK at revision 994
 
 - Present a short beginner workflow first; keep specialist settings and raw data available through labelled disclosure.
 - Explain what each saved file contains and how to use it before asking the user to download or import it.
+
+The user explicitly requested selectable mm/cm/metre entry for all distance settings, discoverable measurement range controls, and clear explanations of marked yellow/red warning distances. Unit changes must preserve the physical quantity; internal acquisition and calculations remain in millimetres.

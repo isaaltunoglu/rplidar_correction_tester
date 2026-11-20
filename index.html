@@ -216,6 +216,176 @@
                     Ön yön · 300° → 60° (0° üzerinden)
                   </p>
                 </details>
+                <details
+                  id="distanceSettings"
+                  class="settings-details distance-settings"
+                >
+                  <summary>
+                    Ölçüm mesafesini değiştir
+                    <span
+                      id="distanceRangeSummary"
+                      class="setting-summary"
+                    ></span>
+                  </summary>
+                  <p class="helper">
+                    Bu aralıktaki nesneleri gösterip değerlendirin. Bu ayar
+                    sensörün fiziksel menzilini değiştirmez.
+                  </p>
+                  <div class="field">
+                    <label for="minDistance">En yakın mesafe</label>
+                    <div class="distance-input">
+                      <input
+                        step="any"
+                        id="minDistance"
+                        type="number"
+                        min="0"
+                        max="99999"
+                        value="150"
+                      /><select
+                        aria-label="En yakın mesafe birimi"
+                        id="minDistanceUnit"
+                        class="distance-unit"
+                      >
+                        <option value="mm">mm</option>
+                        <option selected value="cm">cm</option>
+                        <option value="m">metre</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label for="maxDistance">En uzak mesafe</label>
+                    <div class="distance-input">
+                      <input
+                        step="any"
+                        id="maxDistance"
+                        type="number"
+                        min="1"
+                        max="100000"
+                        value="8000"
+                      /><select
+                        aria-label="En uzak mesafe birimi"
+                        id="maxDistanceUnit"
+                        class="distance-unit"
+                      >
+                        <option value="mm">mm</option>
+                        <option value="cm">cm</option>
+                        <option selected value="m">metre</option>
+                      </select>
+                    </div>
+                  </div>
+                  <p class="helper">
+                    En uzak mesafeyi değiştirince grafik de o uzaklığa göre
+                    ayarlanır. Birimi değiştirmeniz uzaklığı değiştirmez. 1
+                    metre = 100 cm = 1000 mm.
+                  </p>
+                  <details class="settings-details view-settings">
+                    <summary>Yalnızca görüntüyü yakınlaştır</summary>
+                    <div class="field">
+                      <label for="viewRangeValue"
+                        >Grafikte görülecek en uzak mesafe</label
+                      >
+                      <div class="distance-input">
+                        <input
+                          id="viewRangeValue"
+                          type="number"
+                          value="5"
+                          step="any"
+                        /><select
+                          aria-label="Grafik uzaklığı birimi"
+                          id="viewRangeValueUnit"
+                          class="distance-unit"
+                        >
+                          <option value="mm">mm</option>
+                          <option value="cm">cm</option>
+                          <option selected value="m">metre</option>
+                        </select>
+                      </div>
+                    </div>
+                    <p class="helper">
+                      Bu, grafiğin ölçeğidir. Hesaba katılan ölçüm aralığı
+                      yukarıdaki en yakın / en uzak mesafedir.
+                    </p>
+                    <div class="field">
+                      <label for="viewRange"
+                        >Sürgüyle yakınlaştır
+                        <output id="viewLabel">5 m</output></label
+                      ><input
+                        type="range"
+                        id="viewRange"
+                        min="500"
+                        max="16000"
+                        step="250"
+                        value="5000"
+                      />
+                    </div>
+                  </details>
+                </details>
+                <details
+                  id="warningSettings"
+                  class="settings-details warning-settings"
+                >
+                  <summary>Nesne yaklaşınca ne zaman uyarı versin?</summary>
+
+                  <div class="field">
+                    <label for="warningDistance">Sarı uyarı — dikkat</label>
+                    <div class="distance-input">
+                      <input
+                        step="any"
+                        id="warningDistance"
+                        type="number"
+                        min="2"
+                        max="100000"
+                        value="1000"
+                      /><select
+                        aria-label="Sarı uyarı mesafesi birimi"
+                        id="warningDistanceUnit"
+                        class="distance-unit"
+                      >
+                        <option value="mm">mm</option>
+                        <option value="cm">cm</option>
+                        <option selected value="m">metre</option>
+                      </select>
+                    </div>
+                    <p class="helper">
+                      Nesne bu mesafeye veya daha yakına geldiğinde sarı uyarı
+                      gösterilir.
+                    </p>
+                  </div>
+                  <div class="field">
+                    <label for="dangerDistance"
+                      >Kırmızı uyarı — çok yakın</label
+                    >
+                    <div class="distance-input">
+                      <input
+                        step="any"
+                        id="dangerDistance"
+                        type="number"
+                        min="1"
+                        max="50000"
+                        value="500"
+                      /><select
+                        aria-label="Kırmızı uyarı mesafesi birimi"
+                        id="dangerDistanceUnit"
+                        class="distance-unit"
+                      >
+                        <option value="mm">mm</option>
+                        <option selected value="cm">cm</option>
+                        <option value="m">metre</option>
+                      </select>
+                    </div>
+                    <p class="helper">
+                      Nesne bu mesafeye veya daha yakına geldiğinde kırmızı
+                      uyarı sarının yerine geçer.
+                    </p>
+                  </div>
+                  <p id="warningRule" class="warning-rule"></p>
+                  <p id="warningScope" class="helper"></p>
+                  <p class="helper">
+                    Kırmızı uyarı mesafesi sarıdan küçük olmalıdır. Uyarı
+                    yalnızca ekranda görünür; sensörü veya bir makineyi
+                    durdurmaz.
+                  </p>
+                </details>
 
                 <section class="live-result">
                   <h2><span class="step-number">3</span> Ölçümü okuyun</h2>
@@ -239,47 +409,14 @@
                 </section>
                 <details class="settings-details advanced-settings">
                   <summary>Gelişmiş görüntü ayarları</summary>
-                  <div class="field">
-                    <label for="viewRange"
-                      >Görünüm yarıçapı
-                      <output id="viewLabel">5 m</output></label
-                    ><input
-                      type="range"
-                      id="viewRange"
-                      min="500"
-                      max="16000"
-                      step="250"
-                      value="5000"
-                    />
-                  </div>
+
                   <label class="check-field"
                     ><input type="checkbox" id="showContext" checked />Diğer
                     açıları soluk göster</label
                   >
                   <details class="settings-details">
                     <summary>Filtreler &amp; yön kalibrasyonu</summary>
-                    <div class="two-fields">
-                      <div class="field">
-                        <label for="minDistance">Min. mesafe · mm</label
-                        ><input
-                          id="minDistance"
-                          type="number"
-                          min="0"
-                          max="99999"
-                          value="150"
-                        />
-                      </div>
-                      <div class="field">
-                        <label for="maxDistance">Maks. mesafe · mm</label
-                        ><input
-                          id="maxDistance"
-                          type="number"
-                          min="1"
-                          max="100000"
-                          value="8000"
-                        />
-                      </div>
-                    </div>
+
                     <div class="two-fields">
                       <div class="field">
                         <label for="qualityMin">Min. kalite · Q</label
@@ -317,35 +454,6 @@
                     <p class="helper">
                       Ofset fiziksel montaja göre ayarlanır. Bazı modlarda Q
                       sabittir; yansıtıcılık ölçümü değildir.
-                    </p>
-                  </details>
-                  <details class="settings-details">
-                    <summary>Yakınlık eşikleri</summary>
-                    <div class="two-fields">
-                      <div class="field">
-                        <label for="dangerDistance">Yakın · mm</label
-                        ><input
-                          id="dangerDistance"
-                          type="number"
-                          min="1"
-                          max="50000"
-                          value="500"
-                        />
-                      </div>
-                      <div class="field">
-                        <label for="warningDistance">Uyarı · mm</label
-                        ><input
-                          id="warningDistance"
-                          type="number"
-                          min="2"
-                          max="100000"
-                          value="1000"
-                        />
-                      </div>
-                    </div>
-                    <p class="helper">
-                      Yalnızca seçili sektördeki yansımaları izler. Bir makineyi
-                      kontrol etmez.
                     </p>
                   </details>
                 </details>
@@ -405,6 +513,15 @@
                     ><span id="scanMeta">Tarama bekleniyor</span>
                   </div>
                 </section>
+                <div class="distance-legend">
+                  <span
+                    ><i class="rule-swatch yellow" aria-hidden="true"></i
+                    ><span id="yellowLegend"></span></span
+                  ><span
+                    ><i class="rule-swatch red" aria-hidden="true"></i
+                    ><span id="redLegend"></span
+                  ></span>
+                </div>
                 <details class="beginner-help">
                   <summary>Ekrandaki noktalar ne anlama geliyor?</summary>
                   <p>
@@ -646,16 +763,27 @@
                   <div class="guided-fields">
                     <div class="field" id="guidedReferenceField">
                       <label for="guidedReference"
-                        >Cetvelle ölçtüğünüz uzaklık · cm</label
-                      ><input
-                        id="guidedReference"
-                        type="number"
-                        min="0.1"
-                        max="10000"
-                        step="0.1"
-                        value="100"
-                        required
-                      />
+                        >Karşılaştırılacak uzaklık</label
+                      >
+                      <div class="distance-input">
+                        <input
+                          id="guidedReference"
+                          type="number"
+                          min="0.1"
+                          max="10000"
+                          step="any"
+                          value="100"
+                          required
+                        /><select
+                          aria-label="Karşılaştırma uzaklığı birimi"
+                          id="guidedReferenceUnit"
+                          class="distance-unit"
+                        >
+                          <option value="mm">mm</option>
+                          <option selected value="cm">cm</option>
+                          <option value="m">metre</option>
+                        </select>
+                      </div>
                       <p class="helper">
                         Sensörün ortasından nesneye kadar ölçün. 100 cm = 1
                         metre.
@@ -675,29 +803,36 @@
                   </div>
                   <details class="test-advanced">
                     <summary>Test ayarlarını ve notları değiştir</summary>
-                    <div class="field">
-                      <label for="trialReference"
-                        >Karşılaştırma uzaklığı · mm (10 mm = 1 cm)</label
-                      ><input
-                        id="trialReference"
-                        type="number"
-                        min="1"
-                        max="100000"
-                        value="1000"
-                        required
-                      />
-                    </div>
+                    <input
+                      id="trialReference"
+                      type="hidden"
+                      min="1"
+                      max="100000"
+                      value="1000"
+                    />
                     <div class="field">
                       <label for="trialTolerance"
-                        >Kabul ettiğiniz hata payı · mm</label
-                      ><input
-                        id="trialTolerance"
-                        type="number"
-                        min="1"
-                        max="10000"
-                        value="30"
-                        required
-                      />
+                        >Kabul ettiğiniz hata payı (artı / eksi)</label
+                      >
+                      <div class="distance-input">
+                        <input
+                          step="any"
+                          id="trialTolerance"
+                          type="number"
+                          min="1"
+                          max="10000"
+                          value="30"
+                          required
+                        /><select
+                          aria-label="Test hata payı birimi"
+                          id="trialToleranceUnit"
+                          class="distance-unit"
+                        >
+                          <option value="mm">mm</option>
+                          <option selected value="cm">cm</option>
+                          <option value="m">metre</option>
+                        </select>
+                      </div>
                     </div>
                     <div class="field">
                       <label for="trialBearing">Nesnenin yönü · derece</label
