@@ -2053,3 +2053,1118 @@ dd {
   align-items: center;
   gap: 6px;
 }
+
+/* Beginner workflow: familiar actions first; technical controls stay available on demand. */
+body {
+  font-size: 15px;
+  line-height: 1.65;
+}
+.app-shell {
+  display: block;
+}
+.sidebar {
+  position: static;
+  width: auto;
+  flex-direction: row;
+  align-items: center;
+  gap: 40px;
+  padding: 20px 32px;
+}
+.sidebar nav {
+  margin: 0;
+  flex: 1;
+  flex-direction: row;
+  justify-content: flex-end;
+  gap: 8px;
+}
+.brand {
+  padding: 0;
+  flex-shrink: 0;
+}
+.brand small {
+  font-size: 13px;
+}
+.nav-item {
+  width: auto;
+  gap: 9px;
+  font-size: 14px;
+  padding: 11px 15px;
+  white-space: nowrap;
+}
+.nav-count,
+.nav-dot,
+.sidebar-bottom {
+  display: none !important;
+}
+.workspace {
+  margin: 0;
+  width: 100%;
+}
+.topbar {
+  height: auto;
+  min-height: 56px;
+  padding: 10px 32px;
+}
+.breadcrumb,
+.breadcrumb strong {
+  font-size: 13px;
+}
+.button,
+.button.small {
+  font-size: 14px;
+  min-height: 42px;
+  padding: 9px 14px;
+}
+.button svg {
+  width: 17px;
+  height: 17px;
+}
+.badge {
+  font-size: 13px;
+  padding: 6px 10px;
+}
+.text-button {
+  font-size: 13px;
+}
+.source-notice {
+  font-size: 14px;
+  padding: 12px 16px;
+  margin-bottom: 25px;
+}
+main {
+  max-width: 1440px;
+  padding: 26px 32px 0;
+}
+.page-heading {
+  margin-bottom: 23px;
+}
+.page-heading h1 {
+  font-size: 30px;
+}
+.page-heading p {
+  font-size: 15px;
+  line-height: 1.7;
+}
+h2 {
+  font-size: 19px;
+}
+h3 {
+  font-size: 16px;
+}
+.helper,
+.muted {
+  font-size: 13px;
+}
+.field label {
+  font-size: 14px;
+}
+.field output {
+  font-size: 14px;
+}
+.field input:not([type="range"]),
+.field select,
+select,
+textarea {
+  font-size: 15px;
+  min-height: 44px;
+  padding: 9px 12px;
+}
+.field input[type="range"] {
+  height: 6px;
+}
+.field {
+  margin-bottom: 20px;
+}
+.step-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 27px;
+  height: 27px;
+  margin-right: 7px;
+  border-radius: 50%;
+  background: var(--blue-soft);
+  color: var(--blue);
+  font-size: 14px;
+  font-weight: 750;
+  flex-shrink: 0;
+}
+.source-choice {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  align-items: center;
+  gap: 3px 24px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  padding: 20px 0;
+  margin-bottom: 26px;
+}
+.source-choice h2 {
+  font-size: 19px;
+}
+.source-choice > .helper {
+  grid-column: 1;
+  max-width: 70ch;
+}
+.source-switch {
+  grid-column: 2;
+  grid-row: 1/3;
+  display: block;
+}
+.source-switch label {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 6px;
+}
+.source-switch select {
+  width: 100%;
+  max-width: none;
+}
+.live-layout {
+  grid-template-columns: 310px minmax(0, 1fr);
+  gap: 32px;
+}
+.settings-panel {
+  display: block;
+  padding: 0;
+  border: 0;
+}
+.settings-title {
+  align-items: flex-start;
+}
+.settings-title h2 {
+  font-size: 19px;
+}
+.settings-title .text-button {
+  font-size: 12px;
+  margin-top: 5px;
+}
+.settings-panel > .helper {
+  margin: 10px 0 18px;
+}
+.preset-grid {
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+.preset {
+  font-size: 15px;
+  min-height: 61px;
+  padding: 10px 14px;
+  text-align: left;
+}
+.preset small {
+  display: block;
+  font-size: 12px;
+  color: var(--muted);
+  font-weight: 500;
+}
+.selected-direction {
+  font-size: 14px;
+  color: var(--blue);
+  margin: 10px 0 18px;
+}
+.settings-details {
+  margin-top: 16px;
+  padding-top: 16px;
+}
+.settings-details summary,
+.technical-details > summary,
+.beginner-help > summary,
+.test-advanced > summary,
+.test-chart-details > summary,
+.test-history > summary,
+.file-guide > summary {
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  color: var(--blue);
+  padding: 5px 0;
+  min-height: 34px;
+}
+.settings-details[open] > summary {
+  margin-bottom: 20px;
+}
+.check-field {
+  font-size: 14px;
+  line-height: 1.6;
+}
+.angle-ribbon,
+.angle-note {
+  display: flex;
+}
+.angle-note {
+  font-size: 13px;
+  display: block;
+}
+.live-result {
+  border-top: 1px solid var(--line);
+  margin-top: 23px;
+  padding-top: 23px;
+}
+.live-result h2 {
+  font-size: 19px;
+  margin-bottom: 17px;
+}
+.nearest-reading {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.nearest-reading > span {
+  font-size: 13px;
+  color: var(--muted);
+}
+.nearest-reading strong {
+  font-size: 35px;
+  letter-spacing: -0.03em;
+  font-variant-numeric: tabular-nums;
+}
+.nearest-reading small {
+  font-size: 17px;
+  font-weight: 500;
+  letter-spacing: 0;
+}
+.proximity {
+  margin: 14px 0 20px;
+  padding: 13px;
+}
+.proximity strong {
+  font-size: 14px;
+}
+.proximity p {
+  font-size: 13px;
+}
+.live-result > .button {
+  width: 100%;
+}
+.plot-toolbar {
+  padding: 12px 16px;
+  min-height: 52px;
+}
+.plot-toolbar strong {
+  font-size: 14px;
+}
+.plot-tag {
+  font-size: 11px;
+}
+.plot-download {
+  min-height: 32px;
+  font-size: 13px;
+  padding: 5px 10px;
+  color: #e2edf3;
+  background: #19394d;
+  border-color: #527082;
+}
+.canvas-wrap {
+  aspect-ratio: 1.5;
+  min-height: 380px;
+  max-height: 560px;
+}
+.plot-footer {
+  font-size: 12px;
+  line-height: 1.6;
+}
+.point-readout {
+  font-size: 12px;
+}
+.plot-watermark {
+  font-size: 11px;
+}
+.plot-empty h2 {
+  font-size: 23px;
+}
+.plot-empty p {
+  font-size: 14px;
+  line-height: 1.8;
+  max-width: 46ch;
+}
+.plot-empty .button {
+  margin-top: 2px;
+}
+.beginner-help {
+  margin-top: 16px;
+}
+.beginner-help p {
+  font-size: 14px;
+  margin: 12px 0;
+  line-height: 1.85;
+}
+.scan-actions {
+  gap: 10px;
+}
+.scan-actions .button {
+  font-size: 14px;
+}
+.scan-actions .muted {
+  font-size: 13px;
+  margin: 0;
+  width: 100%;
+}
+.technical-details {
+  margin-top: 32px;
+  padding-top: 18px;
+  border-top: 1px solid var(--line);
+}
+.technical-details[open] > summary {
+  margin-bottom: 24px;
+}
+.technical-details > .field {
+  max-width: 350px;
+}
+.telemetry {
+  grid-template-columns: repeat(3, 1fr);
+  margin-bottom: 22px;
+}
+.telemetry span {
+  font-size: 13px;
+}
+.telemetry strong {
+  font-size: 25px;
+}
+.raw-section {
+  margin: 24px 0;
+}
+.raw-section .section-heading p {
+  font-size: 13px;
+}
+.direction-strip > div {
+  font-size: 13px;
+}
+.direction-strip strong {
+  font-size: 14px;
+}
+.table-scroll {
+  margin-top: 12px;
+}
+table,
+th {
+  font-size: 13px;
+}
+.plot-under h3 {
+  font-size: 14px;
+}
+.plot-under span {
+  font-size: 12px;
+}
+.app-footer {
+  font-size: 12px;
+  margin-top: 30px;
+}
+.app-footer #footerState {
+  font-size: 11px;
+}
+.guided-choice {
+  max-width: 900px;
+  margin: 0 auto 25px;
+}
+.guided-choice > label {
+  display: block;
+  font-size: 19px;
+  font-weight: 750;
+  margin-bottom: 12px;
+}
+.guided-choice select {
+  width: 100%;
+  font-size: 17px;
+  min-height: 50px;
+}
+.experiment-layout {
+  display: block;
+  max-width: 900px;
+  margin: auto;
+}
+.experiment-workbench > .section-heading h2 {
+  font-size: 21px;
+}
+.protocol {
+  font-size: 15px;
+  margin-bottom: 20px;
+}
+.trial-preparation {
+  background: #eaf0f1;
+  padding: 20px 24px;
+  border-radius: 6px;
+  margin-bottom: 25px;
+}
+.trial-preparation h3 {
+  font-size: 18px;
+}
+.trial-preparation ol {
+  margin: 14px 0;
+  padding-left: 22px;
+}
+.trial-preparation li {
+  padding: 4px 0;
+  font-size: 15px;
+}
+.trial-preparation .helper {
+  font-size: 14px;
+}
+.guided-fields {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+}
+.guided-fields .helper {
+  font-size: 13px;
+  margin-top: 8px;
+}
+.test-advanced {
+  border-top: 1px solid var(--line);
+  padding: 12px 0;
+  margin-bottom: 12px;
+}
+.test-advanced[open] > .field {
+  margin-top: 16px;
+}
+.trial-config-summary {
+  font-size: 13px;
+}
+.test-start-title {
+  font-size: 18px;
+  margin: 22px 0 14px;
+}
+.trial-actions {
+  gap: 12px;
+}
+.trial-actions .button {
+  font-size: 15px;
+}
+.trial-actions .muted {
+  font-size: 14px;
+  width: 100%;
+  margin-top: 4px;
+}
+.trial-result {
+  display: block;
+  margin-top: 24px;
+  padding: 22px 24px;
+  background: #eaf0f1;
+  border: 0;
+  border-radius: 6px;
+}
+.trial-result h3 {
+  font-size: 23px;
+  margin-bottom: 12px;
+}
+.trial-result p {
+  font-size: 15px;
+  color: var(--ink);
+  line-height: 1.85;
+  margin-bottom: 10px;
+}
+.result-source {
+  font-size: 13px !important;
+  color: var(--accent) !important;
+}
+.result-readings {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin: 17px 0;
+}
+.result-readings span {
+  font-size: 13px;
+}
+.result-readings strong {
+  font-size: 22px;
+}
+.trial-result details {
+  margin-top: 20px;
+}
+.trial-result summary {
+  font-size: 14px;
+  cursor: pointer;
+}
+.trial-chart-area canvas {
+  height: 210px;
+}
+.test-chart-details {
+  margin-top: 20px;
+}
+.test-chart-details .helper {
+  font-size: 13px;
+}
+.test-history {
+  margin-top: 35px;
+  border-top: 1px solid var(--line);
+  padding-top: 16px;
+}
+.test-history .results-heading {
+  margin-top: 22px;
+}
+.test-history > .helper {
+  margin-top: 12px;
+}
+.test-history table {
+  font-size: 13px;
+}
+#simpleReport {
+  margin-top: 20px;
+}
+#simpleReport:disabled {
+  display: none;
+}
+.trial-result .result-stats {
+  font-size: 14px;
+  line-height: 1.9;
+}
+.section-heading p {
+  font-size: 13px;
+}
+.recording-layout {
+  gap: 28px;
+  grid-template-columns: 1fr 1.2fr;
+}
+.recording-control,
+.replay-control {
+  padding: 25px;
+}
+.recording-control > p,
+.replay-control > p {
+  font-size: 15px;
+}
+.recording-summary span {
+  font-size: 14px;
+}
+.recording-summary strong {
+  font-size: 30px;
+}
+.recording-summary strong small {
+  font-size: 15px;
+}
+.replay-empty {
+  font-size: 15px;
+  line-height: 1.9;
+}
+.replay-control .helper,
+.recording-control .helper {
+  font-size: 14px;
+  line-height: 1.8;
+}
+.replay-facts {
+  font-size: 14px;
+  line-height: 1.9;
+  padding: 12px 0;
+}
+.replay-facts strong {
+  font-size: 15px;
+}
+.replay-preview {
+  background: var(--plot);
+  border-radius: 5px;
+  margin: 12px 0 20px;
+  overflow: hidden;
+}
+.replay-preview canvas {
+  display: block;
+  width: 100%;
+  height: 320px;
+}
+#replayFilename {
+  font-size: 14px;
+  margin: 12px 0;
+  overflow-wrap: anywhere;
+}
+label[for="replayScrub"] {
+  font-size: 14px;
+  flex-wrap: wrap;
+  margin-bottom: 15px;
+}
+#replayPosition {
+  font-weight: 500;
+  color: var(--muted);
+}
+.replay-control label[for="replaySpeed"] {
+  font-size: 13px;
+}
+.documentation-block > h2 {
+  font-size: 21px;
+}
+.file-explanation {
+  grid-template-columns: 260px minmax(0, 1fr);
+  font-size: 15px;
+  gap: 0 20px;
+}
+.file-explanation dt,
+.file-explanation dd {
+  padding: 16px 0;
+  font-size: 15px;
+}
+.file-explanation dt {
+  font-weight: 700;
+  color: var(--ink);
+}
+.file-explanation dd {
+  font-weight: 400;
+}
+.file-guide {
+  margin-top: 20px;
+}
+.doc-columns p,
+.source-links a,
+.source-links span {
+  font-size: 14px;
+}
+.device-layout .field label {
+  font-size: 14px;
+}
+.device-layout p {
+  font-size: 14px;
+}
+.device-information dl {
+  font-size: 14px;
+}
+.event-log li {
+  font-size: 13px;
+}
+.toast {
+  font-size: 14px;
+  line-height: 1.7;
+}
+@media (max-width: 1050px) {
+  .sidebar {
+    padding: 18px 22px;
+    gap: 22px;
+  }
+  .nav-item {
+    font-size: 13px;
+    padding: 10px;
+  }
+  .live-layout {
+    grid-template-columns: 280px minmax(0, 1fr);
+    gap: 24px;
+  }
+  main {
+    padding-inline: 24px;
+  }
+  .canvas-wrap {
+    aspect-ratio: 1;
+    min-height: 390px;
+  }
+  .page-heading h1 {
+    font-size: 27px;
+  }
+  .recording-layout {
+    grid-template-columns: 1fr;
+  }
+  .source-links a {
+    flex-direction: column;
+  }
+  .plot-toolbar {
+    flex-wrap: wrap;
+  }
+  .topbar {
+    padding-inline: 24px;
+  }
+}
+@media (max-width: 760px) {
+  .sidebar {
+    padding: 18px 16px 0;
+    display: block;
+  }
+  .brand {
+    font-size: 21px;
+    gap: 10px;
+  }
+  .brand small {
+    font-size: 12px;
+  }
+  .sidebar nav {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 3px;
+    margin-top: 18px;
+  }
+  .nav-item {
+    width: 100%;
+    min-height: 68px;
+    font-size: 12px;
+    padding: 10px 3px;
+    white-space: normal;
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    border-radius: 5px 5px 0 0;
+    gap: 5px;
+    line-height: 1.5;
+  }
+  .nav-item svg {
+    width: 19px;
+    height: 19px;
+  }
+  .topbar {
+    padding: 10px 16px;
+    flex-wrap: wrap;
+  }
+  .top-actions {
+    gap: 8px;
+  }
+  .button.small {
+    font-size: 12px;
+    min-height: 36px;
+    padding: 7px 10px;
+  }
+  .badge {
+    font-size: 12px;
+  }
+  .breadcrumb {
+    display: none;
+  }
+  main {
+    padding: 20px 16px 0;
+  }
+  .source-notice {
+    font-size: 13px;
+    line-height: 1.8;
+    gap: 8px;
+    margin-bottom: 22px;
+  }
+  .source-notice > span {
+    min-width: 200px;
+  }
+  .source-notice .text-button {
+    font-size: 13px;
+  }
+  .page-heading h1 {
+    font-size: 26px;
+  }
+  .page-heading p {
+    font-size: 14px;
+  }
+  .page-heading {
+    gap: 14px;
+  }
+  .source-choice {
+    display: block;
+    padding: 18px 0;
+  }
+  .source-choice h2 {
+    font-size: 18px;
+    margin-bottom: 14px;
+  }
+  .source-switch label {
+    font-size: 13px;
+  }
+  .source-choice > .helper {
+    margin-top: 12px;
+    font-size: 13px;
+  }
+  .source-switch select {
+    min-height: 46px;
+    font-size: 16px;
+  }
+  .live-layout {
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+  }
+  .settings-panel,
+  .plot-column {
+    width: 100%;
+  }
+  .settings-title h2,
+  .live-result h2 {
+    font-size: 18px;
+  }
+  .settings-title .text-button {
+    font-size: 12px;
+  }
+  .preset-grid {
+    grid-template-columns: repeat(4, 1fr);
+    gap: 7px;
+  }
+  .preset {
+    font-size: 13px;
+    padding: 10px 7px;
+    min-height: 68px;
+    text-align: center;
+    line-height: 1.5;
+  }
+  .preset small {
+    font-size: 12px;
+  }
+  .live-result {
+    margin-top: 20px;
+    padding-top: 20px;
+  }
+  .live-result > .button {
+    width: auto;
+  }
+  .nearest-reading strong {
+    font-size: 32px;
+  }
+  .selected-direction {
+    margin-bottom: 12px;
+  }
+  .advanced-settings {
+    margin-top: 20px;
+  }
+  .canvas-wrap {
+    min-height: 345px;
+    aspect-ratio: 1;
+    max-height: 460px;
+  }
+  .plot-toolbar {
+    padding: 12px;
+    gap: 10px;
+  }
+  .plot-toolbar strong {
+    font-size: 13px;
+  }
+  .plot-tag {
+    font-size: 10px;
+  }
+  .plot-download {
+    font-size: 12px;
+    padding: 5px 8px;
+    min-height: 30px;
+  }
+  .point-readout {
+    font-size: 11px;
+    bottom: 10px;
+  }
+  .plot-empty h2 {
+    font-size: 21px;
+  }
+  .plot-empty p {
+    font-size: 14px;
+  }
+  .plot-watermark {
+    font-size: 10px;
+  }
+  .plot-footer {
+    font-size: 11px;
+    gap: 5px;
+  }
+  .plot-footer > span:first-child {
+    white-space: normal;
+  }
+  .plot-under {
+    grid-template-columns: 100px 1fr 46px;
+  }
+  .plot-under h3 {
+    font-size: 13px;
+  }
+  .scan-actions .button {
+    font-size: 13px;
+    padding: 9px 12px;
+  }
+  .scan-actions .muted {
+    font-size: 13px;
+  }
+  .telemetry {
+    grid-template-columns: 1fr;
+    padding: 0;
+  }
+  .telemetry > div,
+  .telemetry > div:first-child,
+  .telemetry > div:nth-child(3) {
+    padding: 12px 0;
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .telemetry > div:last-child {
+    border-bottom: 0;
+  }
+  .technical-details > .field {
+    max-width: none;
+  }
+  .direction-strip {
+    grid-template-columns: 1fr 1fr;
+  }
+  .direction-strip > div {
+    font-size: 12px;
+    flex-direction: column;
+    gap: 3px;
+  }
+  .direction-strip strong {
+    font-size: 14px;
+  }
+  .beginner-help > summary,
+  .technical-details > summary {
+    font-size: 14px;
+  }
+  .app-footer {
+    font-size: 12px;
+  }
+  .guided-choice > label {
+    font-size: 18px;
+  }
+  .guided-choice select {
+    font-size: 15px;
+    line-height: 1.5;
+  }
+  .protocol {
+    font-size: 14px;
+  }
+  .trial-preparation {
+    padding: 18px;
+  }
+  .trial-preparation h3 {
+    font-size: 17px;
+  }
+  .trial-preparation li,
+  .trial-preparation .helper {
+    font-size: 14px;
+  }
+  .guided-fields {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+  .field label {
+    font-size: 14px;
+  }
+  .trial-result {
+    padding: 20px;
+  }
+  .trial-result h3 {
+    font-size: 21px;
+  }
+  .trial-result p {
+    font-size: 14px;
+  }
+  .result-readings {
+    gap: 15px;
+  }
+  .result-readings strong {
+    font-size: 21px;
+  }
+  .trial-actions .button {
+    font-size: 14px;
+  }
+  .recording-control,
+  .replay-control {
+    padding: 20px;
+  }
+  .recording-layout {
+    gap: 22px;
+  }
+  .replay-preview canvas {
+    height: 300px;
+  }
+  .file-explanation {
+    display: block;
+  }
+  .file-explanation dt {
+    border-bottom: 0;
+    padding-bottom: 4px;
+  }
+  .file-explanation dd {
+    padding-top: 0;
+    font-size: 14px;
+  }
+  .file-guide > summary {
+    font-size: 14px;
+  }
+  .device-layout .field label {
+    font-size: 14px;
+  }
+  .device-information dl {
+    font-size: 13px;
+  }
+  .event-log li {
+    font-size: 12px;
+  }
+  .source-links a,
+  .source-links span {
+    font-size: 13px;
+  }
+  .recording-summary strong {
+    font-size: 28px;
+  }
+}
+.skip-link {
+  top: 8px;
+  left: 16px;
+  transform: translateY(-200%);
+}
+.skip-link:focus {
+  transform: translateY(0);
+}
+#prepareDemoTarget {
+  margin: 4px 0 14px;
+  background: #fff;
+  font-size: 14px;
+}
+@media (max-width: 760px) {
+  .live-layout {
+    display: flex;
+    gap: 16px;
+  }
+  .settings-panel,
+  .plot-column {
+    display: contents;
+  }
+  .settings-title {
+    order: 0;
+    margin: 0;
+  }
+  .settings-panel > .helper {
+    order: 1;
+    margin: 0;
+  }
+  .preset-grid {
+    order: 2;
+    margin: 0;
+  }
+  .selected-direction {
+    order: 3;
+    margin: 0;
+  }
+  .custom-angle {
+    order: 4;
+    margin: 0 0 4px;
+  }
+  .plot-panel {
+    order: 5;
+    width: 100%;
+  }
+  .live-result {
+    order: 6;
+    width: 100%;
+    margin: 3px 0;
+  }
+  .advanced-settings {
+    order: 7;
+    width: 100%;
+  }
+  .beginner-help {
+    order: 8;
+    width: 100%;
+    margin: 0;
+  }
+  .plot-column > .scan-actions {
+    order: 9;
+    width: 100%;
+    margin: 0;
+  }
+}
+.preset.active small {
+  color: #405b6a;
+}
+.plot-download:hover:not(:disabled) {
+  background: #31546a;
+  border-color: #7a94a2;
+  color: #fff;
+}
+.plot-footer,
+.point-readout,
+.plot-tag,
+.plot-watermark,
+.app-footer #footerState {
+  font-size: 12px;
+}
+#prepareDemoTarget {
+  max-width: 100%;
+  white-space: normal;
+  text-align: left;
+}
+@media (max-width: 760px) {
+  .settings-title {
+    width: 100%;
+    gap: 12px;
+  }
+}

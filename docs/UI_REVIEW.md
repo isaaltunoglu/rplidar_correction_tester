@@ -1,36 +1,40 @@
 # UI review evidence
 
-The redesign is documented from `index.html`, `web/styles.css`, `web/app.js`, and `web/core.js`. It retains the local Python server and C++ SLAMTEC SDK bridge. The visual direction is the field research station recorded in `DESIGN.md`; `.impeccable/design.json` supplies matching schema-version-2 extensions and ten component previews. The formal contract in `docs/UI_DIRECTION.md` retrospectively consolidates the delegated direction. Seed `5b3a139c` is corroborated by `.impeccable/questions/roll.json`; the original catalog roll was degraded, with no online quality-bar board or approved comp.
+## Current revision
 
-## Available evidence
+This record covers the beginner simplification requested after the user found experiments, JSON and recording/playback confusing. It supersedes the earlier dense dashboard layout and its rendered approval. The local Python server and C++ SLAMTEC SDK bridge remain the architecture. `PRODUCT.md`, `docs/UI_DIRECTION.md`, `docs/QUICKSTART_TR.md`, `index.html`, `web/styles.css`, `web/app.js` and `web/core.js` describe the current product and implementation.
 
-- Source review covers desktop and responsive layouts, local Manrope, explicit data states, keyboard focus, reduced-motion rules, shared SVG iconography, and the angular ribbon/sector relationship.
-- Implementation verification reported 11 passing Python tests, 9 passing JavaScript tests, and passing DOM workflow tests.
-- Actual Chrome workflow checks are recorded in `artifacts/browser/checks.json`: no page errors, no mobile horizontal overflow, sector selection, keyboard point inspection, CSV export, recording, an accuracy trial, report export, replay, source switching, pause/resume and stale-data clearing. The source is explicitly simulation.
-- The synthetic 1000mm target trial produced a mean of approximately 999.4mm. This checks the simulated workflow; it is not physical accuracy evidence.
-- Hardware remains unavailable. `physical_sensor_verified` is false. No new physical sensor measurements or device validation are claimed.
+The Field Research Station palette remains. The original seven-direction roll used seed `5b3a139c`, corroborated by `.impeccable/questions/roll.json`; its online catalog and quality-bar cards were unavailable. No approved comp or comp-fidelity score exists. The formal contract is retrospective. `DESIGN.md` and `.impeccable/design.json` now describe the larger type, horizontal navigation and progressive disclosure of the beginner revision.
 
-## Rendered review disposition
+## Changed experience
 
-**Disposition: ship. Visual ship approval: granted for the reviewed rendered software surface. Physical sensor validation: not granted.**
+- Source, direction and readable result are the initial live workflow. Desktop direction/result controls sit left of the plot; mobile puts the plot between direction choices and result. Technical telemetry, filters, statistics, raw tables and exports start closed.
+- Six question-based guided tests explain preparation before measuring, accept centimetres, and present readable conclusions and an HTML report before statistics. Simulation has its own instructions and a 100cm example-target action.
+- Recording explains measurement data versus video and distinguishes file purposes. Source, duration and count precede playback. A completed in-memory recording can be watched directly in an inline player, with play/stop/rewind, time scrubber, named speeds and elapsed/total time. Wrong JSON kinds receive a plain explanation.
+- Body text is 15px, ordinary controls 14–15px, fields at least 44px high, and main actions at least 42px high. Selected preset subtitles and plot-download hover contrast were corrected; plot state labels/readouts are at least 12px.
 
-The earlier sandbox restriction was resolved. Actual Chrome captured twelve full-page screenshots at desktop (1512 × 1100) and mobile (390 × 844), replacing the previous missing-image evidence gap. The capture manifest is `artifacts/browser/screenshots.sha256.json`.
+## Browser evidence
 
-Desktop captures: `desktop-live.png`, `desktop-experiment.png`, `desktop-recordings.png`, `desktop-replay.png`, `desktop-device.png`, and `desktop-disconnected.png`. Mobile captures: `mobile-live.png`, `mobile-experiments.png`, `mobile-recordings.png`, `mobile-device.png`, `mobile-paused.png`, and `mobile-stale.png`. All are under `artifacts/browser/`.
+`artifacts/browser/checks.json` records successful actual Chrome workflows at desktop (1512 × 1100) and mobile (390 × 844), with no page errors or mobile horizontal overflow. It covers progressive disclosure, front/rear selection, point inspection in centimetres, all six guided protocols, cm-to-mm conversion, a guided test and readable report, recording export, watch without downloading, inline replay and rewind, wrong JSON recovery, recording import, pause/resume and stale clearing.
 
-The finish reviewer confirmed that the initial twelve captures were valid and that the Field Research Station typography, material, ground, responsive treatment and source states were consistent. The one material finding was five Unicode external-link arrows. These were replaced by the shared `i-external` SVG symbol. The reviewer then reread refreshed primary desktop/mobile captures and regenerated desktop-device, mobile-device and desktop-disconnected captures, confirmed authored SVG icons without regression, and returned the final disposition **ship**. This verdict covers the scored fix following full review of the twelve original valid captures; it is approval of the rendered software surface only.
+Thirteen full-page screenshots cover the current revision. Desktop: `desktop-live.png`, `desktop-experiment.png`, `desktop-recordings.png`, `desktop-replay-player.png`, `desktop-replay.png`, `desktop-device.png`, and `desktop-disconnected.png`. Mobile: `mobile-live.png`, `mobile-experiments.png`, `mobile-recordings.png`, `mobile-device.png`, `mobile-paused.png`, and `mobile-stale.png`. All are under `artifacts/browser/`; the screenshot manifest is `screenshots.sha256.json` and related evidence manifest is `evidence.sha256.json`.
 
-Source updates supporting this review include a wrapping plot toolbar with minimum height (49px), desktop padding (10px 17px), mobile padding (10px 11px), bottom label room in the canvas, state-specific empty copy, accurate paused-replay source text, and a source-transition guard against old SSE data arriving before the HTTP acknowledgment. Browser evidence supports the tested software states and captured viewports; it does not establish physical sensor behavior, every possible viewport, or a general touch usability study.
+The synthetic 1000mm reference trial produced a mean of approximately 999.4mm. This demonstrates the simulated workflow and unit conversion, not physical measurement accuracy. Hardware is unavailable and `physical_sensor_verified` remains false.
 
-## Stop-hook triage
+## Revision-specific rendered disposition
 
-The existing scoped exceptions in `.impeccable/config.json` remain limited to `index.html`:
+**Disposition: ship. Visual ship approval: granted for the scored fixes in this rendered software revision. Physical sensor validation and novice user-study approval: not granted.**
 
-- `cramped-padding`: the initial wrapper findings missed logical or nested insets. Final source gives the plot toolbar (10px) vertical padding; telemetry cells have (23px) right padding, table cells (12px 15px) padding inside the scroll wrapper, and the device panel (30px) right padding with its divider removed when the responsive padding is removed. The exception's historical reason still mentions the earlier (8px) toolbar inset; current source and this record supersede that measurement. Because this exception covers the rule within the file, future rendered review must continue to inspect new controls for spacing.
-- `cream-palette`: Field Paper is the deliberate ground of the delegated design, paired with ink blue navigation, a dark plot and terracotta annotations. This records an agent decision within authorized scope, not a separate user-confirmed color choice.
+The fresh beginner finish reviewer inspected all thirteen current captures and identified one material control-state defect: “Kaydı burada izle” could appear enabled with zero recorded frames because a later input-lock update overwrote the capture-state setting. The implementation now keeps the action disabled when locked or when no frames exist. DOM and actual-browser empty-state assertions passed, and all thirteen captures were refreshed. The reviewer scored that fix as resolved, verified the updated DESIGN.md and schema-version-2 sidecar against the beginner contract, and returned final disposition **ship**, covering the scored fixes. No numeric scores were produced; there is no approved comp or catalog quality-bar card.
 
-No global rule or whole-file suppression was added. Low-contrast and tiny functional CSS text findings were fixed in source rather than suppressed. The exceptions do not by themselves grant visual approval.
+This review concerns the rendered software at captured viewports. It is not a novice user study, a general touch/device study, or validation of the physical sensor, USB reconnection or device performance. The earlier dense-layout ship decision is historical and does not transfer to this revision.
+
+## Stop-hook triage and stale catalog
+
+The existing `cramped-padding` and `cream-palette` exceptions in `.impeccable/config.json` remain scoped to `index.html`; there is no global rule or whole-file suppression. The padding exception originally addressed nested/logical inset findings. Its historical toolbar measurement predates this revision: current toolbar padding is 12px 16px on desktop and 12px on mobile. Current readable type and expanded controls are documented from source rather than inferred from that exception. Future additions still need rendered spacing review.
+
+Field Paper is a deliberate palette decision within the delegated design, not a separate user-confirmed color approval. Mechanical contrast problems were corrected in source rather than granted a new exception. The old font/color catalog was based on the earlier documentation and is stale for this revision; current tokens are in `DESIGN.md` and its matching sidecar. Catalog staleness is not a new suppression or a fresh detector pass.
 
 ## Not canonized
 
-The prior missing-capture condition is superseded by actual Chrome evidence. The Unicode external arrows were repaired rather than recorded as icon style. No rendered defect is promoted into a reusable rule. Context-specific semantic shades remain documented without treating every one-off fill as a primitive. Unused light-accent and green CSS primitives are identified as such rather than asserted as universal component fills.
+The former dense first-view telemetry and fixed rail are superseded, not retained as house rules. Confusing JSON terminology and a download-dependent playback path are not reusable patterns. The prior glyph-arrow, preset-subtitle, hover-contrast and empty-recording control-state findings were repaired rather than canonized. No unobserved defect, physical validation claim or beginner user-study claim is introduced by this documentation.

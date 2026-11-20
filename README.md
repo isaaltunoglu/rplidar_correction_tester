@@ -1,6 +1,6 @@
 # RPLIDAR Lab
 
-A local measurement and experiment workspace for SLAMTEC RPLIDAR sensors. Inspect scans, choose angular sectors, run documented experiments and export the evidence. The interface is in Turkish; the acquisition service runs entirely on your computer.
+A local measurement and experiment workspace for SLAMTEC RPLIDAR sensors. Choose a viewing direction, follow a guided experiment and understand the result without prior LiDAR or file-format knowledge. Advanced controls remain available through labelled disclosures. The interface is in Turkish; the acquisition service runs entirely on your computer.
 
 **[Türkçe başlangıç kılavuzu](docs/QUICKSTART_TR.md)** · [Experiments](docs/EXPERIMENTS.md) · [Research sources](docs/RESEARCH.md) · [Validation status](docs/VALIDATION.md)
 
@@ -21,6 +21,12 @@ Without hardware or a compiler:
 ```
 
 For a headless session, use `python3 server.py --demo` and open the printed URL yourself. Add `--port 8081` if the default is occupied. To select a known port directly: `LIDAR_PORT=/dev/ttyUSB0 ./start.sh`. The UI also offers an advanced port and baud selector.
+
+## Beginner workflow
+
+Start on **Canlı görüntü**, choose a USB sensor or **Sensörsüz örnek**, then choose front/rear/all directions. **Adım adım test** explains preparation, accepts centimetres and presents plain-language results. **Kayıt ve izleme** explains the recording contents and plays a captured session on the same page without requiring a download.
+
+Human-readable reports, replayable recording JSON, single-scan JSON, experiment JSON and CSV tables are explicitly distinguished. The application rejects experiment/snapshot JSON in the recording player with an explanation.
 
 ## What you can test
 

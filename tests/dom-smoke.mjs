@@ -152,9 +152,14 @@ const click = (id) =>
 const wait = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 await import("../web/app.js");
 emit(frame(1));
+assert.equal(
+  $("watchRecording").disabled,
+  true,
+  "There is no recording to watch yet",
+);
 assert.equal($("plotEmpty").hidden, true);
 assert.ok($("metricPoints").textContent.includes("2"));
-assert.ok($("noticeText").textContent.includes("SİMÜLASYON"));
+assert.ok($("noticeText").textContent.includes("SENSÖRSÜZ ÖRNEK"));
 document.querySelector('.preset[data-center="180"]').click();
 assert.ok($("metricNear").textContent.includes("0,40"));
 assert.equal($("proximity").dataset.state, "danger");
@@ -183,12 +188,9 @@ for (let seq = 4; seq <= 34; seq++) {
 await wait(250);
 assert.ok($("trialHistory").textContent.includes("Mesafe doğruluğu"));
 assert.equal($("trialState").textContent, "Tamamlandı");
-assert.ok($("trialResults").textContent.includes("SİMÜLASYON"));
+assert.ok($("trialResults").textContent.includes("Sensörsüz örnek"));
 click("exportReport");
-assert.ok(
-  (await blobs.at(-1).text()).includes("SİMÜLASYON") ||
-    (await blobs.at(-1).text()).includes("Simülasyon"),
-);
+assert.ok((await blobs.at(-1).text()).includes("Sensörsüz örnek"));
 const file = $("recordingFile");
 Object.defineProperty(file, "files", {
   configurable: true,
@@ -202,7 +204,7 @@ Object.defineProperty(file, "files", {
 });
 file.dispatchEvent(new window.Event("change"));
 await wait(80);
-assert.ok($("noticeText").textContent.includes("TEKRAR OYNATMA"));
+assert.ok($("noticeText").textContent.includes("KAYITTAN İZLEME"));
 assert.equal($("trialStart").disabled, true);
 assert.equal($("replayEmpty").hidden, true);
 // A queued packet from before the source-change acknowledgement must not exit replay.
@@ -213,7 +215,7 @@ stream.onmessage({
     source: "demo",
   }),
 });
-assert.ok($("noticeText").textContent.includes("TEKRAR OYNATMA"));
+assert.ok($("noticeText").textContent.includes("KAYITTAN İZLEME"));
 deliverBeforeAcknowledgement = true;
 $("sourceSelect").value = "demo";
 $("sourceSelect").dispatchEvent(new window.Event("change"));
@@ -225,7 +227,7 @@ assert.equal(
 );
 assert.ok(!$("toast").textContent.includes("Başka bir istemci"));
 emit(frame(35));
-assert.ok($("noticeText").textContent.includes("SİMÜLASYON"));
+assert.ok($("noticeText").textContent.includes("SENSÖRSÜZ ÖRNEK"));
 state = {
   ...state,
   source: "hardware",

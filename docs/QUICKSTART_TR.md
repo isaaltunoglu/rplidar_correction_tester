@@ -1,41 +1,76 @@
-# RPLIDAR Lab kullanım kılavuzu
+# İlk kez kullanacaklar için
 
-Sensör takılı olmak zorunda değil. Bu klasörde terminal açıp:
+Uygulama, LiDAR sensörünün çevresindeki nesnelere olan uzaklığını gösterir. Lazer veya yazılım bilgisi gerekmez. Sensörünüz yokken de bilgisayarda oluşturulan örnekle düğmeleri deneyebilirsiniz.
 
 ```bash
 ./start.sh --demo
 ```
 
-Arayüz tarayıcıda açılır. Otomatik açılmazsa terminaldeki `http://localhost:8080` adresine gidin. Uygulama tamamen yereldir; ağ veya bulut hesabı istemez.
+Tarayıcıda `http://localhost:8080` açılır. Gerçek sensörle başlatmak için `./start.sh` kullanılır. Gerekirse [USB bağlantı yardımı](USB.md) bilgisayardaki ilk erişim iznini açıklar.
 
-## Profesöre gösterilebilecek akış
+## Canlı görüntüde ne yapacağım?
 
-1. **Canlı tarama:** “Ön 120°” ile “Arka 120°” arasında geçiş yapın. Renkli sektör hangi açıların analiz edildiğini gösterir. Merkez ve açıklık sürgüleriyle özel açı seçin. 300° → 60° aralığı 0° üzerinden geçer.
-2. **Yön ve filtreler:** “Filtreler & yön kalibrasyonu” bölümünden montaj ofseti, ters yön, mesafe ve kalite filtresini değiştirin. Görünüm yarıçapı yalnızca yakınlaştırmayı değiştirir; ölçüm filtresi değildir.
-3. **Nokta inceleme:** Noktaya dokunun, fareyle üzerine gelin veya grafiğe odaklanıp ok tuşlarını kullanın. Ham açı, dönüştürülmüş açı, mesafe, X/Y ve Q değerlerini inceleyin.
-4. **Cihaz & kaynaklar:** Simülasyon senaryosunu “Referans hedef · 1.000 mm” seçin. Canlı taramada ön sektöre dönün.
-5. **Deney tezgâhı:** Mesafe doğruluğu seçin. Referans 1.000 mm, merkez 0°, açıklık 4°, süre 10 s ile örnek bir deney yapın. Sonuç açıkça **simülasyon** işaretlidir. Deney boyunca ayarlar sabitlenir.
-6. **Karşılaştırma:** Farklı protokoller/koşullarla deneyleri tekrarlayın. Defterden JSON kanıtı, üstten HTML raporu indirin. HTML raporu tarayıcının yazdırma menüsünden PDF olarak kaydedilebilir.
-7. **Kayıt & tekrar:** Kaydı başlatın, birkaç saniye sonra durdurup JSON indirin. Dosyayı yeniden açın, oynatma hızını ve konumunu değiştirin; canlı tarama sayfasında aynı ham veriyi farklı açılardan inceleyin.
+1. **Nasıl denemek istersiniz?** bölümünde kendi USB sensörünüzü veya **Sensörsüz örnek** seçeneğini seçin. USB bağlantısı otomatik denenir.
+2. **Hangi yöne baksın?** bölümünde ön, arka, geniş ön alan veya her yön seçin. İstediğiniz başka bir açı varsa **Farklı bir açı seç** bölümünü açın.
+3. Ortadaki işaret sensördür. Noktalar, ölçülen nesnelere olan uzaklıkları gösterir. Merkeze yakın nokta, daha yakın nesne demektir. Renkli dilim, seçtiğiniz yöndür.
+4. **Ölçümü okuyun** bölümünden en yakın nesnenin uzaklığına bakın. **Ölçümü durdur** görüntüyü güncel veri gibi tutmak yerine ölçümü durdurur; devam düğmesiyle yeniden başlayabilirsiniz.
 
-## Gerçek cihazla sonraki kullanım
+Nokta görünmeyen bir yönün boş olduğu söylenemez. O yönden ölçüm alınamamış olabilir. Ön/arka açı seçimi, sensörün tüm çevresinden gelen ölçümlerin hangi bölümünün gösterileceğini belirler.
 
-```bash
-./start.sh
-```
+## Bir testi nasıl yapacağım?
 
-USB adaptörü bağlandığında aday seri portlar otomatik aranır. El sıkışması başarılı olunca cihazın gerçek modeli, seri numarası, firmware'i, sağlık bilgisi ve mod listesi görünür. Takılı cihaz yokken simülasyona kendiliğinden geçilmez; gerçek veri beklenir. Tarama kesilince eski veri güncelmiş gibi gösterilmez.
+**Adım adım test** sayfasına girin. Testler soru şeklinde adlandırılmıştır; örneğin **Mesafeyi doğru ölçüyor mu?**
 
-Başlangıçta seri port izni gerekiyorsa [USB.md](USB.md) yönergesini uygulayın. Uygulama `sudo` istemez ve izinleri kendisi değiştirmez. Olağandışı adaptörlerde Cihaz sekmesinden mevcut port seçilebilir.
+- Önce soruyu seçin.
+- **Testi hazırlayın** bölümündeki üç yönergeyi uygulayın.
+- Uzaklık isteniyorsa santimetre yazın: **100 cm = 1 metre**.
+- Süreyi seçip **Testi başlat** düğmesine basın. Ölçüm boyunca nesneyi ve sensörü hareket ettirmeyin.
+- Sonucu aşağıdaki açıklamadan okuyun. Örneğin cetvel 100 cm, sensör ortalaması 99,9 cm ise fark 0,1 cm olarak açıklanır.
+- Paylaşmak veya okumak için **Sonuç raporunu indir** düğmesini kullanın. Rapor tarayıcıda açılır ve yazdırma menüsünden PDF yapılabilir.
 
-**Duraklat** tarama ve motor durdurma komutlarını SDK'ya gönderir. **Devam et** edinimi yeniden başlatır. Sayısal hız ayarı yalnızca SDK destek ve geçerli RPM sınırlarını bildirdiğinde açılır. PWM tabanlı A2 cihazlarda doğrulanmış bir PWM sınırı varsayılmadığından varsayılan motor başlat/durdur kullanılır.
+Sensörsüz örnekte gerçek nesne koymanız gerekmez. Mesafe testinde **100 cm örnek hedefi hazırla** düğmesine basın ve uzaklığı 100 cm bırakın. Bu sonuç gerçek sensörün doğruluğunu kanıtlamaz.
 
-## Sonuçları yorumlama
+İleri düzey kullanıcılar **Test ayarlarını ve notları değiştir**, **Hesapların ayrıntısını göster** ve **Ölçüm grafiğini incele** bölümlerini açabilir. Önceki sonuçlar **Önceki testler ve ayrıntılı veriler** bölümündedir.
 
-- Ön 0°, sağ 90°, arka 180°, sol 270°; açılar saat yönünde artar. Fiziksel montajın ön yönünü ofsetle eşleştirin.
-- Sektör seçimi yazılım filtresidir; sensör 360° dönmeye devam eder.
-- Hiç dönüş alınmayan alana “güvenli” denmez. Yakınlık göstergesi bir robotu/makineyi kontrol etmez.
-- σ tekrarlanabilirlik göstergesidir. Referans ölçümüne bağlı RMSE mutlak doğrulukla ilgili farklı bir ölçüttür.
-- Tek tek noktalar yerine her turda dar hedef açıklığının medyanı örneklenir. Çok geniş açı farklı yüzeyleri karıştırabilir.
-- Kayıt ve deney sonuçları tarayıcı belleğindedir; sayfayı kapatmadan indirin.
-- Bu geliştirmede fiziksel sensör bağlı değildi. Gerçek cihaz, USB sıcak takma ve motor davranışı yeni donanım denemesiyle doğrulanmadı.
+## Kayıt ne içeriyor?
+
+Kayıt bir video değildir. Bir süre boyunca alınan ölçüm noktalarını içerir:
+
+- her noktanın sensöre göre yönü ve uzaklığı;
+- ölçümlerin hangi sırayla ve ne zaman alındığı;
+- gerçek sensör mü, sensörsüz örnek mi kullanıldığı;
+- cihaz bilgileri ve seçtiğiniz görünüm ayarları.
+
+Nesnelerin fotoğrafını, adını veya rengini kaydetmez.
+
+## Kaydı nasıl oluşturup izleyeceğim?
+
+1. **Kaydı başlat** düğmesine basın ve birkaç saniye bekleyin.
+2. **Kaydı bitir** düğmesine basın.
+3. **Kayıt ve izleme** sayfasına gidin.
+4. **Kaydı burada izle** düğmesine basın. Dosya indirmeniz gerekmez; görüntü aynı sayfada açılır.
+5. **Oynat**, ölçümlerin zaman içindeki değişimini gösterir. **Durdur**, görüntüyü o anda tutar. **Başa dön**, ilk ölçüme gider.
+6. Zaman çubuğuyla istediğiniz ana geçin. İzleme hızını yavaşlatabilir veya hızlandırabilirsiniz.
+7. **Bakılan yönü değiştir** ile aynı kayıt üzerinde ön/arka yön seçimini yeniden yapabilirsiniz.
+
+Kaydı başka zaman izlemek için **Kaydı bilgisayara kaydet** düğmesine basın. Daha sonra **Kaydı aç** ile bu dosyayı seçin. Kaydın süresi, ölçüm sayısı ve kaynağı oynatıcının üzerinde görünür. Kayıtlar indirilmeden sayfa kapatılırsa bellekteki ölçümler kaybolur.
+
+## İndirilen dosyalar arasındaki fark
+
+| Dosya                    | İçinde ne var?                                    | Nasıl kullanılır?                                         |
+| ------------------------ | ------------------------------------------------- | --------------------------------------------------------- |
+| Sonuç raporu `.html`     | Testlerin okunabilir özeti ve açıklaması          | Tarayıcıda açın; paylaşın veya PDF yazdırın.              |
+| Kayıt dosyası `.json`    | Bir süre boyunca alınan ölçümler                  | **Kaydı aç** ile yeniden izleyin.                         |
+| Ölçüm tablosu `.csv`     | Tek bir anda, seçtiğiniz yöndeki noktalar         | Excel gibi bir programla inceleyin. Oynatılmaz.           |
+| Tek ölçüm verisi `.json` | Bir ölçümün sayısal noktaları ve ayarları         | Yazılımla ayrıntılı inceleme içindir. Oynatıcıda açılmaz. |
+| Test verileri `.json`    | Bir testin ayarları, hesapları ve ölçüm kanıtları | Teknik inceleme içindir. Oynatıcıda açılmaz.              |
+
+**JSON**, bilgisayarların veriyi düzenli biçimde saklaması için kullanılan bir dosya biçimidir. Birkaç dosyanın uzantısının `.json` olması, aynı işi yaptıkları anlamına gelmez. Uygulama, yanlış dosyayı oynatıcıda açmaya çalıştığınızda hangi dosyayı seçmeniz gerektiğini açıklar.
+
+## Teknik ayrıntıları nerede bulacağım?
+
+- Canlı görüntüde **Gelişmiş görüntü ayarları**: mesafe filtresi, kalite filtresi, montaj yönü ve yakınlık sınırları.
+- **Teknik ölçümler ve veri dosyaları**: tur hızı, nokta sayıları, ölçüm tablosu ve sayısal dışa aktarımlar.
+- **Ayarlar ve yardım**: cihazın kimliği, desteklediği tarama modları, USB bağlantısı, sağlık sorgusu ve üretici kaynakları.
+
+Bu geliştirmede gerçek sensör kullanılmadı. Sensörsüz örnek ve yazılım testleri, fiziksel sensör performansının doğrulandığı anlamına gelmez.

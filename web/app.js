@@ -20,16 +20,16 @@ const fmt = (v, n = 1) =>
       });
 const sourceName = (s) =>
   ({
-    hardware: "Fiziksel cihaz",
-    demo: "Simülasyon",
-    replay: "Tekrar oynatma",
+    hardware: "Gerçek sensör",
+    demo: "Sensörsüz örnek",
+    replay: "Kayıttan izleme",
     idle: "Kaynak bekleniyor",
   })[s] || "Bilinmiyor";
 const titles = {
-  live: "Canlı tarama",
-  experiments: "Deney tezgâhı",
-  recordings: "Kayıt & tekrar",
-  device: "Cihaz & kaynaklar",
+  live: "Canlı görüntü",
+  experiments: "Adım adım test",
+  recordings: "Kayıt ve izleme",
+  device: "Ayarlar ve yardım",
 };
 let cfg = { ...DEFAULT_CONFIG },
   state = null,
@@ -110,7 +110,10 @@ function navigate(next) {
   $("pageCrumb").textContent = titles[next];
   if (location.hash !== "#" + next) historyReplace(next);
   requestDraw();
-  if (next === "experiments") drawTrial();
+  if (next === "experiments") {
+    if (!trial) setTrialKind(trialKind);
+    drawTrial();
+  }
 }
 function historyReplace(next) {
   window.history.replaceState(null, "", "#" + next);
@@ -149,7 +152,7 @@ function activeSource() {
 function inputLock() {
   const locked = !!trial || recording;
   for (const el of document.querySelectorAll(
-    ".settings-panel input,.settings-panel select,.preset,.experiment-option,#trialForm input,#trialForm textarea,#sourceSelect,#demoScene,#portSelect,#baudSelect,#reconnectButton,#scanMode,#motorSpeed,#applyMotor,#resetConfig,#recordingFile,#replayScrub,#replaySpeed,#replayPlay",
+    "#prepareDemoTarget,#guidedReference,#guidedTrialSelect,#watchRecording,#replayRestart,.settings-panel input,.settings-panel select,.preset,.experiment-option,#trialForm input,#trialForm textarea,#sourceSelect,#demoScene,#portSelect,#baudSelect,#reconnectButton,#scanMode,#motorSpeed,#applyMotor,#resetConfig,#recordingFile,#replayScrub,#replaySpeed,#replayPlay",
   )) {
     el.disabled = locked;
   }
@@ -173,6 +176,7 @@ function inputLock() {
         state?.status.connection !== "connected"));
   $("tryDemo").disabled = locked;
   $("plotDemo").disabled = locked;
+  $("watchRecording").disabled = locked || !capture?.frames.length;
 }
 function syncConfig() {
   const map = {
@@ -211,6 +215,10 @@ function syncConfig() {
     );
   $("trialConfigSummary").textContent =
     `Sektör: merkez ${cfg.center}° / açıklık ${cfg.width}° · Mesafe: ${cfg.min}–${cfg.max} mm · Q ≥ ${cfg.quality} · Ofset ${cfg.offset}°${cfg.invert ? " · Ters yön" : ""}`;
+  $("selectedDirection").textContent =
+    cfg.width === 360
+      ? "Her yöndeki ölçümler gösteriliyor."
+      : `${{ 0: "Ön", 90: "Sağ", 180: "Arka", 270: "Sol" }[cfg.center] || "Seçtiğiniz"} taraf · ${cfg.width}° genişliğinde alan`;
   if (scan) analysis = analyze(scan, cfg);
   renderMetrics();
   requestDraw();
@@ -335,7 +343,7 @@ $("pauseButton").addEventListener("click", async () => {
     await api("/api/control", {
       action: state?.status.scanning ? "pause" : "resume",
     });
-    toast("Komut gönderildi; cihaz yanıtı bekleniyor.");
+    toast("İsteğiniz iletildi. Ölçüm durumu güncelleniyor.");
   } catch (e) {
     toast(e.message, true);
   }
@@ -482,11 +490,11 @@ function renderState() {
   let badge, notice;
   if (localReplay) {
     badge = replayPlaying ? "Kayıt oynatılıyor" : "Kayıt · duraklatıldı";
-    notice = `TEKRAR OYNATMA · Asıl kaynak: ${sourceName(replay.source)}. Yeni fiziksel ölçüm yapılmıyor.`;
+    notice = `KAYITTAN İZLEME · ${sourceName(replay.source)} kaydı gösteriliyor. Yeni ölçüm yapılmıyor.`;
   } else if (state.source === "demo") {
-    badge = "Simülasyon";
+    badge = "Sensörsüz örnek";
     notice =
-      "SİMÜLASYON · Görünen noktalar yapay olarak üretilir. Fiziksel sensör testi değildir.";
+      "SENSÖRSÜZ ÖRNEK · Görüntü bilgisayarda oluşturulur. Gerçek sensörden veri alınmıyor.";
   } else if (!streamOnline) {
     badge = "Sunucu bağlantısı yok";
     notice =
@@ -504,8 +512,13 @@ function renderState() {
           ? "Veri güncel değil"
           : "USB aranıyor";
     notice =
-      state.error ||
-      "USB adaptörü bulundu. SDK cihaz kimliğini ve baud hızını sorguluyor.";
+      state.status.connection === "connecting"
+        ? "Sensör bulundu. Bağlantı kuruluyor; kısa bir süre bekleyin."
+        : state.status.connection === "stale"
+          ? "Yeni ölçüm gelmiyor. USB bağlantısı yeniden deneniyor."
+          : state.error?.includes("izni")
+            ? "Bu bilgisayarda sensöre erişim izni yok. Ayarlar ve yardım bölümünden bağlantı yönergelerini açın."
+            : "Sensörü USB ile bağlayın. Bağlantı otomatik kurulacak. Sensörünüz yoksa örneği deneyin.";
   }
   $("connectionBadge").className =
     "badge " +
@@ -537,31 +550,31 @@ function renderState() {
   if (!streamOnline && !localReplay) {
     emptyTitle.textContent = "Sunucu bağlantısı kesildi.";
     emptyDescription.textContent =
-      "Yerel sunucuya yeniden bağlanılıyor. Güncel ölçüm gelene kadar önceki veriler gösterilmez.";
+      "Uygulamaya yeniden bağlanılıyor. Bağlantı gelene kadar eski ölçümler gizlenir.";
   } else if (paused) {
-    emptyTitle.textContent = "Tarama duraklatıldı.";
+    emptyTitle.textContent = "Ölçüm durduruldu.";
     emptyDescription.textContent =
-      "Devam et düğmesiyle ölçüm akışını yeniden başlatın. Önceki ölçümler güncel veri olarak gösterilmez.";
+      "Yukarıdaki Ölçüme devam et düğmesine basın. Yeni ölçümler geldiğinde noktalar yeniden görünecek.";
   } else if (state.source === "demo") {
     emptyTitle.textContent = "Yeni tarama bekleniyor.";
     emptyDescription.textContent =
-      "Simülasyon akışı hazırlanıyor veya yeni veri ulaşmıyor. Güncel sentetik ölçüm geldiğinde görünüm yenilenir.";
+      "Örnek ölçümler bekleniyor. Yeni veri geldiğinde noktalar burada görünecek.";
   } else {
-    emptyTitle.textContent = "Bir bağlantı, 360° keşif.";
+    emptyTitle.textContent = "Sensörünüz hazır mı?";
     emptyDescription.textContent =
-      "USB LiDAR bağlandığında tarama burada görünür. Sensör olmadan simülasyonla tüm iş akışını deneyin.";
+      "Sensörü USB ile bağlayın; ölçümler otomatik olarak burada görünür. Sensörünüz yoksa örneği açın.";
   }
   $("plotDemo").hidden =
     paused || localReplay || state.source === "demo" || !streamOnline;
   $("plotSource").textContent =
-    source === "hardware" ? "USB" : source === "demo" ? "SİMÜLASYON" : "KAYIT";
+    source === "hardware" ? "USB" : source === "demo" ? "ÖRNEK VERİ" : "KAYIT";
   $("plotWatermark").textContent = localReplay
     ? `KAYIT · ASIL KAYNAK: ${sourceName(replay.source).toLocaleUpperCase("tr")}`
     : source === "demo"
-      ? "SİMÜLASYON · SENTETİK VERİ"
+      ? "SENSÖRSÜZ ÖRNEK"
       : fresh()
-        ? "FİZİKSEL ÖLÇÜM"
-        : "FİZİKSEL VERİ BEKLENİYOR";
+        ? "GERÇEK SENSÖR"
+        : "SENSÖR BEKLENİYOR";
   $("trialSource").textContent = localReplay
     ? `Kayıt / ${sourceName(replay.source)}`
     : sourceName(source);
@@ -571,11 +584,11 @@ function renderState() {
   $("plotDot").classList.toggle("live", fresh());
   $("pauseButton").querySelector("span").textContent = localReplay
     ? replayPlaying
-      ? "Duraklat"
+      ? "Ölçümü durdur"
       : "Oynat"
     : state.status.scanning
-      ? "Duraklat"
-      : "Devam et";
+      ? "Ölçümü durdur"
+      : "Ölçüme devam et";
   $("pauseButton")
     .querySelector("use")
     .setAttribute(
@@ -593,7 +606,7 @@ function renderState() {
     : !streamOnline
       ? "Sunucu bağlantısı kesildi"
       : fresh()
-        ? `Son tarama: ${new Date(scan.timestamp * 1000).toLocaleTimeString("tr-TR")} · ${scan.mode}`
+        ? `Son tarama: ${new Date(scan.timestamp * 1000).toLocaleTimeString("tr-TR")}`
         : "Yeni tarama bekleniyor";
   const dk = JSON.stringify([
     state.device_info,
@@ -646,6 +659,13 @@ function renderState() {
   if (state.last_command?.pending) {
     $("footerState").textContent = "Cihaz komutunun tamamlanması bekleniyor…";
   }
+  if (
+    page === "experiments" &&
+    !trial &&
+    guideKey !==
+      JSON.stringify([state?.source, state?.selection?.scene, trialKind])
+  )
+    setTrialKind(trialKind);
   renderMetrics();
   inputLock();
   requestDraw();
@@ -725,29 +745,29 @@ function renderMetrics() {
     $("metricRaw").textContent =
       `${fmt(scan.points.length, 0)} geçerli / ${fmt(scan.raw_count, 0)} ham dönüş`;
     $("metricNear").innerHTML =
-      fmt(analysis.nearest?.[1] / 1000, 2) + " <small>m</small>";
+      fmt(analysis.nearest?.[1] / 1000, 2) + " <small>metre</small>";
     $("metricAngle").textContent = analysis.nearest
-      ? `${fmt(analysis.nearest[0], 1)}° · seçili sektör`
-      : "Seçili sektörde geçerli dönüş yok";
+      ? `Sensöre göre yönü: ${fmt(analysis.nearest[0], 0)}°`
+      : "Bu yönden ölçüm alınamadı";
     $("metricCoverage").innerHTML =
       fmt(analysis.coverage, 1) + " <small>%</small>";
-    $("scanMeta").textContent = `Tur ${scan.seq} · ${scan.mode}`;
+    $("scanMeta").textContent = `Ölçüm ${scan.seq}`;
     const words = {
       unknown: [
-        "Geçerli dönüş yok",
-        "Bu sektörde açıklık değerlendirilemiyor.",
+        "Bu yönden ölçüm alınamadı",
+        "Bu yönde nesne olup olmadığı söylenemez. Yönü veya mesafe ayarlarını kontrol edin.",
       ],
       danger: [
-        "Yakın yansıma algılandı",
-        `En yakın dönüş ${fmt(analysis.nearest?.[1], 0)} mm. Eşik: ${cfg.danger} mm.`,
+        "Yakında bir nesne ölçüldü",
+        `Yaklaşık ${fmt(analysis.nearest?.[1] / 10, 1)} cm uzakta. Yakınlık sınırınız: ${fmt(cfg.danger / 10, 0)} cm.`,
       ],
       warning: [
-        "Uyarı aralığında yansıma",
-        `En yakın dönüş ${fmt(analysis.nearest?.[1], 0)} mm. Eşik: ${cfg.warning} mm.`,
+        "Yakınlık sınırında bir nesne var",
+        `Yaklaşık ${fmt(analysis.nearest?.[1] / 10, 1)} cm uzakta. Uyarı sınırınız: ${fmt(cfg.warning / 10, 0)} cm.`,
       ],
       clear: [
-        "Eşik içinde yansıma yok",
-        "Geçerli dönüşler eşiklerin dışında. Eksik dönüşler açık alan sayılmaz.",
+        "Yakınlık sınırı içinde ölçüm yok",
+        "Alınan ölçümler daha uzakta. Ölçüm gelmeyen bir yerin boş olduğu söylenemez.",
       ],
     };
     $("proximity").dataset.state = analysis.alarm;
@@ -762,17 +782,18 @@ function renderMetrics() {
     for (const [id, html] of [
       ["metricHz", "— <small>Hz</small>"],
       ["metricPoints", "—"],
-      ["metricNear", "— <small>m</small>"],
+      ["metricNear", "— <small>metre</small>"],
       ["metricCoverage", "— <small>%</small>"],
     ])
       $(id).innerHTML = html;
     $("metricRpm").textContent = "Tur / saniye";
     $("metricRaw").textContent = "Yeni tarama bekleniyor";
-    $("metricAngle").textContent = "Seçili sektör içinde";
+    $("metricAngle").textContent = "Seçtiğiniz yönde";
     $("scanMeta").textContent = "Güncel tarama yok";
     $("proximity").dataset.state = "unknown";
     $("proximityTitle").textContent = "Güncel ölçüm yok";
-    $("proximityText").textContent = "Veri yokken açıklık değerlendirilemez.";
+    $("proximityText").textContent =
+      "Ölçüm gelmeden nesnelerin uzaklığı bilinemez.";
     for (let i = 0; i < 4; i++) $("dir" + i).textContent = "—";
   }
   for (const id of ["exportCSV", "exportJSON", "snapshotButton"])
@@ -814,16 +835,18 @@ function requestDraw() {
         drawRadar();
         drawFrequency();
       } else if (page === "experiments") drawTrial();
+      else if (page === "recordings" && localReplay)
+        drawRadar($("replayCanvas"));
     });
 }
 let plotGeometry = null;
-function drawRadar() {
-  const { ctx: c, w, h } = canvasSize($("radarCanvas"));
+function drawRadar(target = $("radarCanvas")) {
+  const { ctx: c, w, h } = canvasSize(target);
   if (w < 1) return;
   const x = w / 2,
     y = h / 2 - 2,
     r = Math.max(20, Math.min(w / 2 - 45, h / 2 - 62));
-  plotGeometry = { x, y, r };
+  if (target.id === "radarCanvas") plotGeometry = { x, y, r };
   c.clearRect(0, 0, w, h);
   c.fillStyle = "#102c40";
   c.fillRect(0, 0, w, h);
@@ -858,7 +881,7 @@ function drawRadar() {
     c.setLineDash(a % 90 === 0 ? [] : [2, 5]);
     c.stroke();
     c.setLineDash([]);
-    if (a % 90 !== 0) {
+    if (a % 90 !== 0 && $("technicalReadings").open) {
       c.fillStyle = "#8da9bb";
       c.fillText(
         a + "°",
@@ -868,10 +891,10 @@ function drawRadar() {
     }
   }
   for (const [a, label] of [
-    [0, "ÖN · 0°"],
-    [90, "SAĞ · 90°"],
-    [180, "ARKA · 180°"],
-    [270, "SOL · 270°"],
+    [0, "ÖN"],
+    [90, "SAĞ"],
+    [180, "ARKA"],
+    [270, "SOL"],
   ]) {
     const rad = ((a - 90) * Math.PI) / 180;
     c.fillStyle = "#bcced7";
@@ -1113,11 +1136,16 @@ $("radarCanvas").addEventListener("keydown", (e) => {
 });
 function pointReadout() {
   $("pointReadout").textContent = hover
-    ? `${fmt(hover[0], 2)}° · ${fmt(hover[1], 1)} mm · Q ${hover[2]} · X ${fmt(hover[1] * Math.sin((hover[0] * Math.PI) / 180), 0)} / Y ${fmt(hover[1] * Math.cos((hover[0] * Math.PI) / 180), 0)} mm`
-    : "Noktayı incelemek için üzerine gelin veya dokunun. Klavye: ← →";
+    ? `Mesafe: ${fmt(hover[1] / 10, 1)} cm · Yön: ${fmt(hover[0], 0)}°`
+    : "Bir noktanın uzaklığını görmek için üzerine gelin veya dokunun.";
 }
 const observer = new ResizeObserver(() => requestDraw());
-for (const id of ["radarCanvas", "frequencyChart", "trialChart"])
+for (const id of [
+  "radarCanvas",
+  "frequencyChart",
+  "trialChart",
+  "replayCanvas",
+])
   observer.observe($(id));
 function download(content, name, type = "application/json") {
   const blob = new Blob([content], { type }),
@@ -1205,10 +1233,10 @@ function startCapture() {
   recording = true;
   renderCapture();
   inputLock();
-  toast("Ham tarama kaydı başladı. Ayarlar kayıt boyunca sabit tutulur.");
+  toast("Kayıt başladı. Bitirdiğinizde Kaydı bitir düğmesine basın.");
 }
 function stopCapture(
-  message = "Kayıt durduruldu. Dosyayı indirmeyi unutmayın.",
+  message = "Kayıt bitti. Kayıt ve izleme sayfasından izleyebilir veya bilgisayarınıza kaydedebilirsiniz.",
 ) {
   recording = false;
   renderCapture();
@@ -1225,23 +1253,24 @@ function renderCapture() {
     $(id).classList.toggle("is-recording", recording);
     $(id).innerHTML =
       '<span class="record-dot"></span>' +
-      (recording ? "Kaydı durdur" : "Kaydı başlat");
+      (recording ? "Kaydı bitir" : "Kaydı başlat");
   }
   $("recordingInfo").textContent = recording
-    ? `${count} tarama kaydedildi`
-    : "Ham 360° veri kaydedilir";
-  $("captureFrames").innerHTML = count + " <small>tarama</small>";
+    ? `${count} ölçüm kaydedildi. Bitirince Kayıt ve izleme sayfasını açın.`
+    : "Kaydınızı Kayıt ve izleme sayfasından izleyebilir veya indirebilirsiniz.";
+  $("captureFrames").innerHTML = count + " <small>tam çevre ölçümü</small>";
   $("captureStatus").textContent = recording
     ? "Kayıt sürüyor"
     : count
-      ? "Kayıt indirmeye hazır"
-      : "Kayıt hazır";
+      ? "Kayıt hazır. İzleyebilir veya indirebilirsiniz."
+      : "Henüz kayıt başlatılmadı";
   $("captureSize").textContent = count
     ? `${sourceName(capture.source)} · ${fmt(capturedPoints, 0)} nokta · ${fmt(count > 1 ? capture.frames.at(-1).timestamp - capture.frames[0].timestamp : 0, 1)} saniye`
-    : "En fazla 1.200 tarama / 500.000 nokta";
+    : "Önce Kaydı başlat, sonra Kaydı bitir düğmesine basın.";
   $("recordCount").textContent = count;
   $("downloadRecording").disabled = !count || recording;
   $("clearRecording").disabled = !count || recording;
+  $("watchRecording").disabled = !count || recording || !!trial;
 }
 $("downloadRecording").addEventListener("click", () => {
   if (capture?.frames.length)
@@ -1288,7 +1317,7 @@ function showReplayFrame(index) {
   analysis = analyze(scan, cfg);
   $("replayScrub").value = replayIndex;
   $("replayPosition").textContent =
-    `${replayIndex + 1} / ${replay.frames.length}`;
+    `${fmt(scan.timestamp - replay.frames[0].timestamp, 1)} / ${fmt(replay.frames.at(-1).timestamp - replay.frames[0].timestamp, 1)} saniye · ${replayIndex + 1}. ölçüm`;
   history = replay.frames
     .slice(Math.max(0, replayIndex - 59), replayIndex + 1)
     .map((f) => f.hz);
@@ -1328,7 +1357,7 @@ function toggleReplay() {
   else {
     if (replayIndex >= replay.frames.length - 1) showReplayFrame(0);
     replayPlaying = true;
-    $("replayPlay").innerHTML = '<svg><use href="#i-pause"/></svg>Duraklat';
+    $("replayPlay").innerHTML = '<svg><use href="#i-pause"/></svg>Durdur';
     playStep();
   }
   renderState();
@@ -1346,40 +1375,211 @@ $("replaySpeed").addEventListener("change", () => {
   }
 });
 $("viewReplay").addEventListener("click", () => navigate("live"));
+async function loadRecording(data, name) {
+  if (!data || typeof data !== "object")
+    throw Error(
+      "Dosyada kayıt bilgisi bulunamadı. Bu uygulamadan indirilmiş bir kayıt dosyası seçin.",
+    );
+  if (data.kind === "experiment" || data.kind === "scan")
+    throw Error(
+      "Bu dosya bir test veya tek ölçüm dosyası. Yeniden izlemek için Kaydı bilgisayara kaydet düğmesinden indirdiğiniz kayıt dosyasını seçin.",
+    );
+  replay = validateRecording(data);
+  replayIndex = 0;
+  $("replayEmpty").hidden = true;
+  $("replayControls").hidden = false;
+  $("replayFilename").textContent = name;
+  $("replaySource").textContent = sourceName(replay.source);
+  $("replaySource").className =
+    "badge " + (replay.source === "demo" ? "demo" : "neutral");
+  $("replayScrub").max = replay.frames.length - 1;
+  const duration = replay.frames.at(-1).timestamp - replay.frames[0].timestamp;
+  $("replayFacts").innerHTML =
+    `<strong>${esc(sourceName(replay.source))}</strong><br>${fmt(duration, 1)} saniyelik kayıt · ${replay.frames.length} tam çevre ölçümü<br>Oynat düğmesiyle noktaların zaman içindeki değişimini izleyin.`;
+  await activateReplay();
+  toast("Kayıt açıldı. Oynat düğmesiyle aşağıdaki görüntüyü izleyin.");
+}
 $("recordingFile").addEventListener("change", async (e) => {
   const file = e.target.files[0];
   if (!file) return;
   try {
-    if (file.size > 25_000_000) throw Error("Dosya 25 MB sınırını aşıyor.");
-    replay = validateRecording(JSON.parse(await file.text()));
-    replayIndex = 0;
-    $("replayEmpty").hidden = true;
-    $("replayControls").hidden = false;
-    $("replayFilename").textContent = file.name;
-    $("replaySource").textContent = sourceName(replay.source);
-    $("replaySource").className =
-      "badge " + (replay.source === "demo" ? "demo" : "neutral");
-    $("replayScrub").max = replay.frames.length - 1;
-    await activateReplay();
-    toast(
-      "Kayıt yüklendi. Canlı tarama ekranından açıları inceleyebilirsiniz.",
-    );
+    if (file.size > 25_000_000)
+      throw Error(
+        "Dosya çok büyük. En fazla 25 MB büyüklüğünde bir kayıt seçin.",
+      );
+    await loadRecording(JSON.parse(await file.text()), file.name);
   } catch (err) {
-    toast(err.message, true);
+    toast(
+      err instanceof SyntaxError
+        ? "Dosya okunamadı. Bu uygulamadan indirilmiş bir kayıt dosyası (.json) seçin."
+        : err.message,
+      true,
+    );
   } finally {
     $("recordingFile").value = "";
   }
 });
+$("watchRecording").addEventListener("click", async () => {
+  try {
+    if (capture?.frames.length && !recording) {
+      await loadRecording(capture, "Bu oturumda oluşturduğunuz kayıt");
+    }
+  } catch (err) {
+    toast(err.message, true);
+  }
+});
+$("replayRestart").addEventListener("click", () => {
+  if (replay && localReplay && !trial && !recording) {
+    stopReplay();
+    showReplayFrame(0);
+    renderState();
+  }
+});
+const guides = {
+  accuracy: {
+    name: "Mesafeyi doğru ölçüyor mu?",
+    description:
+      "Cetvelle ölçtüğünüz uzaklığı, sensörün bulduğu uzaklıkla karşılaştırın.",
+    steps: [
+      "Düz bir karton veya kutuyu sensörün baktığı yöne yerleştirin.",
+      "Sensörün ortasından nesneye kadar olan uzaklığı cetvelle ölçün ve aşağıya santimetre olarak yazın.",
+      "Ölçüm boyunca sensörü ve nesneyi sabit tutun.",
+    ],
+    expected: "Sonuçta cetvel ve sensör ölçümü arasındaki farkı göreceksiniz.",
+  },
+  repeatability: {
+    name: "Aynı nesneyi hep benzer ölçüyor mu?",
+    description: "Nesne sabit dururken ölçümlerin ne kadar değiştiğine bakın.",
+    steps: [
+      "Düz bir nesneyi sensörün baktığı yöne koyun.",
+      "Sensörü ve nesneyi sabitleyin; yerlerini değiştirmeyin.",
+      "Testi başlatın ve bitene kadar bekleyin.",
+    ],
+    expected: "Sonuçta en düşük ve en yüksek uzaklığı göreceksiniz.",
+  },
+  surface: {
+    name: "Farklı yüzeyleri görebiliyor mu?",
+    description: "Aynı uzaklıkta farklı malzemelerle ayrı ayrı test yapın.",
+    steps: [
+      "Beyaz karton gibi bir yüzeyi seçtiğiniz yöne yerleştirin.",
+      "Uzaklığı ölçüp aşağıya yazın. Notlara malzemenin adını ekleyebilirsiniz.",
+      "Testi tekrarlarken yalnızca yüzeyi değiştirin; uzaklığı ve ışığı aynı tutun.",
+    ],
+    expected:
+      "Her testin sonucunda ne kadar ölçüm alınabildiğini karşılaştırabilirsiniz.",
+  },
+  frequency: {
+    name: "Kesintisiz ölçüm yapabiliyor mu?",
+    description: "Ölçüm hızının test boyunca nasıl değiştiğine bakın.",
+    steps: [
+      "Sensörü sabit bir yere koyun.",
+      "Çevresindeki nesneleri ve ışığı değiştirmeyin.",
+      "Testi başlatın. Ölçüm hızı sonuçta gösterilecek.",
+    ],
+    expected: "Saniyede kaç tam tur ölçüm alındığını göreceksiniz.",
+  },
+  coverage: {
+    name: "Ön ve arka alanları görebiliyor mu?",
+    description: "Seçtiğiniz yönün ne kadarından ölçüm geldiğini görün.",
+    steps: [
+      "Canlı görüntüden ön, arka veya her yön seçimini yapın.",
+      "Sensörün etrafını değiştirmeden testi başlatın.",
+      "Başka bir yön seçip aynı testi tekrarlayarak sonuçları karşılaştırın.",
+    ],
+    expected: "Ölçüm alınamayan bir yönün boş olduğu söylenemez.",
+  },
+  obstacle: {
+    name: "Yakındaki nesneyi görebiliyor mu?",
+    description:
+      "Seçtiğiniz yönde bir nesne varken ölçümün ne sıklıkla geldiğine bakın.",
+    steps: [
+      "Yakın bir nesneyi sensörün baktığı yöne yerleştirin.",
+      "Gelişmiş görüntü ayarlarındaki mesafe aralığını nesnenin çevresinde daraltın; arkadaki duvar ölçülmesin.",
+      "Nesneyi sabit tutup testi başlatın.",
+    ],
+    expected:
+      "Bu test algılama gecikmesini ölçmez; seçilen yönde ölçüm sürekliliğini gösterir.",
+  },
+};
+let guideKey = "";
 function setTrialKind(kind) {
-  if (trial) return;
+  if (trial || !guides[kind]) return;
   trialKind = kind;
+  const guide = guides[kind];
+  guideKey = JSON.stringify([state?.source, state?.selection?.scene, kind]);
   for (const b of document.querySelectorAll("[data-trial]"))
     b.classList.toggle("active", b.dataset.trial === kind);
-  $("trialTitle").textContent = protocols[kind].name;
-  $("trialProtocol").textContent = protocols[kind].text;
+  $("guidedTrialSelect").value = kind;
+  $("trialTitle").textContent = guide.name;
+  $("trialProtocol").textContent = guide.description;
+  let steps = guide.steps;
+  const demo = state?.source === "demo";
+  document.querySelector('label[for="guidedReference"]').textContent = demo
+    ? "Karşılaştırılacak örnek uzaklık · cm"
+    : "Cetvelle ölçtüğünüz uzaklık · cm";
+  $("guidedReferenceField").querySelector(".helper").textContent = demo
+    ? "100 cm = 1 metre. Örnek hedef hazırsa 100 olarak bırakın."
+    : "Sensörün ortasından nesneye kadar ölçün. 100 cm = 1 metre.";
+  if (demo && kind === "accuracy")
+    $("trialProtocol").textContent =
+      "Bilgisayarın ürettiği ölçümü, uzaklığı bilinen örnek bir hedefle karşılaştırın.";
+  $("prepareDemoTarget").hidden = !demo || kind !== "accuracy";
+  if (demo && kind === "accuracy") {
+    const ready = state?.selection?.scene === "target";
+    steps = ready
+      ? [
+          "Bilgisayarda 100 cm uzakta örnek bir nesne var. Gerçek nesne koymanız gerekmez.",
+          "Aşağıdaki uzaklık alanını 100 cm olarak bırakın.",
+          "Testi başlatın. Örnek ölçüm, 100 cm ile karşılaştırılacak.",
+        ]
+      : [
+          "Aşağıdaki düğmeyle 100 cm uzakta bir örnek hedef hazırlayın.",
+          "Uzaklık alanına 100 yazın. Cetvelle ölçmeniz gerekmez.",
+          "Testi başlatın. Bu sonuç gerçek sensörden gelmez.",
+        ];
+    $("prepareDemoTarget").textContent = ready
+      ? "100 cm örnek hedef hazır · Yeniden hazırla"
+      : "100 cm örnek hedefi hazırla";
+  } else if (demo) {
+    steps = [
+      "Şu anda bilgisayarda oluşturulan örnek ölçümleri kullanıyorsunuz.",
+      "Testi başlatıp sonuçta hangi bilgilerin gösterildiğini inceleyin.",
+      "Gerçek nesne veya farklı yüzey deneyi için kendi sensörünüzle aynı testi yapmanız gerekir.",
+    ];
+  }
+  $("trialSteps").innerHTML = steps
+    .map((step) => `<li>${esc(step)}</li>`)
+    .join("");
+  $("trialExpected").textContent =
+    demo && kind === "accuracy"
+      ? "Sonuçta örnek hedefin uzaklığı ile hesaplanan ölçüm arasındaki farkı göreceksiniz."
+      : guide.expected;
+  const referenceNeeded = ["accuracy", "surface"].includes(kind);
+  $("guidedReferenceField").hidden = !referenceNeeded;
+  $("guidedReference").required = referenceNeeded;
+  $("trialBearing").value = cfg.center;
+  $("guidedReference").value = Number($("trialReference").value) / 10;
 }
+$("prepareDemoTarget").addEventListener("click", async () => {
+  await changeSource("demo", { scene: "target" });
+  $("guidedReference").value = 100;
+  $("trialReference").value = 1000;
+  setTrialKind(trialKind);
+});
+$("guidedTrialSelect").addEventListener("change", () =>
+  setTrialKind($("guidedTrialSelect").value),
+);
+$("guidedReference").addEventListener("input", () => {
+  $("trialReference").value = Number($("guidedReference").value) * 10;
+});
+$("trialReference").addEventListener("input", () => {
+  $("guidedReference").value = Number($("trialReference").value) / 10;
+});
 for (const b of document.querySelectorAll("[data-trial]"))
   b.addEventListener("click", () => setTrialKind(b.dataset.trial));
+for (const b of document.querySelectorAll("[data-go]"))
+  b.addEventListener("click", () => navigate(b.dataset.go));
+$("simpleReport").addEventListener("click", () => $("exportReport").click());
 $("trialForm").addEventListener("submit", (e) => {
   e.preventDefault();
   if (!fresh() || recording || trial) return;
@@ -1426,7 +1626,7 @@ $("trialForm").addEventListener("submit", (e) => {
   $("trialState").className = "badge live";
   $("trialProgressBar").value = 0;
   inputLock();
-  toast("Deney başladı. Sensörü ve hedefi sabit tutun.");
+  toast("Test başladı. Sensörü ve nesneyi hareket ettirmeyin.");
 });
 $("trialCancel").addEventListener("click", () =>
   finishTrial("Kullanıcı iptal etti."),
@@ -1465,7 +1665,8 @@ function finishTrial(aborted = null) {
   $("trialState").className =
     "badge " + (aborted ? "error" : t.source === "demo" ? "demo" : "neutral");
   $("trialProgress").textContent =
-    aborted || `${t.samples.length} tur · ${fmt(t.elapsed_s, 1)} saniye`;
+    aborted ||
+    `Test bitti. ${fmt(t.elapsed_s, 0)} saniyede ${t.samples.length} ölçüm alındı.`;
   $("trialProgressBar").value = aborted ? 0 : 100;
   renderTrialResult(t);
   renderTrialHistory();
@@ -1473,27 +1674,55 @@ function finishTrial(aborted = null) {
   inputLock();
   toast(
     aborted
-      ? "Deney kesildi; eksik sonuç işaretlendi."
-      : "Deney tamamlandı. Sonuç ve ham kanıt hazır.",
+      ? "Test tamamlanamadı. Sonuç, eksik ölçüm olarak işaretlendi."
+      : "Test bitti. Sonucu aşağıdan okuyabilir veya raporu indirebilirsiniz.",
     !!aborted,
   );
 }
+function describeTrial(t) {
+  const r = t.result;
+  let heading, body;
+  if (t.aborted) {
+    heading = "Test tamamlanamadı";
+    body =
+      "Neden: " +
+      t.aborted +
+      " Bağlantıyı ve seçtiğiniz yönü kontrol edip yeniden deneyin.";
+  } else if (
+    t.completion !== "complete" ||
+    (!["frequency", "coverage"].includes(t.protocol) && r.n < 5)
+  ) {
+    heading = "Yeterli ölçüm alınamadı";
+    body =
+      "Nesneyi seçtiğiniz yöne yerleştirin. Görüntüde noktalar göründüğünde testi yeniden başlatın.";
+  } else if (t.protocol === "accuracy") {
+    heading = `Sensörün ölçtüğü uzaklık: ${fmt(r.mean / 10, 1)} cm`;
+    body = `${t.source === "demo" ? "Karşılaştırma için girdiğiniz" : "Cetvelle ölçüp girdiğiniz"} uzaklık ${fmt(t.reference / 10, 1)} cm. Ortalama ölçüm ile arasındaki fark ${fmt(Math.abs(r.bias) / 10, 1)} cm. Seçtiğiniz ±${fmt(t.tolerance / 10, 1)} cm hata payı içinde kalan ölçümlerin oranı %${fmt(r.withinTolerance, 1)}.`;
+  } else if (t.protocol === "repeatability") {
+    heading = "Ölçümler ne kadar değişti?";
+    body = `Sabit nesne için en düşük uzaklık ${fmt(r.min / 10, 1)} cm, en yüksek uzaklık ${fmt(r.max / 10, 1)} cm oldu. Nesnenin veya sensörün oynaması sonucu etkiler.`;
+  } else if (t.protocol === "frequency") {
+    heading = `Saniyede ortalama ${fmt(r.hz.mean, 1)} tam tur`;
+    body = `Sensör çevresini bir kez dolaştığında bir tam tur tamamlar. Testteki en düşük hız ${fmt(r.hz.min, 1)}, en yüksek hız ${fmt(r.hz.max, 1)} tur/saniye oldu.`;
+  } else if (t.protocol === "coverage") {
+    heading = `Seçilen alanın %${fmt(r.coverage, 1)} bölümünden ölçüm geldi`;
+    body =
+      "Bu oran, seçtiğiniz yönün 1 derecelik parçaları üzerinden hesaplanır. Ölçüm gelmeyen bir yerin boş olduğu söylenemez.";
+  } else {
+    heading = `Ölçüm alınan turlar: %${fmt(r.hitRate, 1)}`;
+    body = `Toplam ${r.frames} tam tur ölçümün ${r.n} tanesinde, seçtiğiniz nesne yönünden veri geldi. Mesafe aralığı daraltılmadıysa arkadaki nesneler de bu ölçüme katılabilir.`;
+  }
+  const origin =
+    t.source === "demo"
+      ? "Sensörsüz örnek sonucu. Gerçek sensör denenmedi."
+      : "Gerçek sensörden alınan ölçümlerle hesaplandı.";
+  return { heading, body, origin };
+}
 function renderTrialResult(t) {
   const r = t.result;
-  const valid = t.completion === "complete";
-  let text = t.aborted
-    ? "Eksik deney: " + t.aborted
-    : t.protocol === "frequency"
-      ? `Tur frekansı ${fmt(r.hz.min, 2)}–${fmt(r.hz.max, 2)} Hz. σ = ${fmt(r.hz.sd, 3)} Hz. Arayüze ulaşan ${r.frames} tur incelendi.`
-      : t.protocol === "coverage"
-        ? `Ortalama 1° açısal doluluk %${fmt(r.coverage, 1)}. Bu, sensörün doğruluğu veya alanın güvenli olduğu anlamına gelmez.`
-        : r.n < 5
-          ? "Hedef açıklığında en az 5 geçerli tur yok. Sonuç çıkarmak için ölçümü tekrarlayın."
-          : `Geçerli hedef turu ${r.n}/${r.frames}. Tüm alınan turlarda ±${t.tolerance} mm tolerans içinde kalma oranı %${fmt(r.withinTolerance, 1)}. Kayıp hedef turları paydaya dahildir.`;
-  if (t.source === "demo") text = "SİMÜLASYON SONUCU · " + text;
-  if (!valid) text += " Tamamlanmış fiziksel test olarak kullanmayın.";
+  const { heading, body, origin } = describeTrial(t);
   $("trialResults").innerHTML =
-    `<div><span>Ortalama mesafe</span><strong>${fmt(r.mean, 1)} mm</strong></div><div><span>Standart sapma · σ</span><strong>${fmt(r.sd, 2)} mm</strong></div><div><span>RMSE</span><strong>${fmt(r.rmse, 2)} mm</strong></div><div><span>Hedef isabeti</span><strong>%${fmt(r.hitRate, 1)}</strong></div><p>${esc(text)}</p>`;
+    `<p class="result-source">${esc(origin)}</p><h3>${esc(heading)}</h3><p>${esc(body)}</p><p>Bu testte ${r.frames} tam çevre ölçümü kullanıldı. Sonuç, yalnızca denediğiniz koşulları gösterir.</p><details><summary>Hesapların ayrıntısını göster</summary><p class="result-stats">Ortalama: ${fmt(r.mean, 1)} mm · Standart sapma (ölçümlerin yayılımı): ${fmt(r.sd, 2)} mm · RMSE (karşılaştırma uzaklığına göre hata): ${fmt(r.rmse, 2)} mm · Seçilen yönden ölçüm alınan turlar: %${fmt(r.hitRate, 1)}</p></details>`;
   $("trialResults").hidden = false;
 }
 function drawTrial() {
@@ -1508,12 +1737,17 @@ function drawTrial() {
 }
 function renderTrialHistory() {
   $("exportReport").disabled = !results.length;
+  $("simpleReport").disabled = !results.length;
+  $("simpleReport").textContent =
+    results.length > 1
+      ? "Tüm testlerin raporunu indir"
+      : "Sonuç raporunu indir";
   $("trialHistory").innerHTML = results.length
     ? [...results]
         .reverse()
         .map(
           (t) =>
-            `<tr><td><strong>${esc(t.name)}</strong><br><span class="muted">${esc(t.label || "Koşul belirtilmedi")}${t.completion !== "complete" ? " · EKSİK" : ""}</span></td><td>${esc(sourceName(t.source))}</td><td>${t.result.frames} / %${fmt(t.result.hitRate, 0)}</td><td>${fmt(t.result.mean)}</td><td>${fmt(t.result.sd, 2)}</td><td>${fmt(t.result.rmse, 2)}</td><td>${fmt(t.result.hz.mean, 2)}</td><td><button class="inline-download" data-result="${t.id}">JSON</button></td></tr>`,
+            `<tr><td><strong>${esc(t.name)}</strong><br><span class="muted">${esc(t.label || "Koşul belirtilmedi")}${t.completion !== "complete" ? " · EKSİK" : ""}</span></td><td>${esc(sourceName(t.source))}</td><td>${t.result.frames} / %${fmt(t.result.hitRate, 0)}</td><td>${fmt(t.result.mean)}</td><td>${fmt(t.result.sd, 2)}</td><td>${fmt(t.result.rmse, 2)}</td><td>${fmt(t.result.hz.mean, 2)}</td><td><button class="inline-download" data-result="${t.id}">Test verileri</button></td></tr>`,
         )
         .join("")
     : '<tr><td colspan="8" class="empty-cell">Henüz deney yok.</td></tr>';
@@ -1528,13 +1762,14 @@ $("trialHistory").addEventListener("click", (e) => {
 $("exportReport").addEventListener("click", () => {
   if (!results.length) return;
   const rows = results
-    .map(
-      (t) =>
-        `<section><h2>${esc(t.name)} · ${esc(t.label || "Koşul belirtilmedi")}</h2><p><strong>${esc(sourceName(t.source))} · ${t.completion === "complete" ? "TAMAMLANDI" : "EKSİK"}</strong> · ${esc(t.created_at)}</p><p>${esc(protocols[t.protocol].text)}</p><table><tr><th>Tur / geçerli hedef</th><th>Ort. mm</th><th>σ mm</th><th>Yanlılık mm</th><th>RMSE mm</th><th>P95 |hata| mm</th><th>Hz</th></tr><tr><td>${t.result.frames} / ${t.result.n}</td><td>${fmt(t.result.mean)}</td><td>${fmt(t.result.sd, 2)}</td><td>${fmt(t.result.bias, 2)}</td><td>${fmt(t.result.rmse, 2)}</td><td>${fmt(t.result.p95, 2)}</td><td>${fmt(t.result.hz.mean, 2)}</td></tr></table><p>Hedef isabeti %${fmt(t.result.hitRate)} · ±${t.tolerance} mm içinde %${fmt(t.result.withinTolerance)} · Referans ${t.reference} mm · Hedef ${t.bearing}° ±${t.beam / 2}° · Gerçek süre ${fmt(t.elapsed_s, 2)} s</p><p>1° doluluk %${fmt(t.result.coverage)} · Q medyanı ${fmt(t.result.quality)} · Tarama modu ${esc(t.scan_mode)}</p><p>Filtreler: <code>${esc(JSON.stringify(t.config))}</code></p><p>Cihaz: <code>${esc(JSON.stringify(t.device_info))}</code></p><p>Notlar: ${esc(t.notes || "—")}</p>${t.aborted ? "<p>Kesilme nedeni: " + esc(t.aborted) + "</p>" : ""}</section>`,
-    )
+    .map((t) => {
+      const r = t.result,
+        summary = describeTrial(t);
+      return `<section><h2>${esc(guides[t.protocol].name)}</h2><p>${esc(sourceName(t.source))} · ${esc(t.created_at)} · ${t.completion === "complete" ? "Tamamlandı" : "Eksik ölçüm"}</p><h3>${esc(summary.heading)}</h3><p>${esc(summary.origin)}</p><p>${esc(summary.body)}</p><p>Denenen nesne / koşul: ${esc(t.label || "Belirtilmedi")}<br>Notlar: ${esc(t.notes || "Eklenmedi")}</p><details><summary>Hesaplar ve teknik ayrıntılar</summary><p>${esc(protocols[t.protocol].text)}</p><table><tr><th>Alınan / hedef görülen tur</th><th>Ortalama · mm</th><th>Standart sapma · mm</th><th>RMSE · mm</th><th>Ortalama tur/saniye</th></tr><tr><td>${r.frames} / ${r.n}</td><td>${fmt(r.mean)}</td><td>${fmt(r.sd, 2)}</td><td>${fmt(r.rmse, 2)}</td><td>${fmt(r.hz.mean, 2)}</td></tr></table><p>Karşılaştırma uzaklığı: ${t.reference} mm · Hata payı: ±${t.tolerance} mm · Hedef yönü: ${t.bearing}° · Ölçülen açı: ${t.beam}° · Süre: ${fmt(t.elapsed_s, 1)} saniye</p><p>Ayarlar: <code>${esc(JSON.stringify(t.config))}</code></p><p>Cihaz: <code>${esc(JSON.stringify(t.device_info))}</code></p><p>σ, her turda ölçülen hedef uzaklıklarının yayılımıdır. RMSE, karşılaştırma uzaklığına göre hesaplanan ortalama kare hatanın kareköküdür. Bu hesaplar cetvelle yaptığınız ölçümün belirsizliğini içermez. Kayıp hedef ölçümleri oranların paydasında tutulur; arayüze ulaşmayan turlar dahil değildir.</p></details></section>`;
+    })
     .join("");
   download(
-    `<!doctype html><html lang="tr"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>RPLIDAR Lab · Deney raporu</title><style>body{font:14px/1.8 system-ui;color:#193b51;max-width:1100px;margin:40px auto;padding:25px}h1{font-size:28px}h2{font-size:20px}section{border-top:1px solid #b8c9d0;padding:25px 0;break-inside:avoid}table{border-collapse:collapse;width:100%;font-size:12px}td,th{padding:8px;border:1px solid #ccd6d9;text-align:left}p,code{overflow-wrap:anywhere}code{font-size:11px}@media print{body{margin:0;padding:0}}</style><h1>RPLIDAR Lab · Deney raporu</h1><p>Oluşturulma: ${esc(new Date().toLocaleString("tr-TR"))}. Simülasyon sonuçları fiziksel cihaz doğrulaması değildir. σ tur medyanlarının örnek standart sapmasıdır. Hedef isabeti geçerli hedef dönüşü bulunan turların alınan tüm turlara oranıdır. Arayüze teslim edilmeyen turlar bu paydaya dahil değildir.</p><p>Ham kanıtlar her deney satırının JSON dosyasındadır. Bu rapor yeni bir fiziksel test veya üretici uygunluk beyanı değildir. Referans ölçüm belirsizliği ayrıca değerlendirilmelidir.</p>${rows}<p>Yöntem ve kaynak: <a href="https://github.com/Slamtec/rplidar_sdk">SLAMTEC SDK</a> · <a href="https://www.slamtec.com/en/lidar/a2spec">Üretici model özellikleri</a></p></html>`,
+    `<!doctype html><html lang="tr"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>RPLIDAR Lab · Test sonuçları</title><style>body{font:16px/1.8 system-ui;color:#193b51;max-width:1000px;margin:40px auto;padding:25px}h1{font-size:28px}h2{font-size:23px}h3{font-size:20px}section{border-top:1px solid #b8c9d0;padding:25px 0;break-inside:avoid}table{border-collapse:collapse;width:100%;font-size:13px}td,th{padding:10px;border:1px solid #ccd6d9;text-align:left}p,code{overflow-wrap:anywhere}summary{cursor:pointer;font-weight:650}details{margin-top:20px}code{font-size:12px}@media print{body{margin:0;padding:0}}</style><h1>Sensör test sonuçları</h1><p>Bu rapor, bu oturumda yaptığınız ${results.length} testin sonucunu içerir. Sensörsüz örnek sonuçları gerçek sensör testi değildir. Her sonuç yalnızca denediğiniz koşulları gösterir.</p><p>Oluşturulma: ${esc(new Date().toLocaleString("tr-TR"))}</p>${rows}<p>Yöntem: <a href="https://github.com/Slamtec/rplidar_sdk">SLAMTEC ölçüm yazılımı</a>. Ayrıntılı ölçüm noktaları, uygulamada Test verileri düğmesinden ayrıca indirilebilir. Bu rapor oynatılabilir bir kayıt değildir.</p></html>`,
     `rplidar-report-${stamp()}.html`,
     "text/html;charset=utf-8",
   );
@@ -1547,7 +1782,7 @@ setInterval(() => {
       (elapsed / trial.duration) * 100,
     );
     $("trialProgress").textContent =
-      `${fmt(elapsed, 1)} / ${trial.duration} s · ${trial.samples.length} tur`;
+      `Ölçülüyor… ${Math.max(0, Math.ceil(trial.duration - elapsed))} saniye kaldı.`;
     if (elapsed >= trial.duration) finishTrial();
     else if (!fresh()) finishTrial("Güncel tarama alınamadı.");
   }
@@ -1565,6 +1800,7 @@ window.addEventListener("beforeunload", (e) => {
   }
 });
 syncConfig();
+renderCapture();
 setTrialKind("accuracy");
 navigate(location.hash.slice(1) || "live");
 connect();

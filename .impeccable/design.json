@@ -1,6 +1,6 @@
 {
   "schemaVersion": 2,
-  "generatedAt": "2026-11-20T23:03:14.511738Z",
+  "generatedAt": "2026-11-20T23:29:02.499435Z",
   "title": "Design System: RPLIDAR Lab",
   "extensions": {
     "colorMeta": {
@@ -204,27 +204,27 @@
     "typographyMeta": {
       "headline": {
         "displayName": "Headline",
-        "purpose": "Page headings."
+        "purpose": "Plain page titles, responsive from 30px to 26px."
       },
       "title": {
         "displayName": "Title",
-        "purpose": "Section headings."
+        "purpose": "Readable section headings."
       },
       "body": {
         "displayName": "Body",
-        "purpose": "Application reading rhythm."
+        "purpose": "Beginner instructions and explanations."
       },
       "label": {
         "displayName": "Label",
-        "purpose": "Compact field labels and interface metadata."
+        "purpose": "Visible field labels; controls use 14\u201315px."
       },
       "measurement": {
         "displayName": "Measurement",
-        "purpose": "Tabular telemetry values."
+        "purpose": "Nearest-object distance with tabular numerals."
       },
       "raw": {
         "displayName": "Raw",
-        "purpose": "Raw measurement table only."
+        "purpose": "Raw measurement cells only."
       }
     },
     "shadows": [
@@ -248,20 +248,12 @@
     ],
     "breakpoints": [
       {
-        "name": "wide",
-        "value": "1600px"
-      },
-      {
         "name": "compact-desktop",
-        "value": "1200px"
-      },
-      {
-        "name": "stacked",
-        "value": "960px"
+        "value": "1050px"
       },
       {
         "name": "mobile",
-        "value": "680px"
+        "value": "760px"
       }
     ]
   },
@@ -270,92 +262,93 @@
       "name": "Primary action",
       "kind": "button",
       "refersTo": "button-primary",
-      "description": "Compact native action with visible hover, keyboard focus and disabled states.",
-      "html": "<button class=\"ds-button-primary\">Start scan</button>",
-      "css": ".ds-button-primary{font-family:var(--font,Manrope,\"Segoe UI\",sans-serif);display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:36px;padding:8px 13px;border:1px solid #cbd6d9;border-radius:5px;font-size:12px;font-weight:700;cursor:pointer;transition:background .15s ease,border-color .15s ease;background:var(--blue,#123d61);color:#fff;border-color:var(--blue,#123d61);} .ds-button-primary:hover:not(:disabled){background:#1f5277;} .ds-button-primary:focus-visible{outline:3px solid #bd5b34;outline-offset:3px;} .ds-button-primary:disabled{opacity:.48;cursor:not-allowed;} @media(prefers-reduced-motion:reduce){.ds-button-primary{transition:none;}}"
+      "description": "Readable native action with visible hover, keyboard focus and disabled states.",
+      "html": "<button class=\"ds-button-primary\">Testi ba\u015flat</button>",
+      "css": ".ds-button-primary{font-family:var(--font,Manrope,\"Segoe UI\",sans-serif);display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:42px;padding:9px 14px;border:1px solid #cbd6d9;border-radius:5px;font-size:14px;font-weight:700;cursor:pointer;transition:background .15s ease,border-color .15s ease;background:var(--blue,#123d61);color:#fff;border-color:var(--blue,#123d61);} .ds-button-primary:hover:not(:disabled){background:#1f5277;} .ds-button-primary:focus-visible{outline:3px solid #bd5b34;outline-offset:3px;} .ds-button-primary:disabled{opacity:.48;cursor:not-allowed;} @media(prefers-reduced-motion:reduce){.ds-button-primary{transition:none;}}"
     },
     {
       "name": "Secondary action",
       "kind": "button",
       "refersTo": "button-secondary",
-      "description": "Compact native action with visible hover, keyboard focus and disabled states.",
-      "html": "<button class=\"ds-button-secondary\">Export CSV</button>",
-      "css": ".ds-button-secondary{font-family:var(--font,Manrope,\"Segoe UI\",sans-serif);display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:36px;padding:8px 13px;border:1px solid #cbd6d9;border-radius:5px;font-size:12px;font-weight:700;cursor:pointer;transition:background .15s ease,border-color .15s ease;background:var(--white,#fff);color:var(--ink,#193b51);border-color:#cbd6d9;} .ds-button-secondary:hover:not(:disabled){background:#eaf0f1;} .ds-button-secondary:focus-visible{outline:3px solid #bd5b34;outline-offset:3px;} .ds-button-secondary:disabled{opacity:.48;cursor:not-allowed;} @media(prefers-reduced-motion:reduce){.ds-button-secondary{transition:none;}}"
+      "description": "Readable native action with visible hover, keyboard focus and disabled states.",
+      "html": "<button class=\"ds-button-secondary\">Kayd\u0131 burada izle</button>",
+      "css": ".ds-button-secondary{font-family:var(--font,Manrope,\"Segoe UI\",sans-serif);display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:42px;padding:9px 14px;border:1px solid #cbd6d9;border-radius:5px;font-size:14px;font-weight:700;cursor:pointer;transition:background .15s ease,border-color .15s ease;background:var(--white,#fff);color:var(--ink,#193b51);border-color:#cbd6d9;} .ds-button-secondary:hover:not(:disabled){background:#eaf0f1;} .ds-button-secondary:focus-visible{outline:3px solid #bd5b34;outline-offset:3px;} .ds-button-secondary:disabled{opacity:.48;cursor:not-allowed;} @media(prefers-reduced-motion:reduce){.ds-button-secondary{transition:none;}}"
     },
     {
       "name": "Plot action",
       "kind": "button",
       "refersTo": "button-accent",
-      "description": "Compact native action with visible hover, keyboard focus and disabled states.",
-      "html": "<button class=\"ds-button-accent\">Explore simulation</button>",
-      "css": ".ds-button-accent{font-family:var(--font,Manrope,\"Segoe UI\",sans-serif);display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:36px;padding:8px 13px;border:1px solid #cbd6d9;border-radius:5px;font-size:12px;font-weight:700;cursor:pointer;transition:background .15s ease,border-color .15s ease;background:#e9a37c;color:#122e40;border-color:#e9a37c;} .ds-button-accent:hover:not(:disabled){background:#f3b898;} .ds-button-accent:focus-visible{outline:3px solid #bd5b34;outline-offset:3px;} .ds-button-accent:disabled{opacity:.48;cursor:not-allowed;} @media(prefers-reduced-motion:reduce){.ds-button-accent{transition:none;}}"
+      "description": "Readable native action with visible hover, keyboard focus and disabled states.",
+      "html": "<button class=\"ds-button-accent\">Sens\u00f6rs\u00fcz \u00f6rne\u011fi ba\u015flat</button>",
+      "css": ".ds-button-accent{font-family:var(--font,Manrope,\"Segoe UI\",sans-serif);display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:42px;padding:9px 14px;border:1px solid #cbd6d9;border-radius:5px;font-size:14px;font-weight:700;cursor:pointer;transition:background .15s ease,border-color .15s ease;background:#e9a37c;color:#122e40;border-color:#e9a37c;} .ds-button-accent:hover:not(:disabled){background:#f3b898;} .ds-button-accent:focus-visible{outline:3px solid #bd5b34;outline-offset:3px;} .ds-button-accent:disabled{opacity:.48;cursor:not-allowed;} @media(prefers-reduced-motion:reduce){.ds-button-accent{transition:none;}}"
     },
     {
       "name": "Text action",
       "kind": "button",
       "refersTo": "button-text",
       "description": "A terracotta inline operation without an enclosing surface.",
-      "html": "<button class=\"ds-text-action\">Connection settings</button>",
-      "css": ".ds-text-action{font-family:var(--font,Manrope,\"Segoe UI\",sans-serif);border:0;background:transparent;padding:0;color:var(--accent,#a64a29);font-size:12px;font-weight:750;cursor:pointer;text-underline-offset:3px;} .ds-text-action:hover{text-decoration:underline;} .ds-text-action:focus-visible{outline:3px solid #bd5b34;outline-offset:3px;}"
+      "html": "<button class=\"ds-text-action\">Ba\u011flant\u0131 yard\u0131m\u0131</button>",
+      "css": ".ds-text-action{font-family:var(--font,Manrope,\"Segoe UI\",sans-serif);border:0;background:transparent;padding:0;color:var(--accent,#a64a29);font-size:13px;font-weight:750;cursor:pointer;text-underline-offset:3px;} .ds-text-action:hover{text-decoration:underline;} .ds-text-action:focus-visible{outline:3px solid #bd5b34;outline-offset:3px;}"
     },
     {
       "name": "Labelled field",
       "kind": "input",
       "refersTo": "input",
-      "description": "Native labelled number input with compact geometry and a visible focus outline.",
-      "html": "<label class=\"ds-label\" for=\"ds-distance\">Viewing range (m)</label><input class=\"ds-input\" id=\"ds-distance\" type=\"number\" value=\"6\" min=\"1\" max=\"20\">",
-      "css": ".ds-label{font-family:var(--font,Manrope,\"Segoe UI\",sans-serif);display:block;font-size:12px;font-weight:650;color:var(--ink,#193b51);margin-bottom:7px;} .ds-input{font-family:var(--font,Manrope,\"Segoe UI\",sans-serif);background:var(--white,#fff);border:1px solid #ced9db;border-radius:4px;padding:8px 10px;color:var(--ink,#193b51);font-size:12px;max-width:100%;caret-color:var(--accent,#a64a29);} .ds-input:focus-visible{outline:3px solid #bd5b34;outline-offset:3px;} .ds-input:disabled{opacity:.48;cursor:not-allowed;}"
+      "description": "A plain labelled centimetre reference with an explicit everyday-unit example.",
+      "html": "<label class=\"ds-label\" for=\"ds-distance\">Cetvelle \u00f6l\u00e7t\u00fc\u011f\u00fcn\u00fcz uzakl\u0131k \u00b7 cm</label><input class=\"ds-input\" id=\"ds-distance\" type=\"number\" value=\"100\" min=\"0.1\" step=\"0.1\"><p class=\"ds-input-help\">100 cm = 1 metre.</p>",
+      "css": ".ds-label{font-family:var(--font,Manrope,\"Segoe UI\",sans-serif);display:block;font-size:14px;font-weight:650;color:var(--ink,#193b51);margin-bottom:7px;} .ds-input{font-family:var(--font,Manrope,\"Segoe UI\",sans-serif);font-size:15px;min-height:44px;padding:9px 12px;background:var(--white,#fff);border:1px solid #ced9db;border-radius:4px;color:var(--ink,#193b51);max-width:100%;caret-color:var(--accent,#a64a29);} .ds-input-help{font-family:var(--font,Manrope,\"Segoe UI\",sans-serif);font-size:13px;color:var(--muted,#60717b);margin:8px 0 0;} .ds-input:focus-visible{outline:3px solid #bd5b34;outline-offset:3px;} .ds-input:disabled{opacity:.48;cursor:not-allowed;}"
     },
     {
-      "name": "Navigation",
+      "name": "Horizontal navigation",
       "kind": "nav",
       "refersTo": "nav-active",
-      "description": "Pale active item on an ink blue navigation rail.",
-      "html": "<nav class=\"ds-nav\" aria-label=\"Instrument\"><button class=\"ds-nav-item ds-nav-active\" aria-current=\"page\">Live scan</button><button class=\"ds-nav-item\">Experiments</button></nav>",
-      "css": ".ds-nav{font-family:var(--font,Manrope,\"Segoe UI\",sans-serif);background:var(--blue,#123d61);padding:17px;display:grid;gap:7px;} .ds-nav-item{font-family:var(--font,Manrope,\"Segoe UI\",sans-serif);border:0;background:transparent;color:#d2e0eb;padding:12px 13px;border-radius:6px;text-align:left;font-size:12px;font-weight:550;cursor:pointer;} .ds-nav-item:hover{background:#214d70;} .ds-nav-active{background:var(--paper,#f6f5f0);color:var(--blue,#123d61);font-weight:750;} .ds-nav-item:focus-visible{outline:3px solid #bd5b34;outline-offset:3px;}"
+      "description": "Four familiar destinations form a horizontal header and a wrapping four-column mobile row.",
+      "html": "<nav class=\"ds-nav\" aria-label=\"\u00c7al\u0131\u015fma alan\u0131\"><button class=\"ds-nav-item ds-nav-active\" aria-current=\"page\">Canl\u0131 g\u00f6r\u00fcnt\u00fc</button><button class=\"ds-nav-item\">Ad\u0131m ad\u0131m test</button><button class=\"ds-nav-item\">Kay\u0131t ve izleme</button><button class=\"ds-nav-item\">Ayarlar ve yard\u0131m</button></nav>",
+      "css": ".ds-nav{font-family:var(--font,Manrope,\"Segoe UI\",sans-serif);background:var(--blue,#123d61);padding:20px 32px;display:flex;justify-content:flex-end;gap:8px;} .ds-nav-item{font-family:var(--font,Manrope,\"Segoe UI\",sans-serif);border:0;background:transparent;color:#d2e0eb;padding:11px 15px;border-radius:6px;text-align:left;font-size:14px;font-weight:550;cursor:pointer;} .ds-nav-item:hover{background:#214d70;} .ds-nav-active{background:var(--paper,#f6f5f0);color:var(--blue,#123d61);font-weight:750;} .ds-nav-item:focus-visible{outline:3px solid #bd5b34;outline-offset:3px;} @media(max-width:760px){.ds-nav{display:grid;grid-template-columns:repeat(4,1fr);padding:18px 16px 0;gap:3px;} .ds-nav-item{min-height:68px;padding:10px 3px;font-size:12px;text-align:center;border-radius:5px 5px 0 0;line-height:1.5;}}"
     },
     {
       "name": "Source badge",
       "kind": "chip",
       "refersTo": "badge-neutral",
       "description": "An explicit source/status label with a neutral state dot.",
-      "html": "<span class=\"ds-badge\"><span class=\"ds-badge-dot\" aria-hidden=\"true\"></span>Disconnected</span>",
-      "css": ".ds-badge{font-family:var(--font,Manrope,\"Segoe UI\",sans-serif);display:inline-flex;align-items:center;gap:7px;border-radius:4px;padding:5px 9px;font-size:12px;font-weight:700;line-height:1.4;background:#e9eeec;color:#50646e;white-space:nowrap;} .ds-badge-dot{width:6px;height:6px;border-radius:50%;background:currentColor;}"
+      "html": "<span class=\"ds-badge\"><span class=\"ds-badge-dot\" aria-hidden=\"true\"></span>Sens\u00f6r ba\u011fl\u0131 de\u011fil</span>",
+      "css": ".ds-badge{font-family:var(--font,Manrope,\"Segoe UI\",sans-serif);display:inline-flex;align-items:center;gap:7px;border-radius:4px;padding:6px 10px;font-size:13px;font-weight:700;line-height:1.4;background:#e9eeec;color:#50646e;white-space:nowrap;} .ds-badge-dot{width:6px;height:6px;border-radius:50%;background:currentColor;}"
     },
     {
       "name": "Recording container",
       "kind": "card",
       "refersTo": "container",
-      "description": "One of the bounded secondary workspaces; ordinary measurement groups stay flat.",
-      "html": "<section class=\"ds-container\"><h2>Session recording</h2><p>Record measurements together with their settings and source.</p></section>",
-      "css": ".ds-container{font-family:var(--font,Manrope,\"Segoe UI\",sans-serif);background:var(--white,#fff);color:var(--ink,#193b51);border:1px solid var(--line,#dce2df);border-radius:7px;padding:25px;} .ds-container h2{font-size:16px;font-weight:750;line-height:1.5;letter-spacing:-.025em;margin:0;} .ds-container p{font-size:12px;color:var(--muted,#60717b);line-height:1.6;margin:10px 0 18px;max-width:75ch;}"
+      "description": "A bounded recording workspace explains what the recording contains before presenting actions.",
+      "html": "<section class=\"ds-container\"><h2>Kay\u0131t olu\u015fturun</h2><p>Bu bir video de\u011fildir. Bir s\u00fcre boyunca al\u0131nan y\u00f6n ve uzakl\u0131k \u00f6l\u00e7\u00fcmlerini saklar.</p></section>",
+      "css": ".ds-container{font-family:var(--font,Manrope,\"Segoe UI\",sans-serif);background:var(--white,#fff);color:var(--ink,#193b51);border:1px solid var(--line,#dce2df);border-radius:7px;padding:25px;} .ds-container h2{font-size:19px;font-weight:750;line-height:1.5;letter-spacing:-.025em;margin:0;} .ds-container p{font-size:15px;color:var(--muted,#60717b);line-height:1.65;margin:10px 0 18px;max-width:75ch;} @media(max-width:760px){.ds-container{padding:20px;}}"
     },
     {
       "name": "Polar plot surface",
       "kind": "custom",
       "refersTo": "plot",
-      "description": "Dark measurement surface with a wrapping toolbar, explicit state text and a pale warm selection legend; preview contains no invented data.",
-      "html": "<section class=\"ds-plot\"><header>Polar scan <span>Disconnected</span></header><div class=\"ds-plot-empty\">Waiting for a data source</div><footer><i aria-hidden=\"true\"></i> Selected sector</footer></section>",
-      "css": ".ds-plot{font-family:var(--font,Manrope,\"Segoe UI\",sans-serif);background:var(--plot,#102c40);color:#d8e7ee;border:1px solid #214457;border-radius:8px;overflow:hidden;} .ds-plot header{display:flex;justify-content:space-between;gap:8px;min-height:49px;padding:10px 17px;border-bottom:1px solid #284759;font-size:12px;font-weight:600;} .ds-plot header span{color:#adc4d1;font-weight:400;} .ds-plot-empty{min-height:170px;display:grid;place-items:center;font-size:12px;color:#b4cad6;} .ds-plot footer{display:flex;align-items:center;gap:6px;padding:10px 16px;border-top:1px solid #294758;font-size:12px;color:#a7bfcb;} .ds-plot footer i{width:5px;height:5px;border-radius:50%;background:#eaa37e;} @media(max-width:680px){.ds-plot header{padding:10px 11px;flex-wrap:wrap;}}"
+      "description": "Dark live or replay ground; source and missing-data text remain explicit without invented returns.",
+      "html": "<section class=\"ds-plot\"><header>Tarama g\u00f6r\u00fcn\u00fcm\u00fc <span>Sens\u00f6r ba\u011fl\u0131 de\u011fil</span></header><div class=\"ds-plot-empty\">Sens\u00f6r ba\u011flan\u0131nca \u00f6l\u00e7\u00fcm burada g\u00f6r\u00fcnecek.</div><footer><i aria-hidden=\"true\"></i> Se\u00e7ilen alan</footer></section>",
+      "css": ".ds-plot{font-family:var(--font,Manrope,\"Segoe UI\",sans-serif);background:var(--plot,#102c40);color:#d8e7ee;border:1px solid #214457;border-radius:8px;overflow:hidden;} .ds-plot header{display:flex;justify-content:space-between;gap:8px;min-height:52px;padding:12px 16px;border-bottom:1px solid #284759;font-size:14px;font-weight:600;} .ds-plot header span{color:#adc4d1;font-weight:400;} .ds-plot-empty{min-height:170px;display:grid;place-items:center;font-size:12px;color:#b4cad6;} .ds-plot footer{display:flex;align-items:center;gap:6px;padding:10px 16px;border-top:1px solid #294758;font-size:12px;color:#a7bfcb;} .ds-plot footer i{width:5px;height:5px;border-radius:50%;background:#eaa37e;} @media(max-width:680px){.ds-plot header{padding:12px;flex-wrap:wrap;}}"
     },
     {
-      "name": "Angular ribbon",
+      "name": "Technical disclosure",
       "kind": "custom",
-      "refersTo": "angle-ribbon",
-      "description": "Start and end angles share a terracotta connector. On narrow layouts controls and plot retain the selection meaning.",
-      "html": "<div class=\"ds-angle\"><span>300\u00b0</span><div><span></span><i aria-hidden=\"true\"></i><span></span></div><span>60\u00b0</span></div>",
-      "css": ".ds-angle{font-family:var(--font,Manrope,\"Segoe UI\",sans-serif);display:flex;align-items:center;gap:9px;font-size:12px;color:var(--accent,#a64a29);font-weight:700;font-variant-numeric:tabular-nums;margin:23px 0 6px;} .ds-angle>div{display:flex;align-items:center;flex:1;} .ds-angle>div>span{height:2px;flex:1;background:#d4a085;} .ds-angle i{width:6px;height:6px;border-radius:50%;background:#bd5b34;}"
+      "refersTo": "disclosure",
+      "description": "Advanced settings and evidence stay available behind a native labelled disclosure, initially closed.",
+      "html": "<details class=\"ds-disclosure\"><summary>Teknik \u00f6l\u00e7\u00fcmler ve veri dosyalar\u0131</summary><p>Tur h\u0131z\u0131, say\u0131sal \u00f6l\u00e7\u00fcmler ve ayr\u0131nt\u0131l\u0131 dosyalar bu b\u00f6l\u00fcmde bulunur.</p></details>",
+      "css": ".ds-disclosure{font-family:var(--font,Manrope,\"Segoe UI\",sans-serif);margin-top:32px;padding-top:18px;border-top:1px solid var(--line,#dce2df);color:var(--ink,#193b51);} .ds-disclosure summary{font-size:14px;font-weight:700;cursor:pointer;color:var(--blue,#123d61);padding:5px 0;min-height:34px;} .ds-disclosure summary:focus-visible{outline:3px solid #bd5b34;outline-offset:3px;} .ds-disclosure p{font-size:13px;line-height:1.65;margin:12px 0;max-width:75ch;}"
     }
   ],
   "narrative": {
     "northStar": "The Field Research Station",
-    "overview": "RPLIDAR Lab is a compact local instrument: ink blue navigation frames an offwhite working ground, and a dark plotting surface holds the measurements. The character is calm, precise and practical. Separators, aligned values and restrained color communicate structure without turning every group into a card.\n\nA terracotta angular ribbon and the corresponding plotted sector form the signature. They describe the same software selection; the plotted geometry is evidence-bearing rather than decorative. Locally served Manrope gives controls and measurements one consistent voice. Data source, stale data, disconnected hardware, simulation, replay and pause remain explicit product states.",
+    "overview": "RPLIDAR Lab makes a local measuring instrument approachable to a first-time user. Ink blue horizontal navigation frames an offwhite working ground and a dark plotting surface. Larger Manrope text, familiar controls and short Turkish instructions establish a calm, practical hierarchy. The first visible choices explain the source, direction and result; technical settings remain available through labelled disclosures.\n\nThe terracotta angular selection and its plotted wedge retain the instrument's signature. They describe the same software filter, while clear source text distinguishes the USB sensor, computer-generated example and recorded data. Guided tests put preparation before measurement and readable conclusions before statistics. Recording is explained as measurement data rather than video, with playback available directly in the page.",
     "keyCharacteristics": [
-      "Ink blue navigation, offwhite workspaces and a dark measurement canvas.",
-      "Compact controls, deliberate dividers and tabular measurement numerals.",
-      "A terracotta selection ribbon paired with the plotted angular sector.",
-      "Explicit provenance and honest unavailable-data states.",
-      "Local assets, visible keyboard focus and reduced-motion support."
+      "Ink blue horizontal navigation, paper workspaces and a dark measurement canvas.",
+      "Readable instructions and large direction/result controls before technical detail.",
+      "Terracotta angular selections paired with their plotted sector.",
+      "Guided questions, source-aware preparation and human-readable results.",
+      "Explained recording files and direct in-page playback.",
+      "Local assets, labelled native controls, visible focus and reduced-motion support."
     ],
     "rules": [
       {
@@ -365,13 +358,18 @@
       },
       {
         "name": "The Paired Annotation Rule",
-        "body": "Keep selection annotations consistent with the plotted sector. Color cannot substitute for the angle values or sector description.",
+        "body": "Keep direction presets, numeric angles and the plotted sector consistent. Color cannot replace the direction or angle description.",
         "section": "colors"
       },
       {
         "name": "The Aligned Values Rule",
-        "body": "Use tabular numerals for measurements, angles, elapsed values and data tables. Keep units visually subordinate without hiding them.",
+        "body": "Use tabular numerals for measurements, angles, elapsed time and data tables. Keep units visible and distinguish a missing measurement from zero.",
         "section": "typography"
+      },
+      {
+        "name": "The Explain Then Reveal Rule",
+        "body": "Present the useful next action and readable result first. Place filters, statistics and raw file exports in clearly labelled disclosures that start closed.",
+        "section": "layout"
       },
       {
         "name": "The Flat Instrument Rule",
@@ -380,19 +378,23 @@
       }
     ],
     "dos": [
-      "Do retain the ink blue rail, paper ground and dark plot as distinct working surfaces.",
-      "Do pair source color with visible source text and unavailable-data explanations.",
-      "Do keep the angular controls, ribbon values and plotted sector consistent.",
-      "Do use locally served Manrope, tabular data numerals and monospace raw cells.",
-      "Do preserve visible focus, native labelled inputs and reduced-motion behavior.",
-      "Do verify desktop and mobile rendered states before granting visual ship approval."
+      "Do preserve the horizontal ink blue header, paper working ground and dark plots.",
+      "Do explain source, direction and the readable result before technical detail.",
+      "Do retain labelled, initially closed disclosures for advanced controls and raw evidence.",
+      "Do pair source color with source text and honest unavailable-data explanations.",
+      "Do keep direction presets, angle values and the plotted sector consistent.",
+      "Do explain a file's purpose before asking a beginner to save or open it.",
+      "Do preserve local Manrope, tabular measurements, labelled native inputs, visible focus and reduced motion.",
+      "Do obtain a revision-specific rendered review after material layout or workflow changes."
     ],
     "donts": [
-      "Don't fabricate live measurements or add a decorative scanning sweep.",
-      "Don't present missing data or a proximity color as a safety conclusion.",
+      "Don't fabricate live measurements or draw a decorative scanning sweep.",
+      "Don't present missing returns or proximity color as a safety conclusion.",
+      "Don't require raw statistics, file-format knowledge or a download to understand the basic workflow.",
+      "Don't call measurement recordings video or imply every JSON file is playable.",
       "Don't turn every measurement group into an elevated card.",
-      "Don't substitute glyph characters for the existing SVG icon system.",
-      "Don't treat source inspection or DOM tests as a completed browser screenshot review."
+      "Don't substitute glyph characters for the shared SVG icons.",
+      "Don't present rendered review as a novice user study or physical sensor validation."
     ]
   }
 }

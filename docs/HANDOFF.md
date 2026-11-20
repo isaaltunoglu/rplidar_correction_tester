@@ -11,3 +11,9 @@ The 20 unit checks, DOM regression workflows and real Chrome browser integration
 The access restriction was lifted and the complete history moved from `.git-local` to standard `.git`. Use normal `git` commands. Original nested SDK Git metadata is preserved at `.git/vendor-sdk-history` and is not distributed. `scripts/package.py` packages tracked source into `dist/` with a SHA-256 checksum; generated artifacts, binaries and local Git metadata are excluded.
 
 Continue from the current files; do not restore hardcoded A2M8 performance labels, fake healthy states, automatic fault resets, or claims that missing returns prove free space. The exact connected hardware revision remains unknown.
+
+## Beginner usability revision
+
+The user's follow-up identified cognitive load, unclear experiments and unknown JSON/recording meanings. The interface now opens with a numbered source/direction/result flow, familiar horizontal navigation and larger text. Technical features remain available behind labelled disclosures. Six test questions give concrete preparation steps, centimetre input, explicit computer-generated examples and plain-language result/report summaries.
+
+Recording/replay now explains what is saved, distinguishes data from video, presents source/duration/measurement counts and draws replay on the same page. Direct in-memory playback, rewind, named speeds, a time position and file-format guidance are included. The 20 unit checks and expanded real-browser workflow cover disclosure, all six preparation guides, centimetre conversion, the example-target control, readable reports, direct playback and wrong-JSON recovery. The current independent UI review record is in UI_REVIEW.md; earlier screenshot approvals apply only to their earlier revision.

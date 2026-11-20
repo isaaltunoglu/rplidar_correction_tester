@@ -71,27 +71,22 @@
           ><svg class="brand-mark"><use href="#i-scan" /></svg
           ><span
             >RPLIDAR <strong>Lab</strong
-            ><small>Ölçüm & deney stüdyosu</small></span
+            ><small>Sensörü kolayca deneyin</small></span
           ></a
         >
         <nav aria-label="Çalışma alanları">
           <button class="nav-item active" data-page="live">
-            <svg><use href="#i-scan" /></svg>Canlı tarama<span
-              class="nav-dot"
-            ></span>
+            <svg><use href="#i-scan" /></svg><span>Canlı görüntü</span>
           </button>
           <button class="nav-item" data-page="experiments">
-            <svg><use href="#i-flask" /></svg>Deney tezgâhı
+            <svg><use href="#i-flask" /></svg><span>Adım adım test</span>
           </button>
           <button class="nav-item" data-page="recordings">
-            <svg><use href="#i-record" /></svg>Kayıt & tekrar<span
-              class="nav-count"
-              id="recordCount"
-              >0</span
-            >
+            <svg><use href="#i-record" /></svg><span>Kayıt ve izleme</span
+            ><span id="recordCount" class="nav-count">0</span>
           </button>
           <button class="nav-item" data-page="device">
-            <svg><use href="#i-chip" /></svg>Cihaz & kaynaklar
+            <svg><use href="#i-chip" /></svg><span>Ayarlar ve yardım</span>
           </button>
         </nav>
         <div class="sidebar-bottom">
@@ -136,40 +131,225 @@
           >
             <div class="page-heading">
               <div>
-                <h1 id="liveTitle">Çevreyi ölç. Veriyi keşfet.</h1>
-                <p>360° taramadan seçtiğiniz açıya, her ölçüm kontrolünüzde.</p>
+                <h1 id="liveTitle">Sensör ne görüyor?</h1>
+                <p>Bir yön seçin. O yöndeki nesnelerin uzaklığını görün.</p>
               </div>
+            </div>
+            <section class="source-choice">
+              <h2>
+                <span class="step-number">1</span> Nasıl denemek istersiniz?
+              </h2>
               <div class="source-switch">
-                <label for="sourceSelect">Veri kaynağı</label
+                <label for="sourceSelect">Ölçüm kaynağı</label
                 ><select id="sourceSelect">
-                  <option value="hardware">USB · Otomatik</option>
-                  <option value="demo">Simülasyon</option>
-                  <option value="replay">Kayıttan oynat</option>
+                  <option value="hardware">Kendi sensörüm · USB</option>
+                  <option value="demo">Sensörsüz örnek</option>
+                  <option value="replay">Kaydı açıp izle</option>
                 </select>
               </div>
-            </div>
-            <div class="telemetry" aria-label="Son taramanın ölçümleri">
-              <div>
-                <span>Tarama frekansı</span
-                ><strong id="metricHz">— <small>Hz</small></strong
-                ><span id="metricRpm">Tur / saniye</span>
-              </div>
-              <div>
-                <span>Seçili noktalar</span><strong id="metricPoints">—</strong
-                ><span id="metricRaw">Ham veri bekleniyor</span>
-              </div>
-              <div>
-                <span>En yakın yansıma</span
-                ><strong id="metricNear">— <small>m</small></strong
-                ><span id="metricAngle">Seçili sektör içinde</span>
-              </div>
-              <div>
-                <span>Açısal doluluk</span
-                ><strong id="metricCoverage">— <small>%</small></strong
-                ><span>1° kutular · seçili sektör</span>
-              </div>
-            </div>
+              <p class="helper">
+                Sensörü USB ile bağlayabilirsiniz. Sensörünüz yoksa “Sensörsüz
+                örnek” seçin.
+              </p>
+            </section>
+
             <div class="live-layout">
+              <aside class="settings-panel" aria-label="Açı ve ölçüm ayarları">
+                <div class="settings-title">
+                  <h2><span class="step-number">2</span>Hangi yöne baksın?</h2>
+                  <button id="resetConfig" class="text-button">
+                    Varsayılana dön
+                  </button>
+                </div>
+                <p class="helper">
+                  Renkli alan, seçtiğiniz yöndeki ölçümleri gösterir.
+                </p>
+                <div class="preset-grid" aria-label="Hazır açı seçimleri">
+                  <button
+                    class="preset active"
+                    data-center="0"
+                    data-width="120"
+                  >
+                    Ön taraf <small>120°</small></button
+                  ><button class="preset" data-center="180" data-width="120">
+                    Arka taraf <small>120°</small></button
+                  ><button class="preset" data-center="0" data-width="180">
+                    Geniş ön alan <small>180°</small></button
+                  ><button class="preset" data-center="0" data-width="360">
+                    Her yön <small>360°</small>
+                  </button>
+                </div>
+                <p id="selectedDirection" class="selected-direction"></p>
+                <details class="settings-details custom-angle">
+                  <summary>Farklı bir açı seç</summary>
+                  <div class="field">
+                    <label for="sectorCenter"
+                      >Merkez yönü
+                      <output id="centerLabel">0° · Ön</output></label
+                    ><input
+                      type="range"
+                      id="sectorCenter"
+                      min="0"
+                      max="359"
+                      step="1"
+                      value="0"
+                    />
+                  </div>
+                  <div class="field">
+                    <label for="sectorWidth"
+                      >Görüş açısı <output id="widthLabel">120°</output></label
+                    ><input
+                      type="range"
+                      id="sectorWidth"
+                      min="1"
+                      max="360"
+                      step="1"
+                      value="120"
+                    />
+                  </div>
+                  <div class="angle-ribbon">
+                    <span id="sectorStart">300°</span>
+                    <div><span></span><i></i><span></span></div>
+                    <span id="sectorEnd">60°</span>
+                  </div>
+                  <p class="angle-note" id="sectorDescription">
+                    Ön yön · 300° → 60° (0° üzerinden)
+                  </p>
+                </details>
+
+                <section class="live-result">
+                  <h2><span class="step-number">3</span> Ölçümü okuyun</h2>
+                  <div class="nearest-reading">
+                    <span>Seçtiğiniz yöndeki en yakın nesne</span
+                    ><strong id="metricNear">— <small>m</small></strong
+                    ><span id="metricAngle">Seçili sektör içinde</span>
+                  </div>
+                  <div class="proximity" id="proximity" data-state="unknown">
+                    <span class="status-dot"></span>
+                    <div>
+                      <strong id="proximityTitle">Ölçüm bekleniyor</strong>
+                      <p id="proximityText">
+                        Veri yokken açıklık değerlendirilemez.
+                      </p>
+                    </div>
+                  </div>
+                  <button data-go="experiments" class="button primary">
+                    Adım adım test yap <svg><use href="#i-arrow" /></svg>
+                  </button>
+                </section>
+                <details class="settings-details advanced-settings">
+                  <summary>Gelişmiş görüntü ayarları</summary>
+                  <div class="field">
+                    <label for="viewRange"
+                      >Görünüm yarıçapı
+                      <output id="viewLabel">5 m</output></label
+                    ><input
+                      type="range"
+                      id="viewRange"
+                      min="500"
+                      max="16000"
+                      step="250"
+                      value="5000"
+                    />
+                  </div>
+                  <label class="check-field"
+                    ><input type="checkbox" id="showContext" checked />Diğer
+                    açıları soluk göster</label
+                  >
+                  <details class="settings-details">
+                    <summary>Filtreler &amp; yön kalibrasyonu</summary>
+                    <div class="two-fields">
+                      <div class="field">
+                        <label for="minDistance">Min. mesafe · mm</label
+                        ><input
+                          id="minDistance"
+                          type="number"
+                          min="0"
+                          max="99999"
+                          value="150"
+                        />
+                      </div>
+                      <div class="field">
+                        <label for="maxDistance">Maks. mesafe · mm</label
+                        ><input
+                          id="maxDistance"
+                          type="number"
+                          min="1"
+                          max="100000"
+                          value="8000"
+                        />
+                      </div>
+                    </div>
+                    <div class="two-fields">
+                      <div class="field">
+                        <label for="qualityMin">Min. kalite · Q</label
+                        ><input
+                          id="qualityMin"
+                          type="number"
+                          min="0"
+                          max="63"
+                          value="0"
+                        />
+                      </div>
+                      <div class="field">
+                        <label for="angleOffset">Yön ofseti · °</label
+                        ><input
+                          id="angleOffset"
+                          type="number"
+                          min="-360"
+                          max="360"
+                          value="0"
+                        />
+                      </div>
+                    </div>
+                    <label class="check-field"
+                      ><input type="checkbox" id="invertAngle" />Açı yönünü ters
+                      çevir</label
+                    >
+                    <div class="field">
+                      <label for="colorMode">Nokta rengi</label
+                      ><select id="colorMode">
+                        <option value="distance">Mesafeye göre</option>
+                        <option value="quality">Kaliteye göre</option>
+                        <option value="single">Tek renk</option>
+                      </select>
+                    </div>
+                    <p class="helper">
+                      Ofset fiziksel montaja göre ayarlanır. Bazı modlarda Q
+                      sabittir; yansıtıcılık ölçümü değildir.
+                    </p>
+                  </details>
+                  <details class="settings-details">
+                    <summary>Yakınlık eşikleri</summary>
+                    <div class="two-fields">
+                      <div class="field">
+                        <label for="dangerDistance">Yakın · mm</label
+                        ><input
+                          id="dangerDistance"
+                          type="number"
+                          min="1"
+                          max="50000"
+                          value="500"
+                        />
+                      </div>
+                      <div class="field">
+                        <label for="warningDistance">Uyarı · mm</label
+                        ><input
+                          id="warningDistance"
+                          type="number"
+                          min="2"
+                          max="100000"
+                          value="1000"
+                        />
+                      </div>
+                    </div>
+                    <p class="helper">
+                      Yalnızca seçili sektördeki yansımaları izler. Bir makineyi
+                      kontrol etmez.
+                    </p>
+                  </details>
+                </details>
+              </aside>
               <div class="plot-column">
                 <section
                   class="plot-panel"
@@ -184,17 +364,13 @@
                     <div class="plot-controls">
                       <label class="sr-only" for="renderStyle"
                         >Çizim biçimi</label
-                      ><select id="renderStyle">
-                        <option value="points">Noktalar</option>
-                        <option value="rays">Işınlar</option>
-                        <option value="contour">Kontur</option></select
                       ><button
-                        class="plot-button"
+                        class="button plot-download"
                         id="snapshotButton"
                         title="Görünümü PNG olarak indir"
-                        aria-label="Görünümü PNG olarak indir"
+                        aria-label="Ekrandaki ölçüm görüntüsünü resim olarak indir"
                       >
-                        <svg><use href="#i-down" /></svg>
+                        Resim indir
                       </button>
                     </div>
                   </div>
@@ -224,257 +400,137 @@
                   </div>
                   <div class="plot-footer">
                     <span
-                      ><i class="legend-dot"></i>Seçili sektör
-                      <i class="legend-dot context-dot"></i>360° bağlam</span
+                      ><i class="legend-dot"></i>Seçilen alan
+                      <i class="legend-dot context-dot"></i>Diğer yönler</span
                     ><span id="scanMeta">Tarama bekleniyor</span>
                   </div>
                 </section>
-                <div class="plot-under">
-                  <div>
-                    <h3>Frekans geçmişi</h3>
-                    <span id="historyLabel">Son 60 tarama</span>
-                  </div>
-                  <canvas
-                    id="frequencyChart"
-                    aria-label="Son 60 taramanın frekans grafiği"
-                  ></canvas>
-                  <div class="history-scale">
-                    <span id="hzMin">—</span><span id="hzMax">—</span>
-                  </div>
-                </div>
+                <details class="beginner-help">
+                  <summary>Ekrandaki noktalar ne anlama geliyor?</summary>
+                  <p>
+                    Ortadaki işaret sensördür. Her nokta, sensörün bir nesneye
+                    kadar ölçtüğü uzaklığı gösterir. Nokta merkeze ne kadar
+                    yakınsa nesne de o kadar yakındır. Renkli dilim, baktığınız
+                    yöndür.
+                  </p>
+                  <p>
+                    Nokta görünmeyen bir yerin boş olduğu söylenemez; o yönden
+                    ölçüm alınamamış olabilir.
+                  </p>
+                </details>
+
                 <div class="scan-actions">
-                  <button class="button" id="exportCSV">
-                    <svg><use href="#i-down" /></svg>Tarama CSV</button
-                  ><button class="button" id="exportJSON">Ham JSON</button
-                  ><button class="button" id="recordButton">
+                  <button class="button" id="recordButton">
                     <span class="record-dot"></span
                     ><span>Kaydı başlat</span></button
                   ><span id="recordingInfo" class="muted"
-                    >Ham 360° veri kaydedilir</span
+                    >Kaydettiğiniz ölçümleri “Kayıt ve izleme” sayfasından
+                    indirebilirsiniz.</span
                   >
                 </div>
               </div>
-              <aside class="settings-panel" aria-label="Açı ve ölçüm ayarları">
-                <div class="settings-title">
-                  <h2>Görüş alanı</h2>
-                  <button id="resetConfig" class="text-button">Sıfırla</button>
+            </div>
+
+            <details id="technicalReadings" class="technical-details">
+              <div class="field">
+                <label for="renderStyle">Noktalar nasıl çizilsin?</label
+                ><select id="renderStyle">
+                  <option value="points">Noktalar</option>
+                  <option value="rays">Işınlar</option>
+                  <option value="contour">Kontur</option>
+                </select>
+              </div>
+              <summary>Teknik ölçümler ve veri dosyaları</summary>
+              <div class="telemetry" aria-label="Son taramanın ölçümleri">
+                <div>
+                  <span>Tarama frekansı</span
+                  ><strong id="metricHz">— <small>Hz</small></strong
+                  ><span id="metricRpm">Tur / saniye</span>
                 </div>
-                <p class="helper">
-                  Sensör 360° tarar. Analiz edilecek alanı aşağıdan seçin.
-                </p>
-                <div class="preset-grid" aria-label="Hazır açı seçimleri">
-                  <button
-                    class="preset active"
-                    data-center="0"
-                    data-width="120"
-                  >
-                    Ön 120°</button
-                  ><button class="preset" data-center="180" data-width="120">
-                    Arka 120°</button
-                  ><button class="preset" data-center="0" data-width="180">
-                    Ön 180°</button
-                  ><button class="preset" data-center="0" data-width="360">
-                    Tam 360°
-                  </button>
+                <div>
+                  <span>Seçili noktalar</span
+                  ><strong id="metricPoints">—</strong
+                  ><span id="metricRaw">Ham veri bekleniyor</span>
                 </div>
-                <div class="field">
-                  <label for="sectorCenter"
-                    >Merkez yönü
-                    <output id="centerLabel">0° · Ön</output></label
-                  ><input
-                    type="range"
-                    id="sectorCenter"
-                    min="0"
-                    max="359"
-                    step="1"
-                    value="0"
-                  />
+
+                <div>
+                  <span>Açısal doluluk</span
+                  ><strong id="metricCoverage">— <small>%</small></strong
+                  ><span>1° kutular · seçili sektör</span>
                 </div>
-                <div class="field">
-                  <label for="sectorWidth"
-                    >Görüş açısı <output id="widthLabel">120°</output></label
-                  ><input
-                    type="range"
-                    id="sectorWidth"
-                    min="1"
-                    max="360"
-                    step="1"
-                    value="120"
-                  />
+              </div>
+              <div class="plot-under">
+                <div>
+                  <h3>Frekans geçmişi</h3>
+                  <span id="historyLabel">Son 60 tarama</span>
                 </div>
-                <div class="angle-ribbon">
-                  <span id="sectorStart">300°</span>
-                  <div><span></span><i></i><span></span></div>
-                  <span id="sectorEnd">60°</span>
+                <canvas
+                  id="frequencyChart"
+                  aria-label="Son 60 taramanın frekans grafiği"
+                ></canvas>
+                <div class="history-scale">
+                  <span id="hzMin">—</span><span id="hzMax">—</span>
                 </div>
-                <p class="angle-note" id="sectorDescription">
-                  Ön yön · 300° → 60° (0° üzerinden)
-                </p>
-                <div class="field">
-                  <label for="viewRange"
-                    >Görünüm yarıçapı <output id="viewLabel">5 m</output></label
-                  ><input
-                    type="range"
-                    id="viewRange"
-                    min="500"
-                    max="16000"
-                    step="250"
-                    value="5000"
-                  />
-                </div>
-                <label class="check-field"
-                  ><input type="checkbox" id="showContext" checked />Diğer
-                  açıları soluk göster</label
-                >
-                <details class="settings-details">
-                  <summary>Filtreler & yön kalibrasyonu</summary>
-                  <div class="two-fields">
-                    <div class="field">
-                      <label for="minDistance">Min. mesafe · mm</label
-                      ><input
-                        id="minDistance"
-                        type="number"
-                        min="0"
-                        max="99999"
-                        value="150"
-                      />
-                    </div>
-                    <div class="field">
-                      <label for="maxDistance">Maks. mesafe · mm</label
-                      ><input
-                        id="maxDistance"
-                        type="number"
-                        min="1"
-                        max="100000"
-                        value="8000"
-                      />
-                    </div>
-                  </div>
-                  <div class="two-fields">
-                    <div class="field">
-                      <label for="qualityMin">Min. kalite · Q</label
-                      ><input
-                        id="qualityMin"
-                        type="number"
-                        min="0"
-                        max="63"
-                        value="0"
-                      />
-                    </div>
-                    <div class="field">
-                      <label for="angleOffset">Yön ofseti · °</label
-                      ><input
-                        id="angleOffset"
-                        type="number"
-                        min="-360"
-                        max="360"
-                        value="0"
-                      />
-                    </div>
+              </div>
+              <section class="raw-section">
+                <div class="section-heading">
+                  <div>
+                    <h2>Ölçüm tablosu</h2>
+                    <p>Seçili sektör · X sağ, Y ön · Grafikle aynı filtreler</p>
                   </div>
                   <label class="check-field"
-                    ><input type="checkbox" id="invertAngle" />Açı yönünü ters
-                    çevir</label
+                    ><input type="checkbox" id="showRaw" />Ham veriyi
+                    göster</label
                   >
-                  <div class="field">
-                    <label for="colorMode">Nokta rengi</label
-                    ><select id="colorMode">
-                      <option value="distance">Mesafeye göre</option>
-                      <option value="quality">Kaliteye göre</option>
-                      <option value="single">Tek renk</option>
-                    </select>
-                  </div>
-                  <p class="helper">
-                    Ofset fiziksel montaja göre ayarlanır. Bazı modlarda Q
-                    sabittir; yansıtıcılık ölçümü değildir.
-                  </p>
-                </details>
-                <details class="settings-details">
-                  <summary>Yakınlık eşikleri</summary>
-                  <div class="two-fields">
-                    <div class="field">
-                      <label for="dangerDistance">Yakın · mm</label
-                      ><input
-                        id="dangerDistance"
-                        type="number"
-                        min="1"
-                        max="50000"
-                        value="500"
-                      />
-                    </div>
-                    <div class="field">
-                      <label for="warningDistance">Uyarı · mm</label
-                      ><input
-                        id="warningDistance"
-                        type="number"
-                        min="2"
-                        max="100000"
-                        value="1000"
-                      />
-                    </div>
-                  </div>
-                  <p class="helper">
-                    Yalnızca seçili sektördeki yansımaları izler. Bir makineyi
-                    kontrol etmez.
-                  </p>
-                </details>
-                <div class="proximity" id="proximity" data-state="unknown">
-                  <span class="status-dot"></span>
-                  <div>
-                    <strong id="proximityTitle">Ölçüm bekleniyor</strong>
-                    <p id="proximityText">
-                      Veri yokken açıklık değerlendirilemez.
-                    </p>
-                  </div>
                 </div>
-              </aside>
-            </div>
-            <section class="raw-section">
-              <div class="section-heading">
-                <div>
-                  <h2>Ölçüm tablosu</h2>
-                  <p>Seçili sektör · X sağ, Y ön · Grafikle aynı filtreler</p>
+                <div id="rawContainer" class="table-scroll" hidden>
+                  <table>
+                    <thead>
+                      <tr>
+                        <th>Açı</th>
+                        <th>Ham açı</th>
+                        <th>Mesafe · mm</th>
+                        <th>X · mm</th>
+                        <th>Y · mm</th>
+                        <th>Kalite · Q</th>
+                      </tr>
+                    </thead>
+                    <tbody id="rawBody"></tbody>
+                  </table>
+                  <p class="helper">
+                    İlk 120 nokta gösterilir. CSV, seçili sektörün tüm
+                    noktalarını içerir.
+                  </p>
                 </div>
-                <label class="check-field"
-                  ><input type="checkbox" id="showRaw" />Ham veriyi
-                  göster</label
+                <div
+                  class="direction-strip"
+                  aria-label="Dört yöndeki en yakın yansımalar"
                 >
-              </div>
-              <div id="rawContainer" class="table-scroll" hidden>
-                <table>
-                  <thead>
-                    <tr>
-                      <th>Açı</th>
-                      <th>Ham açı</th>
-                      <th>Mesafe · mm</th>
-                      <th>X · mm</th>
-                      <th>Y · mm</th>
-                      <th>Kalite · Q</th>
-                    </tr>
-                  </thead>
-                  <tbody id="rawBody"></tbody>
-                </table>
-                <p class="helper">
-                  İlk 120 nokta gösterilir. CSV, seçili sektörün tüm noktalarını
-                  içerir.
-                </p>
-              </div>
-              <div
-                class="direction-strip"
-                aria-label="Dört yöndeki en yakın yansımalar"
-              >
-                <div><span>Ön · ±45°</span><strong id="dir0">—</strong></div>
-                <div>
-                  <span>Sağ · 90° ±45°</span><strong id="dir1">—</strong>
+                  <div><span>Ön · ±45°</span><strong id="dir0">—</strong></div>
+                  <div>
+                    <span>Sağ · 90° ±45°</span><strong id="dir1">—</strong>
+                  </div>
+                  <div>
+                    <span>Arka · 180° ±45°</span><strong id="dir2">—</strong>
+                  </div>
+                  <div>
+                    <span>Sol · 270° ±45°</span><strong id="dir3">—</strong>
+                  </div>
                 </div>
-                <div>
-                  <span>Arka · 180° ±45°</span><strong id="dir2">—</strong>
-                </div>
-                <div>
-                  <span>Sol · 270° ±45°</span><strong id="dir3">—</strong>
-                </div>
+              </section>
+              <div class="scan-actions">
+                <button class="button" id="exportCSV">
+                  Ölçüm tablosu (.csv)</button
+                ><button class="button" id="exportJSON">
+                  Tek ölçüm verisi (.json)
+                </button>
               </div>
-            </section>
+              <p class="helper">
+                Tablo (.csv), seçili alanın o anki noktalarını Excel gibi
+                programlarda açar. Tek ölçüm (.json), yazılımla incelemek
+                içindir; kayıt oynatıcısına yüklenmez.
+              </p>
+            </details>
           </section>
           <section
             class="page"
@@ -484,17 +540,38 @@
           >
             <div class="page-heading">
               <div>
-                <h1 id="experimentsTitle">Bir soruyla başla.</h1>
-                <p>
-                  Aynı koşullarda ölç, karşılaştır, kanıtıyla birlikte raporla.
-                </p>
+                <h1 id="experimentsTitle">Sensörü adım adım test edin</h1>
+                <p>Bir test seçin, yönergeyi uygulayın ve sonucu okuyun.</p>
               </div>
               <span class="badge neutral" id="trialSource"
                 >Kaynak bekleniyor</span
               >
             </div>
+            <div class="guided-choice">
+              <label for="guidedTrialSelect"
+                ><span class="step-number">1</span> Ne denemek
+                istiyorsunuz?</label
+              ><select id="guidedTrialSelect">
+                <option value="accuracy">Mesafeyi doğru ölçüyor mu?</option>
+                <option value="repeatability">
+                  Aynı nesneyi hep benzer ölçüyor mu?
+                </option>
+                <option value="surface">
+                  Farklı yüzeyleri görebiliyor mu?
+                </option>
+                <option value="frequency">
+                  Kesintisiz ölçüm yapabiliyor mu?
+                </option>
+                <option value="coverage">
+                  Ön ve arka alanları görebiliyor mu?
+                </option>
+                <option value="obstacle">
+                  Yakındaki nesneyi görebiliyor mu?
+                </option>
+              </select>
+            </div>
             <div class="experiment-layout">
-              <div class="experiment-list">
+              <div hidden class="experiment-list">
                 <h2>Deney protokolleri</h2>
                 <button class="experiment-option active" data-trial="accuracy">
                   <span class="experiment-icon"
@@ -546,36 +623,46 @@
               </div>
               <div class="experiment-workbench">
                 <div class="section-heading">
-                  <h2 id="trialTitle">Mesafe doğruluğu</h2>
+                  <h2 id="trialTitle" class="sr-only">
+                    Mesafeyi doğru ölçüyor mu?
+                  </h2>
                   <span class="badge neutral" id="trialState">Hazır</span>
                 </div>
                 <p class="protocol" id="trialProtocol"></p>
+                <section class="trial-preparation">
+                  <h3><span class="step-number">2</span> Testi hazırlayın</h3>
+                  <ol id="trialSteps"></ol>
+                  <button
+                    id="prepareDemoTarget"
+                    type="button"
+                    class="button"
+                    hidden
+                  >
+                    100 cm örnek hedefi hazırla
+                  </button>
+                  <p class="helper" id="trialExpected"></p>
+                </section>
                 <form id="trialForm">
-                  <div class="three-fields">
-                    <div class="field">
-                      <label for="trialReference">Referans · mm</label
+                  <div class="guided-fields">
+                    <div class="field" id="guidedReferenceField">
+                      <label for="guidedReference"
+                        >Cetvelle ölçtüğünüz uzaklık · cm</label
                       ><input
-                        id="trialReference"
+                        id="guidedReference"
                         type="number"
-                        min="1"
-                        max="100000"
-                        value="1000"
-                        required
-                      />
-                    </div>
-                    <div class="field">
-                      <label for="trialTolerance">Hata toleransı · ±mm</label
-                      ><input
-                        id="trialTolerance"
-                        type="number"
-                        min="1"
+                        min="0.1"
                         max="10000"
-                        value="30"
+                        step="0.1"
+                        value="100"
                         required
                       />
+                      <p class="helper">
+                        Sensörün ortasından nesneye kadar ölçün. 100 cm = 1
+                        metre.
+                      </p>
                     </div>
                     <div class="field">
-                      <label for="trialDuration">Süre · saniye</label
+                      <label for="trialDuration">Kaç saniye ölçsün?</label
                       ><input
                         id="trialDuration"
                         type="number"
@@ -586,9 +673,34 @@
                       />
                     </div>
                   </div>
-                  <div class="three-fields">
+                  <details class="test-advanced">
+                    <summary>Test ayarlarını ve notları değiştir</summary>
                     <div class="field">
-                      <label for="trialBearing">Hedef doğrultusu · °</label
+                      <label for="trialReference"
+                        >Karşılaştırma uzaklığı · mm (10 mm = 1 cm)</label
+                      ><input
+                        id="trialReference"
+                        type="number"
+                        min="1"
+                        max="100000"
+                        value="1000"
+                        required
+                      />
+                    </div>
+                    <div class="field">
+                      <label for="trialTolerance"
+                        >Kabul ettiğiniz hata payı · mm</label
+                      ><input
+                        id="trialTolerance"
+                        type="number"
+                        min="1"
+                        max="10000"
+                        value="30"
+                        required
+                      />
+                    </div>
+                    <div class="field">
+                      <label for="trialBearing">Nesnenin yönü · derece</label
                       ><input
                         id="trialBearing"
                         type="number"
@@ -599,7 +711,8 @@
                       />
                     </div>
                     <div class="field">
-                      <label for="trialBeam">Örnekleme açıklığı · °</label
+                      <label for="trialBeam"
+                        >Nesne çevresinde ölçülecek açı · derece</label
                       ><input
                         id="trialBeam"
                         type="number"
@@ -610,7 +723,8 @@
                       />
                     </div>
                     <div class="field">
-                      <label for="trialLabel">Koşul / malzeme</label
+                      <label for="trialLabel"
+                        >Denenen nesne / yüzey (isteğe bağlı)</label
                       ><input
                         id="trialLabel"
                         type="text"
@@ -618,27 +732,32 @@
                         placeholder="Örn. beyaz karton · iç ortam"
                       />
                     </div>
-                  </div>
-                  <div class="field">
-                    <label for="trialNotes">Deney notları</label
-                    ><textarea
-                      id="trialNotes"
-                      rows="2"
-                      maxlength="1500"
-                      placeholder="Hedef, aydınlatma, ölçüm referansı ve değişen koşullar…"
-                    ></textarea>
-                  </div>
-                  <div
-                    class="trial-config-summary"
-                    id="trialConfigSummary"
-                  ></div>
+                    <div class="field">
+                      <label for="trialNotes"
+                        >Eklemek istediğiniz notlar (isteğe bağlı)</label
+                      ><textarea
+                        id="trialNotes"
+                        rows="2"
+                        maxlength="1500"
+                        placeholder="Hedef, aydınlatma, ölçüm referansı ve değişen koşullar…"
+                      ></textarea>
+                    </div>
+                    <div
+                      class="trial-config-summary"
+                      id="trialConfigSummary"
+                    ></div>
+                  </details>
+
+                  <h3 class="test-start-title">
+                    <span class="step-number">3</span> Ölçümü başlatın
+                  </h3>
                   <div class="trial-actions">
                     <button
                       class="button primary"
                       type="submit"
                       id="trialStart"
                     >
-                      <svg><use href="#i-play" /></svg>Deneyi başlat</button
+                      Testi başlat</button
                     ><button
                       type="button"
                       class="button"
@@ -647,7 +766,8 @@
                     >
                       İptal et</button
                     ><span class="muted" id="trialProgress"
-                      >Her turda hedef açıklığının medyanı alınır.</span
+                      >Ölçüm sürerken sensörü ve nesneyi hareket
+                      ettirmeyin.</span
                     >
                   </div>
                   <progress
@@ -657,54 +777,75 @@
                     aria-label="Deney ilerlemesi"
                   ></progress>
                 </form>
-                <div class="trial-chart-area">
-                  <canvas
-                    id="trialChart"
-                    aria-label="Deney boyunca ölçülen hedef mesafesi"
-                  ></canvas>
-                  <p class="helper" id="trialChartLabel">
-                    Deney tamamlandığında tur başına ölçümler burada görünür.
+
+                <div id="trialResults" class="trial-result" hidden></div>
+                <details class="test-chart-details">
+                  <summary>Ölçüm grafiğini incele</summary>
+                  <div class="trial-chart-area">
+                    <canvas
+                      id="trialChart"
+                      aria-label="Deney boyunca ölçülen hedef mesafesi"
+                    ></canvas>
+                    <p class="helper" id="trialChartLabel">
+                      Deney tamamlandığında tur başına ölçümler burada görünür.
+                    </p>
+                  </div>
+                </details>
+                <button
+                  disabled
+                  id="simpleReport"
+                  type="button"
+                  class="button primary"
+                >
+                  Sonuç raporunu indir
+                </button>
+              </div>
+            </div>
+
+            <details class="test-history">
+              <summary>Önceki testler ve ayrıntılı veriler</summary>
+              <div class="section-heading results-heading">
+                <div>
+                  <h2>Deney defteri</h2>
+                  <p>
+                    Sonuçları karşılaştırın. En fazla 20 deney / 1 milyon kanıt
+                    noktası tutulur; eski sonuçları indirin.
                   </p>
                 </div>
-                <div id="trialResults" class="trial-result" hidden></div>
+                <button class="button" id="exportReport" disabled>
+                  Tüm sonuçları raporla
+                </button>
               </div>
-            </div>
-            <div class="section-heading results-heading">
-              <div>
-                <h2>Deney defteri</h2>
-                <p>
-                  Sonuçları karşılaştırın. En fazla 20 deney / 1 milyon kanıt
-                  noktası tutulur; eski sonuçları indirin.
-                </p>
+              <div class="table-scroll">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Deney / koşul</th>
+                      <th>Kaynak</th>
+                      <th>Tur / isabet</th>
+                      <th>Ort. · mm</th>
+                      <th>σ · mm</th>
+                      <th>RMSE · mm</th>
+                      <th>Ort. Hz</th>
+                      <th>Kanıt</th>
+                    </tr>
+                  </thead>
+                  <tbody id="trialHistory">
+                    <tr>
+                      <td colspan="8" class="empty-cell">
+                        Henüz deney yok. Bir protokol seçin ve ilk ölçümü
+                        başlatın.
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
-              <button class="button" id="exportReport" disabled>
-                <svg><use href="#i-down" /></svg>Deney raporu
-              </button>
-            </div>
-            <div class="table-scroll">
-              <table>
-                <thead>
-                  <tr>
-                    <th>Deney / koşul</th>
-                    <th>Kaynak</th>
-                    <th>Tur / isabet</th>
-                    <th>Ort. · mm</th>
-                    <th>σ · mm</th>
-                    <th>RMSE · mm</th>
-                    <th>Ort. Hz</th>
-                    <th>Kanıt</th>
-                  </tr>
-                </thead>
-                <tbody id="trialHistory">
-                  <tr>
-                    <td colspan="8" class="empty-cell">
-                      Henüz deney yok. Bir protokol seçin ve ilk ölçümü
-                      başlatın.
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
+              <p class="helper">
+                “Test verileri” düğmesi, testin ayarlarını ve ölçümlerini .json
+                dosyasına kaydeder. Bu dosya teknik inceleme içindir; kayıt
+                oynatıcısında açılmaz. Okumak için “Sonuç raporu”nu indirin.
+              </p>
+            </details>
           </section>
           <section
             class="page"
@@ -714,14 +855,16 @@
           >
             <div class="page-heading">
               <div>
-                <h1 id="recordingsTitle">Ölçümü yeniden yaşat.</h1>
+                <h1 id="recordingsTitle">
+                  Ölçümleri kaydedin ve yeniden izleyin
+                </h1>
                 <p>
-                  Ham 360° taramaları kaydedin. Aynı veride farklı açıları
-                  tekrar inceleyin.
+                  Bu kayıt bir video değildir. Sensörün ölçtüğü noktaları,
+                  uzaklıkları ve ölçüm zamanlarını saklar.
                 </p>
               </div>
               <label class="button primary file-button"
-                ><svg><use href="#i-upload" /></svg>Kayıt dosyası aç<input
+                ><svg><use href="#i-upload" /></svg>Kaydı aç<input
                   type="file"
                   id="recordingFile"
                   accept=".json,application/json"
@@ -729,10 +872,11 @@
             </div>
             <div class="recording-layout">
               <section class="recording-control">
-                <h2>Oturum kaydı</h2>
+                <h2>Yeni bir ölçüm kaydı oluşturun</h2>
                 <p>
-                  Ham noktalar, zaman damgaları, veri kaynağı, cihaz bilgisi ve
-                  filtre ayarları birlikte saklanır.
+                  Önce canlı görüntüyü veya sensörsüz örneği açın. Kaydı
+                  başlatın, bir süre ölçün, sonra kaydı bitirip bilgisayarınıza
+                  indirin.
                 </p>
                 <div class="recording-summary">
                   <span id="captureStatus">Kayıt hazır</span
@@ -745,19 +889,27 @@
                   <button class="button primary" id="recordButton2">
                     <span class="record-dot"></span>Kaydı başlat</button
                   ><button class="button" id="downloadRecording" disabled>
-                    <svg><use href="#i-down" /></svg>JSON indir</button
+                    Kaydı bilgisayara kaydet</button
+                  ><button
+                    class="button"
+                    type="button"
+                    id="watchRecording"
+                    disabled
+                  >
+                    Kaydı burada izle</button
                   ><button class="button" id="clearRecording" disabled>
-                    Temizle
+                    Bu kaydı temizle
                   </button>
                 </div>
                 <p class="helper">
-                  Kayıt tarayıcı belleğinde tutulur. Sayfayı kapatmadan indirin.
-                  Simülasyon kayıtları kalıcı olarak “demo” işaretlidir.
+                  İndirilen .json dosyası yeniden izlemek içindir. Sayfayı
+                  kapatmadan kaydedin; ölçümler şu anda yalnızca bu sayfanın
+                  belleğinde tutulur.
                 </p>
               </section>
               <section class="replay-control">
                 <div class="section-heading">
-                  <h2>Tekrar oynatıcı</h2>
+                  <h2>Kaydedilmiş ölçümleri izleyin</h2>
                   <span class="badge neutral" id="replaySource"
                     >Dosya bekleniyor</span
                   >
@@ -765,15 +917,24 @@
                 <div class="replay-empty" id="replayEmpty">
                   <svg><use href="#i-record" /></svg>
                   <p>
-                    Bir RPLIDAR Lab JSON kaydı açın.<br />Sensör bağlantısı
-                    gerektirmez.
+                    “Kaydı aç” ile daha önce indirdiğiniz kayıt dosyasını seçin.
+                    Görüntü ve oynatma düğmeleri burada açılır. Sensör
+                    bağlamanız gerekmez.
                   </p>
                 </div>
                 <div id="replayControls" hidden>
                   <p id="replayFilename"></p>
+                  <div id="replayFacts" class="replay-facts"></div>
+                  <div class="replay-preview">
+                    <canvas
+                      id="replayCanvas"
+                      aria-label="Kayıtlı ölçümler. Noktalar sensöre göre nesnelerin uzaklığını gösterir."
+                    ></canvas>
+                  </div>
                   <label for="replayScrub"
-                    >Tarama konumu
-                    <output id="replayPosition">0 / 0</output></label
+                    >Kaydın neresindesiniz?<output id="replayPosition"
+                      >0 saniye</output
+                    ></label
                   ><input
                     type="range"
                     id="replayScrub"
@@ -784,52 +945,80 @@
                   <div class="scan-actions">
                     <button class="button primary" id="replayPlay">
                       <svg><use href="#i-play" /></svg>Oynat</button
-                    ><label for="replaySpeed" class="sr-only"
-                      >Oynatma hızı</label
+                    ><button type="button" id="replayRestart" class="button">
+                      Başa dön</button
+                    ><label for="replaySpeed">İzleme hızı</label
                     ><select id="replaySpeed">
-                      <option value="0.25">0,25×</option>
-                      <option value="0.5">0,5×</option>
-                      <option value="1" selected>1×</option>
-                      <option value="2">2×</option>
-                      <option value="4">4×</option></select
+                      <option value="0.25">Çok yavaş</option>
+                      <option value="0.5">Yavaş</option>
+                      <option value="1" selected>Normal hız</option>
+                      <option value="2">2 kat hızlı</option>
+                      <option value="4">4 kat hızlı</option></select
                     ><button class="button" id="viewReplay">
-                      Taramayı görüntüle
+                      Bakılan yönü değiştir
                     </button>
                   </div>
                   <p class="helper">
-                    Tekrar oynatıldığında USB edinimi durdurulur. Görünen zaman,
-                    kayıttaki ölçüm zamanıdır.
+                    Oynat: ölçümlerin zaman içindeki değişimini gösterir.
+                    Durdur: görüntüyü o anda tutar. Zaman çubuğunu sürükleyerek
+                    başka bir ana geçebilirsiniz. Bu sırada yeni sensör ölçümü
+                    alınmaz.
                   </p>
                 </div>
               </section>
             </div>
             <section class="documentation-block">
-              <h2>Paylaşılabilir bir ölçüm kaydı</h2>
-              <div class="doc-columns">
-                <div>
-                  <h3>Kayıt sırasında</h3>
-                  <p>
-                    Açı seçimi ham veriyi kesmez; tam tarama saklanır. CSV dışa
-                    aktarımı ise o anda seçili sektörün filtrelenmiş noktalarını
-                    içerir.
-                  </p>
-                </div>
-                <div>
-                  <h3>Tekrar incelerken</h3>
-                  <p>
-                    Kayıtlı ayarlar dosyayla yüklenir. Sonrasında görüş alanını,
-                    yön ofsetini ve mesafe filtrelerini değiştirebilirsiniz.
-                  </p>
-                </div>
-                <div>
-                  <h3>Kanıtı korurken</h3>
-                  <p>
-                    Gerçek cihaz, simülasyon ve tekrar oynatma ayrı
-                    kaynaklardır. Tekrar oynatma yeni bir fiziksel test
-                    sayılmaz.
-                  </p>
-                </div>
-              </div>
+              <h2>Kayıtta tam olarak ne var?</h2>
+              <dl class="file-explanation">
+                <dt>Ölçülen noktalar</dt>
+                <dd>
+                  Her noktanın sensöre göre yönü ve uzaklığı. Nesnelerin adını
+                  veya rengini içermez.
+                </dd>
+                <dt>Zaman sırası</dt>
+                <dd>
+                  Ölçümlerin hangi sırayla ve ne zaman alındığı. Oynatıcı, bu
+                  sırayı yeniden gösterir.
+                </dd>
+                <dt>Ölçümün kaynağı</dt>
+                <dd>
+                  Gerçek sensör mü, sensörsüz örnek mi kullanıldığı ve varsa
+                  cihaz bilgileri.
+                </dd>
+                <dt>Seçtiğiniz ayarlar</dt>
+                <dd>
+                  Bakılan yön ve açı gibi ayarlar. Kaydı izlerken başka bir yön
+                  seçebilirsiniz.
+                </dd>
+              </dl>
+              <details class="file-guide">
+                <summary>
+                  Rapor, kayıt dosyası ve tablo arasındaki fark nedir?
+                </summary>
+                <dl class="file-explanation">
+                  <dt>Sonuç raporu · .html</dt>
+                  <dd>
+                    Test sonucunu okumak ve paylaşmak içindir. Tarayıcıda
+                    açılır; yazdırma menüsünden PDF yapılabilir.
+                  </dd>
+                  <dt>Kayıt dosyası · .json</dt>
+                  <dd>
+                    Bir süre boyunca alınan ölçümleri yeniden izlemek içindir.
+                    Bu sayfadaki “Kaydı aç” düğmesiyle açılır.
+                  </dd>
+                  <dt>Ölçüm tablosu · .csv</dt>
+                  <dd>
+                    Tek bir andaki seçili noktaları Excel gibi bir programda
+                    incelemek içindir. Oynatılabilir bir kayıt değildir.
+                  </dd>
+                  <dt>Tek ölçüm / test verileri · .json</dt>
+                  <dd>
+                    Yazılımla ayrıntılı inceleme içindir. Kayıt oynatıcısına
+                    yüklenmez. Dosya uzantısı aynı olsa da içeriği ve kullanım
+                    amacı farklıdır.
+                  </dd>
+                </dl>
+              </details>
             </section>
           </section>
           <section

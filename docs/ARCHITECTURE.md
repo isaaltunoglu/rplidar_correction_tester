@@ -26,3 +26,13 @@ Recordings: `schema: rplidar-lab/1`, `kind: recording`, original `source`, `devi
 Experiments: the same schema, `kind: experiment`, frozen settings, protocol, reference, tolerance, label, notes, duration, per-scan samples, result, completion status and raw `evidence`. At most 20 recent experiments and 1,000,000 total raw-evidence points are held in browser memory; the oldest complete entries are evicted when either aggregate limit is exceeded. Export before closing or reaching these bounds. Raw evidence is capped at 1,200 scans/500,000 points per trial. Replay is browser-local and retains its original source; it cannot start a new acquisition experiment.
 
 Source changes affect the shared local acquisition service. Separate browser tabs share one instrument; they do not own independent sensors. Source-generation changes abort any active experiment and stop recording. The three-second browser freshness gate also clears plots when the server becomes unreachable.
+
+## Beginner presentation
+
+The underlying acquisition units and `rplidar-lab/1` file schemas remain unchanged. The guided reference field accepts centimetres and writes millimetres into the existing experimental calculation inputs. Front/rear presets remain identical geometric filters; technical telemetry, rendering styles, numeric controls and point exports start inside labelled details elements.
+
+Guided experiment questions have separate physical-sensor and computer-generated-example preparation copy. An explicit example-target button switches only the synthetic scenario to a nominal 1,000 mm target. It does not configure physical hardware. Results describe centimetres and comparisons in plain language before optional statistical details. HTML reports follow the same summaries.
+
+The recording page now draws the current replay frame on its own canvas, using the same geometry renderer as the live page. A completed in-memory recording can be validated and played directly, without a download/import round trip. The original JSON export/import path remains available. A recorded file retains its acquisition source; replay still suspends backend acquisition through `idle`.
+
+File purposes are explicit: replayable `kind: recording`, single-frame `kind: scan`, experiment evidence `kind: experiment`, selected-point CSV and human-readable HTML report. The player rejects experiment/snapshot JSON with an explanatory message rather than suggesting all JSON is replayable.
