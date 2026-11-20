@@ -1,0 +1,26 @@
+{
+  "detector": {
+    "ignoreRules": [],
+    "ignoreFiles": [],
+    "ignoreValues": [
+      {
+        "rule": "cramped-padding",
+        "value": "*",
+        "files": [
+          "index.html"
+        ],
+        "createdAt": "2026-11-20T21:45:03.920Z",
+        "reason": "Agent source review: plot-toolbar has 8px padding-block; telemetry cells have 23px right padding; table text has 12px 15px cell padding; device-information has 30px right padding and removes its border when responsive padding becomes zero. Wrapper-only findings do not reflect these nested or logical insets."
+      },
+      {
+        "rule": "cream-palette",
+        "value": "*",
+        "files": [
+          "index.html"
+        ],
+        "createdAt": "2026-11-20T21:45:03.972Z",
+        "reason": "Agent delegated design decision, documented in DESIGN.md before this hook: Field Paper #f6f5f0 intentionally accompanies ink-blue navigation, dark measurement plots and terracotta sector annotations. Retain the existing deliberate palette; no user color confirmation is claimed."
+      }
+    ]
+  }
+}

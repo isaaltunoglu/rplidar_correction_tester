@@ -1,6 +1,7 @@
 .git-local/
 .impeccable/*
 !.impeccable/design.json
+!.impeccable/config.json
 .agents/
 .codex/
 .aws/
