@@ -1,0 +1,1008 @@
+<!doctype html>
+<html lang="tr">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#123d61" />
+    <meta
+      name="description"
+      content="SLAMTEC LiDAR için yerel ölçüm, deney ve kayıt laboratuvarı."
+    />
+    <title>RPLIDAR Lab · Ölçüm ve deney stüdyosu</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="stylesheet" href="/web/styles.css" />
+    <script type="module" src="/web/app.js"></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">Çalışma alanına geç</a>
+    <svg
+      class="svg-library"
+      xmlns="http://www.w3.org/2000/svg"
+      aria-hidden="true"
+    >
+      <defs>
+        <symbol id="i-scan" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="9" />
+          <circle cx="12" cy="12" r="4" />
+          <path d="M12 3v9l6-4" />
+        </symbol>
+        <symbol id="i-flask" viewBox="0 0 24 24">
+          <path d="M9 3h6m-5 0v7L4 19q-1 2 2 2h12q3 0 2-2l-6-9V3M7 15h10" />
+        </symbol>
+        <symbol id="i-record" viewBox="0 0 24 24">
+          <rect x="3" y="5" width="18" height="15" rx="2" />
+          <path d="M7 5V3m10 2V3M3 10h18" />
+          <circle cx="12" cy="15" r="2" />
+        </symbol>
+        <symbol id="i-chip" viewBox="0 0 24 24">
+          <rect x="6" y="6" width="12" height="12" rx="2" />
+          <path d="M9 2v4m6-4v4M9 18v4m6-4v4M2 9h4m-4 6h4m12-6h4m-4 6h4" />
+        </symbol>
+        <symbol id="i-down" viewBox="0 0 24 24">
+          <path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5" />
+        </symbol>
+        <symbol id="i-play" viewBox="0 0 24 24">
+          <path d="m8 5 11 7-11 7z" />
+        </symbol>
+        <symbol id="i-pause" viewBox="0 0 24 24">
+          <path d="M8 5v14M16 5v14" />
+        </symbol>
+        <symbol id="i-arrow" viewBox="0 0 24 24">
+          <path d="M5 12h14m-6-6 6 6-6 6" />
+        </symbol>
+        <symbol id="i-info" viewBox="0 0 24 24">
+          <circle cx="12" cy="12" r="9" />
+          <path d="M12 11v6m0-10v1" />
+        </symbol>
+        <symbol id="i-upload" viewBox="0 0 24 24">
+          <path d="M12 16V3m-5 5 5-5 5 5M4 16v5h16v-5" />
+        </symbol>
+        <symbol id="i-check" viewBox="0 0 24 24">
+          <path d="m5 12 4 4L19 6" />
+        </symbol>
+      </defs>
+    </svg>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <a href="#live" class="brand" aria-label="RPLIDAR Lab ana ekran"
+          ><svg class="brand-mark"><use href="#i-scan" /></svg
+          ><span
+            >RPLIDAR <strong>Lab</strong
+            ><small>Ölçüm & deney stüdyosu</small></span
+          ></a
+        >
+        <nav aria-label="Çalışma alanları">
+          <button class="nav-item active" data-page="live">
+            <svg><use href="#i-scan" /></svg>Canlı tarama<span
+              class="nav-dot"
+            ></span>
+          </button>
+          <button class="nav-item" data-page="experiments">
+            <svg><use href="#i-flask" /></svg>Deney tezgâhı
+          </button>
+          <button class="nav-item" data-page="recordings">
+            <svg><use href="#i-record" /></svg>Kayıt & tekrar<span
+              class="nav-count"
+              id="recordCount"
+              >0</span
+            >
+          </button>
+          <button class="nav-item" data-page="device">
+            <svg><use href="#i-chip" /></svg>Cihaz & kaynaklar
+          </button>
+        </nav>
+        <div class="sidebar-bottom">
+          <div class="local-label">
+            <span class="status-dot"></span>Yerel çalışma alanı
+          </div>
+          <p>
+            Veriler bu bilgisayarda işlenir.<br />Bulut bağlantısı gerektirmez.
+          </p>
+          <span class="version">RPLIDAR Lab / 1.0</span>
+        </div>
+      </aside>
+      <div class="workspace">
+        <header class="topbar">
+          <div class="breadcrumb">
+            <span class="breadcrumb-parent">Çalışma alanı</span> <span>/</span>
+            <strong id="pageCrumb">Canlı tarama</strong>
+          </div>
+          <div class="top-actions">
+            <span id="connectionBadge" class="badge neutral"
+              ><span class="status-dot"></span>USB aranıyor</span
+            ><button id="pauseButton" class="button small" disabled>
+              <svg><use href="#i-pause" /></svg><span>Duraklat</span>
+            </button>
+          </div>
+        </header>
+        <main id="main" tabindex="-1">
+          <div class="source-notice" id="sourceNotice" role="status">
+            <svg><use href="#i-info" /></svg
+            ><span id="noticeText"
+              >USB LiDAR bekleniyor. Cihaz bağlandığında otomatik olarak
+              aranacak.</span
+            ><button id="tryDemo" class="text-button">
+              Simülasyonu dene <span aria-hidden="true">↗</span>
+            </button>
+          </div>
+          <section
+            class="page active"
+            id="page-live"
+            aria-labelledby="liveTitle"
+          >
+            <div class="page-heading">
+              <div>
+                <h1 id="liveTitle">Çevreyi ölç. Veriyi keşfet.</h1>
+                <p>360° taramadan seçtiğiniz açıya, her ölçüm kontrolünüzde.</p>
+              </div>
+              <div class="source-switch">
+                <label for="sourceSelect">Veri kaynağı</label
+                ><select id="sourceSelect">
+                  <option value="hardware">USB · Otomatik</option>
+                  <option value="demo">Simülasyon</option>
+                  <option value="replay">Kayıttan oynat</option>
+                </select>
+              </div>
+            </div>
+            <div class="telemetry" aria-label="Son taramanın ölçümleri">
+              <div>
+                <span>Tarama frekansı</span
+                ><strong id="metricHz">— <small>Hz</small></strong
+                ><span id="metricRpm">Tur / saniye</span>
+              </div>
+              <div>
+                <span>Seçili noktalar</span><strong id="metricPoints">—</strong
+                ><span id="metricRaw">Ham veri bekleniyor</span>
+              </div>
+              <div>
+                <span>En yakın yansıma</span
+                ><strong id="metricNear">— <small>m</small></strong
+                ><span id="metricAngle">Seçili sektör içinde</span>
+              </div>
+              <div>
+                <span>Açısal doluluk</span
+                ><strong id="metricCoverage">— <small>%</small></strong
+                ><span>1° kutular · seçili sektör</span>
+              </div>
+            </div>
+            <div class="live-layout">
+              <div class="plot-column">
+                <section
+                  class="plot-panel"
+                  aria-label="Kutupsal tarama görünümü"
+                >
+                  <div class="plot-toolbar">
+                    <div>
+                      <span class="plot-status" id="plotDot"></span
+                      ><strong>Tarama görünümü</strong
+                      ><span id="plotSource" class="plot-tag">USB</span>
+                    </div>
+                    <div class="plot-controls">
+                      <label class="sr-only" for="renderStyle"
+                        >Çizim biçimi</label
+                      ><select id="renderStyle">
+                        <option value="points">Noktalar</option>
+                        <option value="rays">Işınlar</option>
+                        <option value="contour">Kontur</option></select
+                      ><button
+                        class="plot-button"
+                        id="snapshotButton"
+                        title="Görünümü PNG olarak indir"
+                        aria-label="Görünümü PNG olarak indir"
+                      >
+                        <svg><use href="#i-down" /></svg>
+                      </button>
+                    </div>
+                  </div>
+                  <div class="canvas-wrap">
+                    <canvas
+                      id="radarCanvas"
+                      tabindex="0"
+                      aria-label="Tarama grafiği. Saat yönünde 0 derece ön, 90 sağ, 180 arka, 270 sol. Sayısal ölçümler altta ve ham veri tablosunda."
+                    ></canvas>
+                    <div class="plot-watermark" id="plotWatermark">
+                      FİZİKSEL VERİ BEKLENİYOR
+                    </div>
+                    <div class="plot-empty" id="plotEmpty">
+                      <svg><use href="#i-scan" /></svg>
+                      <h2>Bir bağlantı, 360° keşif.</h2>
+                      <p>
+                        USB LiDAR bağlandığında tarama burada görünür.<br />Sensör
+                        olmadan simülasyonla tüm iş akışını deneyin.
+                      </p>
+                      <button class="button accent" id="plotDemo">
+                        Simülasyonu başlat<svg><use href="#i-arrow" /></svg>
+                      </button>
+                    </div>
+                    <div class="point-readout" id="pointReadout">
+                      Noktayı incelemek için üzerine gelin veya dokunun.
+                    </div>
+                  </div>
+                  <div class="plot-footer">
+                    <span
+                      ><i class="legend-dot"></i>Seçili sektör
+                      <i class="legend-dot context-dot"></i>360° bağlam</span
+                    ><span id="scanMeta">Tarama bekleniyor</span>
+                  </div>
+                </section>
+                <div class="plot-under">
+                  <div>
+                    <h3>Frekans geçmişi</h3>
+                    <span id="historyLabel">Son 60 tarama</span>
+                  </div>
+                  <canvas
+                    id="frequencyChart"
+                    aria-label="Son 60 taramanın frekans grafiği"
+                  ></canvas>
+                  <div class="history-scale">
+                    <span id="hzMin">—</span><span id="hzMax">—</span>
+                  </div>
+                </div>
+                <div class="scan-actions">
+                  <button class="button" id="exportCSV">
+                    <svg><use href="#i-down" /></svg>Tarama CSV</button
+                  ><button class="button" id="exportJSON">Ham JSON</button
+                  ><button class="button" id="recordButton">
+                    <span class="record-dot"></span
+                    ><span>Kaydı başlat</span></button
+                  ><span id="recordingInfo" class="muted"
+                    >Ham 360° veri kaydedilir</span
+                  >
+                </div>
+              </div>
+              <aside class="settings-panel" aria-label="Açı ve ölçüm ayarları">
+                <div class="settings-title">
+                  <h2>Görüş alanı</h2>
+                  <button id="resetConfig" class="text-button">Sıfırla</button>
+                </div>
+                <p class="helper">
+                  Sensör 360° tarar. Analiz edilecek alanı aşağıdan seçin.
+                </p>
+                <div class="preset-grid" aria-label="Hazır açı seçimleri">
+                  <button
+                    class="preset active"
+                    data-center="0"
+                    data-width="120"
+                  >
+                    Ön 120°</button
+                  ><button class="preset" data-center="180" data-width="120">
+                    Arka 120°</button
+                  ><button class="preset" data-center="0" data-width="180">
+                    Ön 180°</button
+                  ><button class="preset" data-center="0" data-width="360">
+                    Tam 360°
+                  </button>
+                </div>
+                <div class="field">
+                  <label for="sectorCenter"
+                    >Merkez yönü
+                    <output id="centerLabel">0° · Ön</output></label
+                  ><input
+                    type="range"
+                    id="sectorCenter"
+                    min="0"
+                    max="359"
+                    step="1"
+                    value="0"
+                  />
+                </div>
+                <div class="field">
+                  <label for="sectorWidth"
+                    >Görüş açısı <output id="widthLabel">120°</output></label
+                  ><input
+                    type="range"
+                    id="sectorWidth"
+                    min="1"
+                    max="360"
+                    step="1"
+                    value="120"
+                  />
+                </div>
+                <div class="angle-ribbon">
+                  <span id="sectorStart">300°</span>
+                  <div><span></span><i></i><span></span></div>
+                  <span id="sectorEnd">60°</span>
+                </div>
+                <p class="angle-note" id="sectorDescription">
+                  Ön yön · 300° → 60° (0° üzerinden)
+                </p>
+                <div class="field">
+                  <label for="viewRange"
+                    >Görünüm yarıçapı <output id="viewLabel">5 m</output></label
+                  ><input
+                    type="range"
+                    id="viewRange"
+                    min="500"
+                    max="16000"
+                    step="250"
+                    value="5000"
+                  />
+                </div>
+                <label class="check-field"
+                  ><input type="checkbox" id="showContext" checked />Diğer
+                  açıları soluk göster</label
+                >
+                <details class="settings-details">
+                  <summary>Filtreler & yön kalibrasyonu</summary>
+                  <div class="two-fields">
+                    <div class="field">
+                      <label for="minDistance">Min. mesafe · mm</label
+                      ><input
+                        id="minDistance"
+                        type="number"
+                        min="0"
+                        max="99999"
+                        value="150"
+                      />
+                    </div>
+                    <div class="field">
+                      <label for="maxDistance">Maks. mesafe · mm</label
+                      ><input
+                        id="maxDistance"
+                        type="number"
+                        min="1"
+                        max="100000"
+                        value="8000"
+                      />
+                    </div>
+                  </div>
+                  <div class="two-fields">
+                    <div class="field">
+                      <label for="qualityMin">Min. kalite · Q</label
+                      ><input
+                        id="qualityMin"
+                        type="number"
+                        min="0"
+                        max="63"
+                        value="0"
+                      />
+                    </div>
+                    <div class="field">
+                      <label for="angleOffset">Yön ofseti · °</label
+                      ><input
+                        id="angleOffset"
+                        type="number"
+                        min="-360"
+                        max="360"
+                        value="0"
+                      />
+                    </div>
+                  </div>
+                  <label class="check-field"
+                    ><input type="checkbox" id="invertAngle" />Açı yönünü ters
+                    çevir</label
+                  >
+                  <div class="field">
+                    <label for="colorMode">Nokta rengi</label
+                    ><select id="colorMode">
+                      <option value="distance">Mesafeye göre</option>
+                      <option value="quality">Kaliteye göre</option>
+                      <option value="single">Tek renk</option>
+                    </select>
+                  </div>
+                  <p class="helper">
+                    Ofset fiziksel montaja göre ayarlanır. Bazı modlarda Q
+                    sabittir; yansıtıcılık ölçümü değildir.
+                  </p>
+                </details>
+                <details class="settings-details">
+                  <summary>Yakınlık eşikleri</summary>
+                  <div class="two-fields">
+                    <div class="field">
+                      <label for="dangerDistance">Yakın · mm</label
+                      ><input
+                        id="dangerDistance"
+                        type="number"
+                        min="1"
+                        max="50000"
+                        value="500"
+                      />
+                    </div>
+                    <div class="field">
+                      <label for="warningDistance">Uyarı · mm</label
+                      ><input
+                        id="warningDistance"
+                        type="number"
+                        min="2"
+                        max="100000"
+                        value="1000"
+                      />
+                    </div>
+                  </div>
+                  <p class="helper">
+                    Yalnızca seçili sektördeki yansımaları izler. Bir makineyi
+                    kontrol etmez.
+                  </p>
+                </details>
+                <div class="proximity" id="proximity" data-state="unknown">
+                  <span class="status-dot"></span>
+                  <div>
+                    <strong id="proximityTitle">Ölçüm bekleniyor</strong>
+                    <p id="proximityText">
+                      Veri yokken açıklık değerlendirilemez.
+                    </p>
+                  </div>
+                </div>
+              </aside>
+            </div>
+            <section class="raw-section">
+              <div class="section-heading">
+                <div>
+                  <h2>Ölçüm tablosu</h2>
+                  <p>Seçili sektör · X sağ, Y ön · Grafikle aynı filtreler</p>
+                </div>
+                <label class="check-field"
+                  ><input type="checkbox" id="showRaw" />Ham veriyi
+                  göster</label
+                >
+              </div>
+              <div id="rawContainer" class="table-scroll" hidden>
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Açı</th>
+                      <th>Ham açı</th>
+                      <th>Mesafe · mm</th>
+                      <th>X · mm</th>
+                      <th>Y · mm</th>
+                      <th>Kalite · Q</th>
+                    </tr>
+                  </thead>
+                  <tbody id="rawBody"></tbody>
+                </table>
+                <p class="helper">
+                  İlk 120 nokta gösterilir. CSV, seçili sektörün tüm noktalarını
+                  içerir.
+                </p>
+              </div>
+              <div
+                class="direction-strip"
+                aria-label="Dört yöndeki en yakın yansımalar"
+              >
+                <div><span>Ön · ±45°</span><strong id="dir0">—</strong></div>
+                <div>
+                  <span>Sağ · 90° ±45°</span><strong id="dir1">—</strong>
+                </div>
+                <div>
+                  <span>Arka · 180° ±45°</span><strong id="dir2">—</strong>
+                </div>
+                <div>
+                  <span>Sol · 270° ±45°</span><strong id="dir3">—</strong>
+                </div>
+              </div>
+            </section>
+          </section>
+          <section
+            class="page"
+            id="page-experiments"
+            aria-labelledby="experimentsTitle"
+            hidden
+          >
+            <div class="page-heading">
+              <div>
+                <h1 id="experimentsTitle">Bir soruyla başla.</h1>
+                <p>
+                  Aynı koşullarda ölç, karşılaştır, kanıtıyla birlikte raporla.
+                </p>
+              </div>
+              <span class="badge neutral" id="trialSource"
+                >Kaynak bekleniyor</span
+              >
+            </div>
+            <div class="experiment-layout">
+              <div class="experiment-list">
+                <h2>Deney protokolleri</h2>
+                <button class="experiment-option active" data-trial="accuracy">
+                  <span class="experiment-icon"
+                    ><svg><use href="#i-scan" /></svg></span
+                  ><span
+                    ><strong>Mesafe doğruluğu</strong
+                    ><small>Referans mesafeye göre hata</small></span
+                  ><svg><use href="#i-arrow" /></svg></button
+                ><button class="experiment-option" data-trial="repeatability">
+                  <span class="experiment-icon"
+                    ><svg><use href="#i-record" /></svg></span
+                  ><span
+                    ><strong>Tekrarlanabilirlik</strong
+                    ><small>Sabit hedefte ölçüm kararlılığı</small></span
+                  ><svg><use href="#i-arrow" /></svg></button
+                ><button class="experiment-option" data-trial="surface">
+                  <span class="experiment-icon"
+                    ><svg><use href="#i-flask" /></svg></span
+                  ><span
+                    ><strong>Yüzey karşılaştırması</strong
+                    ><small>Malzeme ve ışık koşulları</small></span
+                  ><svg><use href="#i-arrow" /></svg></button
+                ><button class="experiment-option" data-trial="frequency">
+                  <span class="experiment-icon"
+                    ><svg><use href="#i-chip" /></svg></span
+                  ><span
+                    ><strong>Tarama performansı</strong
+                    ><small>Frekans ve mod kararlılığı</small></span
+                  ><svg><use href="#i-arrow" /></svg></button
+                ><button class="experiment-option" data-trial="coverage">
+                  <span class="experiment-icon"
+                    ><svg><use href="#i-scan" /></svg></span
+                  ><span
+                    ><strong>Açısal kapsama</strong
+                    ><small>Kör bölgeler ve geçerli dönüşler</small></span
+                  ><svg><use href="#i-arrow" /></svg></button
+                ><button class="experiment-option" data-trial="obstacle">
+                  <span class="experiment-icon"
+                    ><svg><use href="#i-info" /></svg></span
+                  ><span
+                    ><strong>Yakın hedef algılama</strong
+                    ><small>Seçili doğrultuda dönüş sürekliliği</small></span
+                  ><svg><use href="#i-arrow" /></svg>
+                </button>
+                <p class="helper protocol-note">
+                  Deneyler cihazın davranışını incelemek içindir. Sonuçlar ölçüm
+                  koşulları ve kullanılan referansla birlikte yorumlanır.
+                </p>
+              </div>
+              <div class="experiment-workbench">
+                <div class="section-heading">
+                  <h2 id="trialTitle">Mesafe doğruluğu</h2>
+                  <span class="badge neutral" id="trialState">Hazır</span>
+                </div>
+                <p class="protocol" id="trialProtocol"></p>
+                <form id="trialForm">
+                  <div class="three-fields">
+                    <div class="field">
+                      <label for="trialReference">Referans · mm</label
+                      ><input
+                        id="trialReference"
+                        type="number"
+                        min="1"
+                        max="100000"
+                        value="1000"
+                        required
+                      />
+                    </div>
+                    <div class="field">
+                      <label for="trialTolerance">Hata toleransı · ±mm</label
+                      ><input
+                        id="trialTolerance"
+                        type="number"
+                        min="1"
+                        max="10000"
+                        value="30"
+                        required
+                      />
+                    </div>
+                    <div class="field">
+                      <label for="trialDuration">Süre · saniye</label
+                      ><input
+                        id="trialDuration"
+                        type="number"
+                        min="3"
+                        max="60"
+                        value="10"
+                        required
+                      />
+                    </div>
+                  </div>
+                  <div class="three-fields">
+                    <div class="field">
+                      <label for="trialBearing">Hedef doğrultusu · °</label
+                      ><input
+                        id="trialBearing"
+                        type="number"
+                        min="0"
+                        max="359"
+                        value="0"
+                        required
+                      />
+                    </div>
+                    <div class="field">
+                      <label for="trialBeam">Örnekleme açıklığı · °</label
+                      ><input
+                        id="trialBeam"
+                        type="number"
+                        min="1"
+                        max="30"
+                        value="4"
+                        required
+                      />
+                    </div>
+                    <div class="field">
+                      <label for="trialLabel">Koşul / malzeme</label
+                      ><input
+                        id="trialLabel"
+                        type="text"
+                        maxlength="120"
+                        placeholder="Örn. beyaz karton · iç ortam"
+                      />
+                    </div>
+                  </div>
+                  <div class="field">
+                    <label for="trialNotes">Deney notları</label
+                    ><textarea
+                      id="trialNotes"
+                      rows="2"
+                      maxlength="1500"
+                      placeholder="Hedef, aydınlatma, ölçüm referansı ve değişen koşullar…"
+                    ></textarea>
+                  </div>
+                  <div
+                    class="trial-config-summary"
+                    id="trialConfigSummary"
+                  ></div>
+                  <div class="trial-actions">
+                    <button
+                      class="button primary"
+                      type="submit"
+                      id="trialStart"
+                    >
+                      <svg><use href="#i-play" /></svg>Deneyi başlat</button
+                    ><button
+                      type="button"
+                      class="button"
+                      id="trialCancel"
+                      disabled
+                    >
+                      İptal et</button
+                    ><span class="muted" id="trialProgress"
+                      >Her turda hedef açıklığının medyanı alınır.</span
+                    >
+                  </div>
+                  <progress
+                    id="trialProgressBar"
+                    max="100"
+                    value="0"
+                    aria-label="Deney ilerlemesi"
+                  ></progress>
+                </form>
+                <div class="trial-chart-area">
+                  <canvas
+                    id="trialChart"
+                    aria-label="Deney boyunca ölçülen hedef mesafesi"
+                  ></canvas>
+                  <p class="helper" id="trialChartLabel">
+                    Deney tamamlandığında tur başına ölçümler burada görünür.
+                  </p>
+                </div>
+                <div id="trialResults" class="trial-result" hidden></div>
+              </div>
+            </div>
+            <div class="section-heading results-heading">
+              <div>
+                <h2>Deney defteri</h2>
+                <p>
+                  Sonuçları karşılaştırın. En fazla 20 deney / 1 milyon kanıt
+                  noktası tutulur; eski sonuçları indirin.
+                </p>
+              </div>
+              <button class="button" id="exportReport" disabled>
+                <svg><use href="#i-down" /></svg>Deney raporu
+              </button>
+            </div>
+            <div class="table-scroll">
+              <table>
+                <thead>
+                  <tr>
+                    <th>Deney / koşul</th>
+                    <th>Kaynak</th>
+                    <th>Tur / isabet</th>
+                    <th>Ort. · mm</th>
+                    <th>σ · mm</th>
+                    <th>RMSE · mm</th>
+                    <th>Ort. Hz</th>
+                    <th>Kanıt</th>
+                  </tr>
+                </thead>
+                <tbody id="trialHistory">
+                  <tr>
+                    <td colspan="8" class="empty-cell">
+                      Henüz deney yok. Bir protokol seçin ve ilk ölçümü
+                      başlatın.
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+          <section
+            class="page"
+            id="page-recordings"
+            aria-labelledby="recordingsTitle"
+            hidden
+          >
+            <div class="page-heading">
+              <div>
+                <h1 id="recordingsTitle">Ölçümü yeniden yaşat.</h1>
+                <p>
+                  Ham 360° taramaları kaydedin. Aynı veride farklı açıları
+                  tekrar inceleyin.
+                </p>
+              </div>
+              <label class="button primary file-button"
+                ><svg><use href="#i-upload" /></svg>Kayıt dosyası aç<input
+                  type="file"
+                  id="recordingFile"
+                  accept=".json,application/json"
+              /></label>
+            </div>
+            <div class="recording-layout">
+              <section class="recording-control">
+                <h2>Oturum kaydı</h2>
+                <p>
+                  Ham noktalar, zaman damgaları, veri kaynağı, cihaz bilgisi ve
+                  filtre ayarları birlikte saklanır.
+                </p>
+                <div class="recording-summary">
+                  <span id="captureStatus">Kayıt hazır</span
+                  ><strong id="captureFrames">0 <small>tarama</small></strong
+                  ><span id="captureSize"
+                    >En fazla 1.200 tarama / 500.000 nokta</span
+                  >
+                </div>
+                <div class="scan-actions">
+                  <button class="button primary" id="recordButton2">
+                    <span class="record-dot"></span>Kaydı başlat</button
+                  ><button class="button" id="downloadRecording" disabled>
+                    <svg><use href="#i-down" /></svg>JSON indir</button
+                  ><button class="button" id="clearRecording" disabled>
+                    Temizle
+                  </button>
+                </div>
+                <p class="helper">
+                  Kayıt tarayıcı belleğinde tutulur. Sayfayı kapatmadan indirin.
+                  Simülasyon kayıtları kalıcı olarak “demo” işaretlidir.
+                </p>
+              </section>
+              <section class="replay-control">
+                <div class="section-heading">
+                  <h2>Tekrar oynatıcı</h2>
+                  <span class="badge neutral" id="replaySource"
+                    >Dosya bekleniyor</span
+                  >
+                </div>
+                <div class="replay-empty" id="replayEmpty">
+                  <svg><use href="#i-record" /></svg>
+                  <p>
+                    Bir RPLIDAR Lab JSON kaydı açın.<br />Sensör bağlantısı
+                    gerektirmez.
+                  </p>
+                </div>
+                <div id="replayControls" hidden>
+                  <p id="replayFilename"></p>
+                  <label for="replayScrub"
+                    >Tarama konumu
+                    <output id="replayPosition">0 / 0</output></label
+                  ><input
+                    type="range"
+                    id="replayScrub"
+                    min="0"
+                    max="0"
+                    value="0"
+                  />
+                  <div class="scan-actions">
+                    <button class="button primary" id="replayPlay">
+                      <svg><use href="#i-play" /></svg>Oynat</button
+                    ><label for="replaySpeed" class="sr-only"
+                      >Oynatma hızı</label
+                    ><select id="replaySpeed">
+                      <option value="0.25">0,25×</option>
+                      <option value="0.5">0,5×</option>
+                      <option value="1" selected>1×</option>
+                      <option value="2">2×</option>
+                      <option value="4">4×</option></select
+                    ><button class="button" id="viewReplay">
+                      Taramayı görüntüle
+                    </button>
+                  </div>
+                  <p class="helper">
+                    Tekrar oynatıldığında USB edinimi durdurulur. Görünen zaman,
+                    kayıttaki ölçüm zamanıdır.
+                  </p>
+                </div>
+              </section>
+            </div>
+            <section class="documentation-block">
+              <h2>Paylaşılabilir bir ölçüm kaydı</h2>
+              <div class="doc-columns">
+                <div>
+                  <h3>Kayıt sırasında</h3>
+                  <p>
+                    Açı seçimi ham veriyi kesmez; tam tarama saklanır. CSV dışa
+                    aktarımı ise o anda seçili sektörün filtrelenmiş noktalarını
+                    içerir.
+                  </p>
+                </div>
+                <div>
+                  <h3>Tekrar incelerken</h3>
+                  <p>
+                    Kayıtlı ayarlar dosyayla yüklenir. Sonrasında görüş alanını,
+                    yön ofsetini ve mesafe filtrelerini değiştirebilirsiniz.
+                  </p>
+                </div>
+                <div>
+                  <h3>Kanıtı korurken</h3>
+                  <p>
+                    Gerçek cihaz, simülasyon ve tekrar oynatma ayrı
+                    kaynaklardır. Tekrar oynatma yeni bir fiziksel test
+                    sayılmaz.
+                  </p>
+                </div>
+              </div>
+            </section>
+          </section>
+          <section
+            class="page"
+            id="page-device"
+            aria-labelledby="deviceTitle"
+            hidden
+          >
+            <div class="page-heading">
+              <div>
+                <h1 id="deviceTitle">Cihazı tanı. Sınırlarını bil.</h1>
+                <p>
+                  SDK üzerinden okunan yetenekler, bağlantı tanısı ve üretici
+                  kaynakları.
+                </p>
+              </div>
+              <button class="button" id="healthButton">
+                <svg><use href="#i-check" /></svg>Sağlığı yeniden sorgula
+              </button>
+            </div>
+            <div class="device-layout">
+              <section class="device-information">
+                <h2>Cihaz kimliği</h2>
+                <dl id="deviceInfo">
+                  <dt>Model</dt>
+                  <dd>Fiziksel cihaz bekleniyor</dd>
+                </dl>
+                <h3>Tarama modu</h3>
+                <div class="field">
+                  <label for="scanMode">Cihazın bildirdiği modlar</label
+                  ><select id="scanMode" disabled>
+                    <option value="">Bağlı cihaz yok</option>
+                  </select>
+                </div>
+                <p class="helper" id="modeInfo">
+                  Örnekleme hızı ve menzil, bağlı cihazdan okunur.
+                </p>
+                <div id="motorControl" hidden>
+                  <div class="field">
+                    <label for="motorSpeed">Motor hedefi · RPM</label
+                    ><input type="number" id="motorSpeed" />
+                  </div>
+                  <button class="button" id="applyMotor">
+                    Motor hedefini uygula
+                  </button>
+                </div>
+                <p class="helper" id="motorInfo">
+                  Motor kontrol desteği bağlantı sonrasında gösterilir.
+                </p>
+              </section>
+              <section class="connection-control">
+                <h2>USB bağlantısı</h2>
+                <p>
+                  Bilinen USB adaptörleri arka planda aranır. Aygıt kimliği
+                  LiDAR olduğunu kanıtlamaz; SDK el sıkışması gerekir.
+                </p>
+                <div class="field">
+                  <label for="portSelect">Seri port</label
+                  ><select id="portSelect">
+                    <option value="">Otomatik algıla</option>
+                  </select>
+                </div>
+                <div class="field">
+                  <label for="baudSelect">Baud hızı</label
+                  ><select id="baudSelect">
+                    <option value="0">Otomatik dene</option>
+                    <option>115200</option>
+                    <option>256000</option>
+                    <option>460800</option>
+                    <option>1000000</option>
+                  </select>
+                </div>
+                <button class="button primary" id="reconnectButton">
+                  USB ile yeniden bağlan
+                </button>
+                <div class="field demo-scene">
+                  <label for="demoScene">Simülasyon senaryosu</label
+                  ><select id="demoScene">
+                    <option value="room">Oda · sabit duvarlar</option>
+                    <option value="target">Referans hedef · 1.000 mm</option>
+                    <option value="moving">Hareketli nesne</option>
+                    <option value="dropout">Eksik dönüşler</option>
+                  </select>
+                </div>
+                <p class="helper">
+                  Simülasyon seçiliyken senaryo değişir. Fiziksel cihaz
+                  davranışını temsil ettiği varsayılmaz.
+                </p>
+              </section>
+            </div>
+            <section class="event-section">
+              <div class="section-heading">
+                <h2>Bağlantı günlüğü</h2>
+                <span class="muted">Son 60 olay</span>
+              </div>
+              <ol id="eventLog" class="event-log">
+                <li>Sunucu bağlantısı bekleniyor.</li>
+              </ol>
+            </section>
+            <section class="documentation-block">
+              <h2>Deneyden önce bilinmesi gerekenler</h2>
+              <div class="doc-columns">
+                <div>
+                  <h3>Açı ve yön</h3>
+                  <p>
+                    Ön yön 0°, sağ 90°, arka 180°, sol 270° kabul edilir. Ön
+                    120°; 300°–60°, arka 120°; 120°–240° aralığıdır. Montaja
+                    göre yön ofsetini ayarlayın.
+                  </p>
+                </div>
+                <div>
+                  <h3>Ölçümün anlamı</h3>
+                  <p>
+                    Geçerli dönüş olmayan açı “boş” veya “güvenli” sayılmaz. Q
+                    her modda gerçek yoğunluk değildir. Kontur yalnızca ardışık
+                    noktaları birleştirir; SLAM veya konum kestirimi yapmaz.
+                  </p>
+                </div>
+                <div>
+                  <h3>Model ve revizyon</h3>
+                  <p>
+                    A2M8 adı tek başına menzil ve örnekleme hızını belirlemez.
+                    Eski veri sayfası ile güncel ürün sayfası farklı revizyonlar
+                    içerir. Kendi cihazınızın kimliğini ve modlarını esas alın.
+                  </p>
+                </div>
+              </div>
+              <h3>Birincil kaynaklar</h3>
+              <ul class="source-links">
+                <li>
+                  <a
+                    href="https://github.com/Slamtec/rplidar_sdk"
+                    target="_blank"
+                    rel="noreferrer"
+                    >SLAMTEC resmî C++ SDK
+                    <span>Bağlantı, tarama modları, veri çözümleme ↗</span></a
+                  >
+                </li>
+                <li>
+                  <a
+                    href="https://www.slamtec.com/en/lidar/a2spec"
+                    target="_blank"
+                    rel="noreferrer"
+                    >RPLIDAR A2 güncel teknik özellikler
+                    <span>Model ve revizyona bağlı değerler ↗</span></a
+                  >
+                </li>
+                <li>
+                  <a
+                    href="https://bucket.download.slamtec.com/d25d26d45180b88f3913796817e5db92e81cb823/LD208_SLAMTEC_rplidar_datasheet_A2M8_v1.0_en.pdf"
+                    target="_blank"
+                    rel="noreferrer"
+                    >A2M8 veri sayfası · v1.0
+                    <span>Eski revizyon; karşılaştırma için ↗</span></a
+                  >
+                </li>
+                <li>
+                  <a
+                    href="https://www.slamtec.ai/wp-content/uploads/2023/11/LR001_SLAMTEC_rplidar_protocol_v2.4_en.pdf"
+                    target="_blank"
+                    rel="noreferrer"
+                    >RPLIDAR haberleşme protokolü
+                    <span>Geçersiz ölçümler, kalite ve komutlar ↗</span></a
+                  >
+                </li>
+              </ul>
+            </section>
+          </section>
+          <footer class="app-footer">
+            <span
+              >RPLIDAR Lab <span class="footer-sep">/</span> Araştır, ölç,
+              karşılaştır.</span
+            ><span id="footerState">Yerel sunucuya bağlanılıyor</span>
+          </footer>
+        </main>
+      </div>
+    </div>
+    <div id="toast" class="toast" role="status" aria-live="polite" hidden></div>
+  </body>
+</html>

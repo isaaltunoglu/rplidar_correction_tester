@@ -1,0 +1,13 @@
+{
+  "name": "rplidar-lab",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "node tests/core.test.mjs",
+    "test:dom": "node tests/dom-smoke.mjs"
+  },
+  "devDependencies": {
+    "linkedom": "0.18.13"
+  }
+}

@@ -1,0 +1,4 @@
+Upstream: https://github.com/Slamtec/rplidar_sdk.git
+Revision: 99478e5fb90de3b4a6db0080acacd373f8b36869
+Distribution: SDK source, build includes and original license; application samples, tools and prebuilt binaries are not part of the application source release.
+Local original nested Git metadata is preserved in .git-local/vendor-sdk-history and is not distributed.
