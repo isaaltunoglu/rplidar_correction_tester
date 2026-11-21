@@ -1,16 +1,16 @@
-# İlk kez kullanacaklar için
+# USB sensörle ilk kullanım
 
-Uygulama, LiDAR sensörünün çevresindeki nesnelere olan uzaklığını gösterir. Lazer veya yazılım bilgisi gerekmez. Sensörünüz yokken de bilgisayarda oluşturulan örnekle düğmeleri deneyebilirsiniz.
+Uygulama, bağlı LiDAR sensörünün çevresindeki nesnelere olan uzaklığını gösterir. Sensörü uygun USB adaptörüyle bilgisayara bağlayın, proje klasöründe terminal açın ve çalıştırın:
 
 ```bash
-./start.sh --demo
+./start.sh
 ```
 
-Tarayıcıda `http://localhost:8080` açılır. Gerçek sensörle başlatmak için `./start.sh` kullanılır. Gerekirse [USB bağlantı yardımı](USB.md) bilgisayardaki ilk erişim iznini açıklar.
+Linux üzerinde Python 3.10+, C++17 destekli g++ ve GNU Make gerekir. Tarayıcıda `http://localhost:8080` açılır. Desteklenen USB bağlantıları ve bağlantı hızları otomatik denenir. İlk erişim izni veya bağlantı sorunu varsa [USB bağlantı yardımı](USB.md) bölümüne bakın.
 
 ## Canlı görüntüde ne yapacağım?
 
-1. **Nasıl denemek istersiniz?** bölümünde kendi USB sensörünüzü veya **Sensörsüz örnek** seçeneğini seçin. USB bağlantısı otomatik denenir.
+1. **Nasıl denemek istersiniz?** bölümünde ölçüm kaynağını **Kendi sensörüm · USB** seçin. USB bağlantısı otomatik denenir. Güncel ölçüm geldiğini kontrol edin; **Ayarlar ve yardım** sayfasında cihazın kimliğini inceleyebilirsiniz.
 2. **Hangi yöne baksın?** bölümünde ön, arka, geniş ön alan veya her yön seçin. İstediğiniz başka bir açı varsa **Farklı bir açı seç** bölümünü açın.
 3. Ortadaki işaret sensördür. Noktalar, ölçülen nesnelere olan uzaklıkları gösterir. Merkeze yakın nokta, daha yakın nesne demektir. Renkli dilim, seçtiğiniz yöndür.
 4. **Ölçümü okuyun** bölümünden en yakın nesnenin uzaklığına bakın. **Ölçümü durdur** görüntüyü güncel veri gibi tutmak yerine ölçümü durdurur; devam düğmesiyle yeniden başlayabilirsiniz.
@@ -45,12 +45,12 @@ Testin karşılaştırma uzaklığında ve hata payında da mm, cm veya metre se
 
 - Önce soruyu seçin.
 - **Testi hazırlayın** bölümündeki üç yönergeyi uygulayın.
-- Uzaklık isteniyorsa santimetre yazın: **100 cm = 1 metre**.
+- Uzaklık isteniyorsa hedefin gerçek uzaklığını cetvel veya mezurayla ölçüp girin. Ölçüm başlangıcı için üreticinin belirttiği referansı kullanın. Birim olarak **mm**, **cm** veya **metre** seçebilirsiniz: **100 cm = 1 metre**.
 - Süreyi seçip **Testi başlat** düğmesine basın. Ölçüm boyunca nesneyi ve sensörü hareket ettirmeyin.
 - Sonucu aşağıdaki açıklamadan okuyun. Örneğin cetvel 100 cm, sensör ortalaması 99,9 cm ise fark 0,1 cm olarak açıklanır.
 - Paylaşmak veya okumak için **Sonuç raporunu indir** düğmesini kullanın. Rapor tarayıcıda açılır ve yazdırma menüsünden PDF yapılabilir.
 
-Sensörsüz örnekte gerçek nesne koymanız gerekmez. Mesafe testinde **100 cm örnek hedefi hazırla** düğmesine basın ve uzaklığı 100 cm bırakın. Bu sonuç gerçek sensörün doğruluğunu kanıtlamaz.
+İlk mesafe testinde sensörü sabitleyip düz, mat bir hedef kullanın. Seçilen yön ve mesafe aralığının hedefi kapsadığını kontrol edin. Farklı uzaklıklarda ayrı testler yapın; hedef malzemesi, ortam ve tarama modunu notlara yazın. Yüzeyleri karşılaştırırken diğer koşulları sabit tutun.
 
 İleri düzey kullanıcılar **Test ayarlarını ve notları değiştir**, **Hesapların ayrıntısını göster** ve **Ölçüm grafiğini incele** bölümlerini açabilir. Önceki sonuçlar **Önceki testler ve ayrıntılı veriler** bölümündedir.
 
@@ -60,7 +60,7 @@ Kayıt bir video değildir. Bir süre boyunca alınan ölçüm noktalarını iç
 
 - her noktanın sensöre göre yönü ve uzaklığı;
 - ölçümlerin hangi sırayla ve ne zaman alındığı;
-- gerçek sensör mü, sensörsüz örnek mi kullanıldığı;
+- ölçümün kaynağı;
 - cihaz bilgileri ve seçtiğiniz görünüm ayarları.
 
 Nesnelerin fotoğrafını, adını veya rengini kaydetmez.
@@ -91,8 +91,9 @@ Kaydı başka zaman izlemek için **Kaydı bilgisayara kaydet** düğmesine bas�
 
 ## Teknik ayrıntıları nerede bulacağım?
 
-- Canlı görüntüde **Gelişmiş görüntü ayarları**: mesafe filtresi, kalite filtresi, montaj yönü ve yakınlık sınırları.
+- Canlı görüntüde **Ölçüm mesafesini değiştir** ve **Nesne yaklaşınca ne zaman uyarı versin?**: inceleme aralığı ve yakınlık uyarıları.
+- **Gelişmiş görüntü ayarları**: kalite filtresi, montaj yönü ve görüntü seçenekleri.
 - **Teknik ölçümler ve veri dosyaları**: tur hızı, nokta sayıları, ölçüm tablosu ve sayısal dışa aktarımlar.
 - **Ayarlar ve yardım**: cihazın kimliği, desteklediği tarama modları, USB bağlantısı, sağlık sorgusu ve üretici kaynakları.
 
-Bu geliştirmede gerçek sensör kullanılmadı. Sensörsüz örnek ve yazılım testleri, fiziksel sensör performansının doğrulandığı anlamına gelmez.
+Yazılım kontrolleri fiziksel sensör performansının doğrulandığı anlamına gelmez. Tamamlanan kontroller ve fiziksel doğrulama kapsamı [doğrulama kaydında](VALIDATION.md) belirtilmiştir.

@@ -4,11 +4,11 @@
 
 RPLIDAR Lab, SLAMTEC RPLIDAR sensörlerinin çevresindeki nesnelere olan uzaklığını bilgisayarda gösteren, Türkçe arayüzlü bir ölçüm ve deney uygulamasıdır. Hangi yöne bakılacağını, hangi mesafelerin inceleneceğini ve nesne yaklaştığında ne zaman uyarı gösterileceğini seçebilirsiniz. Adım adım testler, sensörün belirli koşullarda nasıl ölçüm yaptığını incelemenize yardımcı olur.
 
-Öğrenciler, öğretim üyeleri ve sensörle ilk kez çalışacak kullanıcılar için hazırlanmıştır. Bilgisayarınızda çalışır; normal kullanım için internet, bulut hesabı veya tarayıcı eklentisi gerekmez. **Sensörünüz yokken de örnek verilerle programı deneyebilirsiniz.**
+Öğrenciler, öğretim üyeleri ve sensörle ilk kez çalışacak kullanıcılar için hazırlanmıştır. **Sensörü USB ile bağlayın, canlı ölçümleri görün ve deneyleri gerçek hedeflerle yapın.** Program bilgisayarınızda çalışır; normal kullanım için internet, bulut hesabı veya tarayıcı eklentisi gerekmez.
 
 ![Canlı görüntü: ön 120 derecelik alan, ölçüm noktaları ve en yakın nesnenin uzaklığı](docs/images/canli-goruntu.png)
 
-_Görseller uygulamanın gerçek arayüzünden, sensörsüz örnek modunda alınmıştır. Görünen sonuçlar fiziksel bir sensörün performansını göstermez; ekranlardaki ayarlar değiştirilebilir örneklerdir._
+_Ekran görüntüleri arayüz tanıtımı için örnek veriyle alınmıştır; cihaz ölçüm raporu değildir._
 
 [Başlangıç kılavuzu](docs/QUICKSTART_TR.md) · [USB bağlantısı](docs/USB.md) · [Deney yöntemleri](docs/EXPERIMENTS.md) · [Araştırma kaynakları](docs/RESEARCH.md) · [Doğrulama durumu](docs/VALIDATION.md)
 
@@ -27,35 +27,34 @@ LiDAR, lazerle nesnelere olan uzaklığı ölçer. Ekranın ortasındaki işaret
 | Sonuçları paylaşmak veya başka bir araçta incelemek | Okunabilir rapor, CSV tablosu, JSON verileri ve grafik resmi                      |
 | Bağlı cihazı tanımak                                | Cihazın bildirdiği model, seri numarası, yazılım sürümü, sağlık ve tarama modları |
 
-## Hızlı başlangıç
+## USB sensörle başlangıç
 
-### Sensör olmadan deneyin
+Mevcut başlatma akışı Linux içindir. Bilgisayarda Python 3.10+, C++17 destekli `g++` ve GNU Make bulunmalıdır.
 
-Proje klasöründe terminal açın:
-
-```bash
-./start.sh --demo
-```
-
-Tarayıcıda `http://localhost:8080` açılır. **Sensörsüz örnek** modunda oda, 1 metre uzaktaki hedef, hareketli nesne ve eksik ölçüm senaryolarını deneyebilirsiniz. Bu modda gerçek sensörden veri alınmaz.
-
-Demo için Python 3.10 veya üzeri yeterlidir; derleyici gerekmez.
-
-### USB sensörle çalıştırın
-
-Mevcut başlatma akışı Linux içindir. Python 3.10+, C++17 destekli `g++` ve GNU Make gerekir:
+1. Sensörü uygun USB adaptörü ve kablosuyla bilgisayara bağlayın.
+2. Proje klasöründe terminal açıp şu komutu çalıştırın:
 
 ```bash
 ./start.sh
 ```
 
+3. Tarayıcıda `http://localhost:8080` açılır. **Canlı görüntü** sayfasındaki ölçüm kaynağının **Kendi sensörüm · USB** olduğunu kontrol edin.
+4. Bağlantı kurulduğunda cihaz bilgilerini ve güncellenen ölçüm noktalarını kontrol edin; ardından yön ve mesafe ayarlarına geçin.
+
 Başlatıcı gerektiğinde sensör bağlantı programını derler, yerel hizmeti başlatır ve arayüzü açar. Desteklenen USB seri bağlantıları arka planda aranır; bağlantı hızları otomatik denenir. Bağlantı kesilirse yeniden bağlanma denenir. İşletim sisteminin seri porta ilk erişim izni gerekebilir; adımlar [USB bağlantı kılavuzunda](docs/USB.md) açıklanmıştır.
 
 Tarayıcı otomatik açılmazsa `http://localhost:8080` adresine gidin. Uygulamayı kapatmak için terminalde **Ctrl+C** kullanın.
 
+### Sensör bulunmazsa
+
+- USB bağlantısını, sensörün beslemesini ve kabloyu kontrol edin.
+- Seri portu kullanan başka bir program varsa kapatın.
+- **Ayarlar ve yardım** bölümündeki bağlantı kaydını inceleyin. Gerekirse portu elle seçin.
+- Erişim izni hatası varsa [USB bağlantı kılavuzunu](docs/USB.md) uygulayın.
+
 ## İlk kullanımda ne yapacağım?
 
-1. **Canlı görüntü** sayfasında USB sensörünü veya **Sensörsüz örnek** seçeneğini seçin.
+1. **Canlı görüntü** sayfasında ölçüm kaynağını **Kendi sensörüm · USB** seçin ve güncel ölçüm geldiğini kontrol edin.
 2. **Hangi yöne baksın?** bölümünden ön, arka veya her yönü seçin.
 3. **Ölçüm mesafesini değiştir** bölümünden incelemek istediğiniz en yakın ve en uzak mesafeyi girin.
 4. **Ölçümü okuyun** bölümünden seçtiğiniz yöndeki en yakın nesnenin uzaklığına bakın.
@@ -95,11 +94,21 @@ Açı ve mesafe seçimleri, alınan ölçümleri yazılımda süzer; sensörün 
 | Ön ve arka alanları görebiliyor mu? | Seçilen açısal alanlarda ölçüm gelen yönler                                                            |
 | Yakındaki nesneyi görebiliyor mu?   | Seçilen hedef yönünde ölçüm alınıp alınmadığı                                                          |
 
-Sensörsüz bir mesafe denemesi için **100 cm örnek hedefi hazırla** düğmesini kullanın, karşılaştırma uzaklığını **100 cm** veya **1 metre** bırakın ve **Testi başlat** düğmesine basın. Sonucu sayfanın altındaki açıklamadan okuyabilirsiniz. **Sonuç raporunu indir** ile raporu kaydedebilir; tarayıcının yazdırma menüsünden PDF oluşturabilirsiniz.
+### İlk fiziksel mesafe deneyi
+
+1. Sensörü sabitleyin ve seçilen yönde düz, mat bir hedef yerleştirin.
+2. Hedefin gerçek uzaklığını cetvel veya mezurayla ölçün; uzaklık başlangıcı için sensör üreticisinin belirttiği ölçüm referansını kullanın.
+3. **Mesafeyi doğru ölçüyor mu?** testini seçin. Ölçtüğünüz uzaklığı ve birimini girin; örneğin **100 cm** veya **1 metre**.
+4. **Test ayarlarını ve notları değiştir** bölümünde kabul edeceğiniz hata payını ve hedefe ilişkin notları yazın. Canlı görüntüde seçtiğiniz yön ve mesafe aralığının hedefi kapsadığını kontrol edin.
+5. Süreyi seçip **Testi başlat** düğmesine basın. Ölçüm boyunca sensörü ve hedefi sabit tutun.
+6. Sonuçta referans uzaklıkla ölçüm ortalamasının farkını ve hata payı içinde kalan ölçümleri inceleyin.
+7. **Sonuç raporunu indir** ile raporu saklayın. Tarayıcının yazdırma menüsünden PDF oluşturabilirsiniz. Ayrıntılı inceleme için test verilerini de indirin.
+
+Farklı uzaklıklarda tekrarlayın. Yüzey karşılaştırırken uzaklık, hedef açısı, ortam ve tarama modunu sabit tutup yalnızca yüzeyi değiştirin.
 
 ![Mesafe testi: hazırlık yönergeleri, birim seçimi ve okunabilir örnek sonuç](docs/images/adim-adim-test.png)
 
-_Örnek veriden üretilen test sonucu. Gerçek sensörün doğruluğunu değerlendirmek için ayrı fiziksel ölçümler ve bilinen bir referans gerekir. Deney koşulları ve hesap yöntemleri [deney dokümanında](docs/EXPERIMENTS.md) açıklanmıştır._
+_Test ekranının düzeni ve sonuçların sunumu. Deney koşulları ve hesap yöntemleri [deney dokümanında](docs/EXPERIMENTS.md) açıklanmıştır._
 
 ## Kayıt ve yeniden izleme
 
@@ -114,7 +123,7 @@ Kayıt; ölçülen noktaların yönünü, uzaklığını, zaman sırasını, öl
 
 ![Kayıt ve izleme: ölçüm sayısı, süre, kayıt dosyası ve zaman çubuklu oynatıcı](docs/images/kayit-ve-izleme.png)
 
-_Sensörsüz örnekten alınmış kısa bir kaydın durdurulmuş görünümü. Noktalar, kayıt sırasında alınan ölçümlerdir._
+_Kayıt oynatıcısının durdurulmuş görünümü. Kendi kaydınızın süresi ve ölçüm sayısı bu bölümde gösterilir._
 
 ### İndirilen dosyalarda ne var?
 
@@ -159,11 +168,11 @@ scripts/               Kaynak paketleme ve Git yardımcıları
 ### Çalıştırma seçenekleri
 
 ```bash
-# Tarayıcıyı otomatik açmadan örnek veriyle çalıştırma
-python3 server.py --demo
+# Tarayıcıyı otomatik açmadan sensörle çalıştırma (önce make ile derleyin)
+python3 server.py
 
 # Farklı bir yerel port kullanma
-./start.sh --demo --port 8081
+./start.sh --port 8081
 
 # Bilinen USB portunu doğrudan seçme
 LIDAR_PORT=/dev/ttyUSB0 ./start.sh
